@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image, { type StaticImageData } from "next/image";
+import Link from "next/link";
 import SiteFooter from "@/app/components/SiteFooter";
-import gsrtcCover from "@/public/gsrtc-hero.webp";
+import pdfHero from "@/public/pdfhero.webp";
 import razorpayBadge from "@/public/razorpay-logo.webp";
 import rahulPatel from "@/public/rahul-patel.webp";
 import jayeshChaudhary from "@/public/jayesh.jpg";
@@ -260,9 +261,9 @@ export default function PdfCourse() {
                 <a href="#faq">❓ FAQ</a>
               </div>
             </div>
-            <a className="header-buy" href="#buy">
-              <CartIcon /> ખરીદો ₹149
-            </a>
+            <Link className="header-buy" href="/buy">
+              <CartIcon /> ખરીદો ₹1
+            </Link>
           </nav>
         </div>
       </header>
@@ -273,73 +274,73 @@ export default function PdfCourse() {
           <div className="container">
             <div className="product-grid">
               {/* Product cover */}
-            <div className="box-scene">
-              <Image
-                src={gsrtcCover}
-                alt="GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ"
-                className="product-image"
-                sizes="(max-width: 900px) 90vw, 440px"
-                priority
-              />
-            </div>
-
-            {/* Product info */}
-            <div className="product-info" id="buy">
-              <div className="rating">
-                <span className="stars">★★★★★</span>
-                <span className="rating-score">4.9</span>
-                <span className="rating-sep" />
-                <span className="rating-count">
-                  <strong>250+</strong> ઉમેદવારોના રિવ્યુ
-                </span>
+              <div className="box-scene">
+                <Image
+                  src={pdfHero}
+                  alt="GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ"
+                  className="product-image"
+                  sizes="(max-width: 900px) 90vw, 440px"
+                  priority
+                />
               </div>
 
-              <h1 className="product-headline">
-                GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ હમણાં જ મેળવો!! 📗
-              </h1>
+              {/* Product info */}
+              <div className="product-info" id="buy">
+                <div className="rating">
+                  <span className="stars">★★★★★</span>
+                  <span className="rating-score">4.9</span>
+                  <span className="rating-sep" />
+                  <span className="rating-count">
+                    <strong>250+</strong> ઉમેદવારોના રિવ્યુ
+                  </span>
+                </div>
 
-              <div className="launch-banner">
-                આ launch ઓફર છે અને આગામી 24 કલાકમાં સમાપ્ત થશે
+                <h1 className="product-headline">
+                  GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ હમણાં જ મેળવો!! 📗
+                </h1>
+
+                <div className="launch-banner">
+                  આ launch ઓફર છે અને આગામી 24 કલાકમાં સમાપ્ત થશે
+                </div>
+
+                <div className="product-tagline">
+                  GSRTC કંડક્ટર સંપૂર્ણ તૈયારી PDF (તૈયાર — તરત ડાઉનલોડ)
+                </div>
+
+                <ul className="check-list">
+                  {heroChecklist.map((item) => (
+                    <li key={item.bold}>
+                      <span className="check" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="14" height="14">
+                          <path
+                            d="M20 6L9 17l-5-5"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                      <span>
+                        <strong>{item.bold}</strong> {item.rest}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-
-              <div className="product-tagline">
-                GSRTC કંડક્ટર સંપૂર્ણ તૈયારી PDF (તૈયાર — તરત ડાઉનલોડ)
-              </div>
-
-              <ul className="check-list">
-                {heroChecklist.map((item) => (
-                  <li key={item.bold}>
-                    <span className="check" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" width="14" height="14">
-                        <path
-                          d="M20 6L9 17l-5-5"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
-                    <span>
-                      <strong>{item.bold}</strong> {item.rest}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
             </div>
 
             {/* Offer below hero (centered, full width) */}
             <div className="hero-offer">
               <h2 className="hero-offer-title">
-                ફક્ત ₹149/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
+                ફક્ત ₹1/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
               </h2>
 
-              <a className="btn btn-accent hero-buy" href="#buy">
-                <CartIcon /> હમણાં ખરીદો ₹149{" "}
+              <Link className="btn btn-accent hero-buy" href="/buy">
+                <CartIcon /> હમણાં ખરીદો ₹1{" "}
                 <span className="final-old">₹499</span>
-              </a>
+              </Link>
 
               <div className="final-badges">
                 <span className="fb">⚡ તરત ડાઉનલોડ</span>
@@ -517,9 +518,9 @@ export default function PdfCourse() {
               <span className="wa-sub">કોઈ પ્રશ્ન હોય તો મેસેજ કરો</span>
             </span>
           </a>
-          <a className="btn buy-bar-btn" href="#buy">
-            <CartIcon /> ખરીદો ₹149/-
-          </a>
+          <Link className="btn buy-bar-btn" href="/buy">
+            <CartIcon /> ખરીદો ₹1/-
+          </Link>
         </div>
       </div>
 
