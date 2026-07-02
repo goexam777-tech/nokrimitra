@@ -262,7 +262,7 @@ export default function PdfCourse() {
               </div>
             </div>
             <Link className="header-buy" href="/buy">
-              <CartIcon /> ખરીદો ₹1
+              <CartIcon /> ખરીદો ₹148
             </Link>
           </nav>
         </div>
@@ -334,11 +334,11 @@ export default function PdfCourse() {
             {/* Offer below hero (centered, full width) */}
             <div className="hero-offer">
               <h2 className="hero-offer-title">
-                ફક્ત ₹1/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
+                ફક્ત ₹148/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
               </h2>
 
               <Link className="btn btn-accent hero-buy" href="/buy">
-                <CartIcon /> હમણાં ખરીદો ₹1{" "}
+                <CartIcon /> હમણાં ખરીદો ₹148{" "}
                 <span className="final-old">₹499</span>
               </Link>
 
@@ -519,7 +519,7 @@ export default function PdfCourse() {
             </span>
           </a>
           <Link className="btn buy-bar-btn" href="/buy">
-            <CartIcon /> ખરીદો ₹1/-
+            <CartIcon /> ખરીદો ₹148/-
           </Link>
         </div>
       </div>

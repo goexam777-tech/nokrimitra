@@ -66,7 +66,7 @@ export async function POST(req: Request) {
           customerName: name || "વિદ્યાર્થી",
           productName: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
           orderId: razorpay_order_id,
-          amount: Number(amountPaid || 1),
+          amount: Number(amountPaid || 148),
           downloadUrl: downloadUrl,
         });
 
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
           customerName: name || "વિદ્યાર્થી",
           productName: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
           orderId: razorpay_order_id,
-          amount: Number(amountPaid || 1),
+          amount: Number(amountPaid || 148),
           downloadUrl: downloadUrl,
         });
 

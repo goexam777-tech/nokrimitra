@@ -82,7 +82,7 @@ function ThankYouContent() {
         paymentId: "",
         signature: "",
         productName: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
-        amountPaid: "1",
+        amountPaid: "148",
         email: "",
         isMock: false
       };
@@ -96,7 +96,7 @@ function ThankYouContent() {
       paymentId: searchParams.get("razorpay_payment_id") || parsed?.paymentId || "",
       signature: searchParams.get("razorpay_signature") || parsed?.signature || "",
       productName: searchParams.get("productName") || parsed?.productName || "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
-      amountPaid: searchParams.get("amountPaid") || parsed?.amountPaid || "1",
+      amountPaid: searchParams.get("amountPaid") || parsed?.amountPaid || "148",
       email: searchParams.get("email") || parsed?.email || "",
       isMock: searchParams.get("mock") === "true" || parsed?.isMock || false,
     };
@@ -146,7 +146,7 @@ function ThankYouContent() {
         // Track mock purchase event
         if (typeof window !== "undefined" && (window as any).fbq) {
           (window as any).fbq("track", "Purchase", {
-            value: Number(params.amountPaid || 1),
+            value: Number(params.amountPaid || 148),
             currency: "INR",
           });
         }
@@ -184,7 +184,7 @@ function ThankYouContent() {
         // Track real purchase event
         if (typeof window !== "undefined" && (window as any).fbq) {
           (window as any).fbq("track", "Purchase", {
-            value: Number(params.amountPaid || 1),
+            value: Number(params.amountPaid || 148),
             currency: "INR",
           });
         }

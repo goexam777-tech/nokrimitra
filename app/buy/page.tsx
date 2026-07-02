@@ -121,7 +121,7 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: 1,
+          amount: 148,
           name,
           email,
           phone,
@@ -141,7 +141,7 @@ export default function CheckoutPage() {
             name: name,
             email: email,
             phone: phone,
-            amountPaid: "1",
+            amountPaid: "148",
             productName: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
             mock: "true",
           });
@@ -249,7 +249,7 @@ export default function CheckoutPage() {
                 <span className={styles.ratingText}>4.9 (250+ રિવ્યુ)</span>
               </div>
               <div style={{ marginTop: "6px", fontWeight: "800", color: "#0b6b3a", fontSize: "18px" }}>
-                ₹1 <span style={{ textDecoration: "line-through", color: "#829ab1", fontSize: "14px", fontWeight: "normal" }}>₹499</span>
+                ₹148 <span style={{ textDecoration: "line-through", color: "#829ab1", fontSize: "14px", fontWeight: "normal" }}>₹499</span>
               </div>
             </div>
           </div>
@@ -342,7 +342,7 @@ export default function CheckoutPage() {
                 ) : (
                   <>
                     <LockIcon />
-                    <span>સુરક્ષિત પેમેન્ટ કરો · ₹1</span>
+                    <span>સુરક્ષિત પેમેન્ટ કરો · ₹148</span>
                   </>
                 )}
               </button>
@@ -406,7 +406,7 @@ export default function CheckoutPage() {
 
               <div className={styles.totalRow}>
                 <span className={styles.totalLabel}>કુલ રકમ</span>
-                <span className={styles.totalValue}>₹1</span>
+                <span className={styles.totalValue}>₹148</span>
               </div>
             </div>
 
