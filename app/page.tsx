@@ -139,7 +139,7 @@ const reviews: Review[] = [
     initial: "પ",
     color: "#b8720a",
     img: priyaDesai,
-    text: "3000+ MCQ અને જૂના પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹149 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
+    text: "3000+ MCQ અને જૂના પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹120 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
   },
   {
     name: "જયેશ ચૌધરી",
@@ -262,7 +262,7 @@ export default function PdfCourse() {
               </div>
             </div>
             <Link className="header-buy" href="/buy">
-              <CartIcon /> ખરીદો ₹148
+              <CartIcon /> ખરીદો ₹120
             </Link>
           </nav>
         </div>
@@ -334,11 +334,11 @@ export default function PdfCourse() {
             {/* Offer below hero (centered, full width) */}
             <div className="hero-offer">
               <h2 className="hero-offer-title">
-                ફક્ત ₹148/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
+                ફક્ત ₹120/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
               </h2>
 
               <Link className="btn btn-accent hero-buy" href="/buy">
-                <CartIcon /> હમણાં ખરીદો ₹148{" "}
+                <CartIcon /> હમણાં ખરીદો ₹120{" "}
                 <span className="final-old">₹499</span>
               </Link>
 
@@ -519,7 +519,7 @@ export default function PdfCourse() {
             </span>
           </a>
           <Link className="btn buy-bar-btn" href="/buy">
-            <CartIcon /> ખરીદો ₹148/-
+            <CartIcon /> ખરીદો ₹120/-
           </Link>
         </div>
       </div>

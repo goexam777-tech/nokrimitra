@@ -29,7 +29,7 @@ export default function LegalPage({
               હોમ
             </a>
             <a className="header-buy" href="/#buy">
-              ખરીદો ₹149
+              ખરીદો ₹120
             </a>
           </nav>
         </div>

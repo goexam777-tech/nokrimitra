@@ -16,14 +16,14 @@ export async function POST(req: Request) {
       console.log("Razorpay mock mode: Using simulated Order ID");
       return NextResponse.json({
         orderId: `order_mock_${Math.random().toString(36).substring(2, 11)}`,
-        amount: 14800,
+        amount: 12000,
         currency: "INR",
         mock: true,
       });
     }
 
     const body = await req.json().catch(() => ({}));
-    const amount = body.amount ? Number(body.amount) : 148;
+    const amount = body.amount ? Number(body.amount) : 120;
     const amountInPaise = amount * 100;
 
     // Call Razorpay API to create an order
