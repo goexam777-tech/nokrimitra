@@ -173,7 +173,7 @@ export default function CheckoutPage() {
             name: name,
             email: email,
             phone: phone,
-            amountPaid: "1",
+            amountPaid: "120",
           });
           router.push(`/thank-you?${queryParams.toString()}`);
         },
