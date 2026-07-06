@@ -73,7 +73,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={notoGujarati.className}>
+      <body className={notoGujarati.className} suppressHydrationWarning>
         <noscript>
           <img
             height="1"
