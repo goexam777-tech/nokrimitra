@@ -62,6 +62,14 @@ function LockIcon() {
   );
 }
 
+function WhatsAppIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+      <path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-4.9 1 1-4.8-.2-.4c-1-1.6-1.5-3.4-1.5-5.3C5 9.5 9.9 4.9 16 4.9S27 9.5 27 15 22.1 24.8 16 24.8zm5.5-7.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.6.1-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5 0-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.2 3.3 5.2 4.6 2 .8 2.7.9 3.7.8.6-.1 1.8-.8 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.2-.6-.4z" />
+    </svg>
+  );
+}
+
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
     if (typeof window !== "undefined" && (window as any).Razorpay) {
@@ -246,13 +254,27 @@ export default function CheckoutPage() {
               <h3 className={styles.productTitle}>GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ</h3>
               <div className={styles.ratingRow}>
                 <span className={styles.stars}>★★★★★</span>
-                <span className={styles.ratingText}>4.9 (250+ રિવ્યુ)</span>
+                <span className={styles.ratingText}>4.9 (400+ રિવ્યુ)</span>
               </div>
-              <div style={{ marginTop: "6px", fontWeight: "800", color: "#0b6b3a", fontSize: "18px" }}>
-                ₹120 <span style={{ textDecoration: "line-through", color: "#829ab1", fontSize: "14px", fontWeight: "normal" }}>₹499</span>
+              <div className={styles.mobilePrice}>
+                ₹120 <span className={styles.mobilePriceOld}>₹499</span>
+                <span className={styles.offBadge}>76% OFF</span>
               </div>
             </div>
           </div>
+
+          <div className={styles.liveNudge}>
+            🔥 છેલ્લા 24 કલાકમાં <strong>18 ઉમેદવારોએ</strong> ડાઉનલોડ કર્યું
+          </div>
+
+          <ul className={styles.miniChecklist}>
+            {checklistItems.map((item, idx) => (
+              <li key={idx}>
+                <span className={styles.checkIcon}>✓</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className={styles.grid}>
@@ -342,7 +364,7 @@ export default function CheckoutPage() {
                 ) : (
                   <>
                     <LockIcon />
-                    <span>સુરક્ષિત પેમેન્ટ કરો · ₹120</span>
+                    <span>હમણાં જ PDF મેળવો – ₹120</span>
                   </>
                 )}
               </button>
@@ -352,6 +374,16 @@ export default function CheckoutPage() {
                 <span>•</span>
                 <span>⚡ Instant access</span>
               </div>
+
+              <a
+                className={styles.waHelp}
+                href="https://wa.me/919104826422?text=Buy%20Page%20%7C%20GSRTC%20PDF%20%E0%AA%95%E0%AB%8B%E0%AA%B0%E0%AB%8D%E0%AA%B8%20%E2%80%94%20%E0%AA%A8%E0%AA%AE%E0%AA%B8%E0%AB%8D%E0%AA%A4%E0%AB%87%2C%20%E0%AA%AE%E0%AA%A8%E0%AB%87%20%E0%AA%96%E0%AA%B0%E0%AB%80%E0%AA%A6%E0%AB%80%2F%E0%AA%AA%E0%AB%87%E0%AA%AE%E0%AB%87%E0%AA%A8%E0%AB%8D%E0%AA%9F%E0%AA%AE%E0%AA%BE%E0%AA%82%20%E0%AA%AE%E0%AA%A6%E0%AA%A6%20%E0%AA%9C%E0%AB%8B%E0%AA%88%E0%AA%8F%20%E0%AA%9B%E0%AB%87."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <WhatsAppIcon />
+                <span>કોઈ શંકા છે? WhatsApp પર પૂછો — તરત મદદ મળશે</span>
+              </a>
 
               <div className={styles.mobileOnlySecureNotice} style={{ background: "#f8faf8", padding: "12px", borderRadius: "10px", marginBottom: "15px" }}>
                 <p style={{ margin: 0, fontSize: "13px", lineHeight: "1.5", color: "#2e3a47", textAlign: "left" }}>
@@ -388,7 +420,7 @@ export default function CheckoutPage() {
                   <h3 className={styles.productTitle}>GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ</h3>
                   <div className={styles.ratingRow}>
                     <span className={styles.stars}>★★★★★</span>
-                    <span className={styles.ratingText}>4.9 (250+ રિવ્યુ)</span>
+                    <span className={styles.ratingText}>4.9 (400+ રિવ્યુ)</span>
                   </div>
                 </div>
               </div>
@@ -430,6 +462,54 @@ export default function CheckoutPage() {
             </div>
           </div>
         </div>
+
+        {/* TRUST SECTION (all screens) */}
+        <section className={styles.trustSection}>
+          <div className={styles.statsRow}>
+            <div className={styles.statBox}>
+              <strong>400+</strong>
+              <span>ઉમેદવારોએ ખરીદ્યું</span>
+            </div>
+            <div className={styles.statBox}>
+              <strong>4.9★</strong>
+              <span>સરેરાશ રેટિંગ</span>
+            </div>
+            <div className={styles.statBox}>
+              <strong>⚡ તરત</strong>
+              <span>ડાઉનલોડ + ઈમેલ</span>
+            </div>
+            <div className={styles.statBox}>
+              <strong>♾️</strong>
+              <span>લાઇફટાઇમ એક્સેસ</span>
+            </div>
+          </div>
+
+          <h3 className={styles.trustHeading}>ઉમેદવારો શું કહે છે</h3>
+          <div className={styles.reviewRow}>
+            <div className={styles.reviewCard}>
+              <div className={styles.reviewStars}>★★★★★</div>
+              <p>“પેમેન્ટ કર્યા પછી 1 મિનિટમાં PDF મળી ગઈ. MCQ અને જૂના પેપર બંને ઉપયોગી છે.”</p>
+              <div className={styles.reviewer}>
+                <span className={styles.avatar} style={{ background: "#0b6b3a" }}>ર</span>
+                <span>રાહુલ પટેલ · અમદાવાદ ✓</span>
+              </div>
+            </div>
+            <div className={styles.reviewCard}>
+              <div className={styles.reviewStars}>★★★★★</div>
+              <p>“₹120 પ્રમાણે ખૂબ જ વેલ્યુ ફોર મની. તૈયારી માટે એક જ જગ્યાએ બધું મળી ગયું.”</p>
+              <div className={styles.reviewer}>
+                <span className={styles.avatar} style={{ background: "#1d4ed8" }}>જ</span>
+                <span>જયેશ ચૌધરી · મહેસાણા ✓</span>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.trustBadges}>
+            <span>🔒 સુરક્ષિત Razorpay પેમેન્ટ</span>
+            <span>📩 ઈમેલ પર ડાઉનલોડ લિંક</span>
+            <span>💬 WhatsApp સપોર્ટ</span>
+          </div>
+        </section>
       </main>
 
       {/* FOOTER */}

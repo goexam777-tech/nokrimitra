@@ -291,7 +291,7 @@ export default function PdfCourse() {
                   <span className="rating-score">4.9</span>
                   <span className="rating-sep" />
                   <span className="rating-count">
-                    <strong>250+</strong> ઉમેદવારોના રિવ્યુ
+                    <strong>400+</strong> ઉમેદવારોના રિવ્યુ
                   </span>
                 </div>
 
@@ -440,7 +440,7 @@ export default function PdfCourse() {
           <div className="container">
             <h2 className="section-title">ઉમેદવારો શું કહે છે</h2>
             <p className="section-subtitle">
-              250+ ઉમેદવારોએ આ PDF કોર્સથી પોતાની તૈયારી મજબૂત બનાવી.
+              400+ ઉમેદવારોએ આ PDF કોર્સથી પોતાની તૈયારી મજબૂત બનાવી.
             </p>
 
             <div className="reviews-grid">
