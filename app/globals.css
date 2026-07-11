@@ -818,6 +818,39 @@ a {
   max-width: 560px;
 }
 
+.updated-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #eafaf0;
+  border: 1px solid #b7ecc7;
+  color: #0e7a3a;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.updated-badge .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+  animation: pulseDot 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(22, 163, 74, 0.08);
+  }
+}
+
 .rating {
   display: inline-flex;
   align-items: center;
@@ -1281,13 +1314,20 @@ body {
 
 .samples-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 22px;
-  max-width: 960px;
+  max-width: 1120px;
   margin: 28px auto 0;
 }
 
-@media (max-width: 780px) {
+@media (max-width: 1000px) {
+  .samples-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 680px;
+  }
+}
+
+@media (max-width: 520px) {
   .samples-grid {
     grid-template-columns: 1fr;
     max-width: 420px;

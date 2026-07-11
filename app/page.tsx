@@ -122,6 +122,12 @@ const samples: Sample[] = [
     pages: "PDF નમૂનો",
     href: "/sample-smart-notes.pdf",
   },
+  {
+    title: "ગુજરાતનો ઇતિહાસ — MCQ સેમ્પલ",
+    desc: "ગુજરાતના ઇતિહાસને લગતા જવાબ સહિતના MCQ નમૂના.",
+    pages: "MCQ સેમ્પલ",
+    href: "/gujarat_history_mcqs.pdf",
+  },
 ];
 
 const reviews: Review[] = [
@@ -139,7 +145,7 @@ const reviews: Review[] = [
     initial: "પ",
     color: "#b8720a",
     img: priyaDesai,
-    text: "3000+ MCQ અને જૂના પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹120 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
+    text: "3000+ MCQ અને જૂના પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹149 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
   },
   {
     name: "જયેશ ચૌધરી",
@@ -262,7 +268,7 @@ export default function PdfCourse() {
               </div>
             </div>
             <Link className="header-buy" href="/buy">
-              <CartIcon /> ખરીદો ₹120
+              <CartIcon /> ખરીદો ₹149
             </Link>
           </nav>
         </div>
@@ -286,6 +292,9 @@ export default function PdfCourse() {
 
               {/* Product info */}
               <div className="product-info" id="buy">
+                <div className="updated-badge">
+                  <span className="dot" /> Updated for 2026 syllabus
+                </div>
                 <div className="rating">
                   <span className="stars">★★★★★</span>
                   <span className="rating-score">4.9</span>
@@ -299,9 +308,6 @@ export default function PdfCourse() {
                   GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ હમણાં જ મેળવો!! 📗
                 </h1>
 
-                <div className="launch-banner">
-                  આ launch ઓફર છે અને આગામી 24 કલાકમાં સમાપ્ત થશે
-                </div>
 
                 <div className="product-tagline">
                   GSRTC કંડક્ટર સંપૂર્ણ તૈયારી PDF (તૈયાર — તરત ડાઉનલોડ)
@@ -334,11 +340,11 @@ export default function PdfCourse() {
             {/* Offer below hero (centered, full width) */}
             <div className="hero-offer">
               <h2 className="hero-offer-title">
-                ફક્ત ₹120/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
+                ફક્ત ₹149/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
               </h2>
 
               <Link className="btn btn-accent hero-buy" href="/buy">
-                <CartIcon /> હમણાં ખરીદો ₹120{" "}
+                <CartIcon /> હમણાં ખરીદો ₹149{" "}
                 <span className="final-old">₹499</span>
               </Link>
 
@@ -394,7 +400,7 @@ export default function PdfCourse() {
           <div className="container">
             <h2 className="section-title">ફ્રી સેમ્પલ જુઓ</h2>
             <p className="section-subtitle">
-              ખરીદતાં પહેલાં અમારી PDF ની ગુણવત્તા જાતે તપાસો — 3 ફ્રી નમૂના.
+              ખરીદતાં પહેલાં અમારી PDF ની ગુણવત્તા જાતે તપાસો — 4 ફ્રી નમૂના.
             </p>
 
             <div className="samples-grid">
@@ -519,7 +525,7 @@ export default function PdfCourse() {
             </span>
           </a>
           <Link className="btn buy-bar-btn" href="/buy">
-            <CartIcon /> ખરીદો ₹120/-
+            <CartIcon /> ખરીદો ₹149/-
           </Link>
         </div>
       </div>

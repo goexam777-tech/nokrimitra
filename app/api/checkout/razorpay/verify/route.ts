@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { buildOrderEmail, buildOrderEmailText } from "@/lib/emailTemplate";
+import {
+  buildPsychologyEmail,
+  buildPsychologyEmailText,
+} from "@/lib/psychologyEmailTemplate";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +16,8 @@ export async function POST(req: Request) {
       name,
       email,
       amountPaid,
+      product,
+      productName,
     } = body;
 
     if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
@@ -54,7 +60,10 @@ export async function POST(req: Request) {
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const appUrl = `${protocol}://${host}`;
-    const downloadUrl = `${appUrl}/go`;
+    const isPsychology = product === "psychology";
+    const downloadUrl = isPsychology
+      ? `${appUrl}/psychology-notes/go`
+      : `${appUrl}/go`;
 
     // Trigger Email sending via Resend API
     const resendApiKey = process.env.RESEND_API_KEY;
@@ -62,21 +71,44 @@ export async function POST(req: Request) {
 
     if (resendApiKey && resendApiKey !== "your_resend_key_here" && email) {
       try {
-        const htmlContent = buildOrderEmail({
-          customerName: name || "વિદ્યાર્થી",
-          productName: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
-          orderId: razorpay_order_id,
-          amount: Number(amountPaid || 120),
-          downloadUrl: downloadUrl,
-        });
+        const psyProductName = productName || "Psychology Notes";
+        const gsrtcProductName = "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ";
 
-        const textContent = buildOrderEmailText({
-          customerName: name || "વિદ્યાર્થી",
-          productName: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
-          orderId: razorpay_order_id,
-          amount: Number(amountPaid || 120),
-          downloadUrl: downloadUrl,
-        });
+        const htmlContent = isPsychology
+          ? buildPsychologyEmail({
+              customerName: name || "there",
+              productName: psyProductName,
+              orderId: razorpay_order_id,
+              amount: Number(amountPaid || 149),
+              downloadUrl,
+            })
+          : buildOrderEmail({
+              customerName: name || "વિદ્યાર્થી",
+              productName: gsrtcProductName,
+              orderId: razorpay_order_id,
+              amount: Number(amountPaid || 149),
+              downloadUrl,
+            });
+
+        const textContent = isPsychology
+          ? buildPsychologyEmailText({
+              customerName: name || "there",
+              productName: psyProductName,
+              orderId: razorpay_order_id,
+              amount: Number(amountPaid || 149),
+              downloadUrl,
+            })
+          : buildOrderEmailText({
+              customerName: name || "વિદ્યાર્થી",
+              productName: gsrtcProductName,
+              orderId: razorpay_order_id,
+              amount: Number(amountPaid || 149),
+              downloadUrl,
+            });
+
+        const subject = isPsychology
+          ? `${psyProductName}: Your download link is ready! 🎉`
+          : "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ: આપનો ડાઉનલોડ લિંક તૈયાર છે! 📚🎉";
 
         const emailResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
@@ -87,8 +119,8 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             from: emailFrom,
             to: [email],
-            reply_to: "support@nokrimitra.in",
-            subject: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ: આપનો ડાઉનલોડ લિંક તૈયાર છે! 📚🎉",
+            reply_to: isPsychology ? "goexam777@gmail.com" : "support@nokrimitra.in",
+            subject,
             html: htmlContent,
             text: textContent,
           }),
