@@ -1493,3 +1493,97 @@
     font-size: 26px;
   }
 }
+
+/* Sticky mobile buy bar */
+.stickyBar {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  .stickyBar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(180deg, #1ea7ea 0%, #1690d0 100%);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
+  }
+
+  /* keep page content clear of the fixed bar */
+  .page {
+    padding-bottom: 84px;
+  }
+}
+
+.stickyInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.stickyLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+
+.stickyTimer {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.timerBox {
+  min-width: 34px;
+  padding: 6px 4px;
+  background: #e11d1d;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.18);
+}
+
+.timerColon {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.stickyBtn {
+  flex: 1;
+  min-width: 0;
+  background: #e11d1d;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  text-align: center;
+  padding: 14px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(225, 29, 29, 0.42);
+  animation: stickyPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes stickyPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}

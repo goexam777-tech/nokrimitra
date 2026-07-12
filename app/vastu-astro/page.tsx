@@ -3,6 +3,7 @@ import Image from "next/image";
 import astroImg from "@/public/astro8.webp";
 import styles from "./vastu.module.css";
 import VastuFooter from "./VastuFooter";
+import StickyBuyBar from "./StickyBuyBar";
 
 const faqs = [
   {
@@ -612,6 +613,8 @@ export default function VastuAstroPage() {
       </section>
 
       <VastuFooter />
+
+      <StickyBuyBar />
     </div>
   );
 }
