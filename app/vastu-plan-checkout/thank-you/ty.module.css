@@ -1,0 +1,201 @@
+.page {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 0%, #12224a 0%, #0a1024 55%);
+  color: #ffffff;
+  padding: 48px 20px 70px;
+}
+
+.loading {
+  min-height: 100vh;
+  background: #0a1024;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  padding: 20px;
+}
+
+.spinner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.15);
+  border-top-color: #3b8dfe;
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hero */
+.hero {
+  max-width: 760px;
+  margin: 0 auto 28px;
+  text-align: center;
+}
+
+.confirmPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(46, 204, 149, 0.14);
+  border: 1px solid rgba(46, 204, 149, 0.4);
+  color: #34e0a1;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 999px;
+  margin-bottom: 22px;
+}
+
+.pillTick {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #34e0a1;
+  color: #0a1024;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.sub {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #c3cbdd;
+}
+
+.sub strong {
+  color: #ffffff;
+}
+
+/* Card */
+.card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: #ffffff;
+  color: #1a2130;
+  border-radius: 20px;
+  padding: 40px 34px 38px;
+  text-align: center;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+}
+
+.check {
+  width: 66px;
+  height: 66px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  background: #17bd8d;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 12px 26px rgba(23, 189, 141, 0.4);
+}
+
+.support {
+  max-width: 560px;
+  margin: 0 auto 22px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #5b6577;
+}
+
+.support a {
+  color: #1e63d3;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 26px;
+  font-size: 14px;
+  color: #3a4353;
+  font-weight: 600;
+  margin-bottom: 26px;
+}
+
+.features span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.fIcon {
+  font-size: 15px;
+}
+
+/* Download buttons */
+.downloads {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.downloadBtn {
+  display: block;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 800;
+  padding: 16px 24px;
+  color: #ffffff;
+}
+
+.primaryBtn {
+  background: linear-gradient(180deg, #3b8dfe 0%, #1e63d3 100%);
+  box-shadow: 0 12px 26px rgba(30, 99, 211, 0.35);
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+
+.primaryBtn:hover {
+  filter: brightness(1.05);
+}
+
+.primaryBtn:active {
+  transform: translateY(1px);
+}
+
+.emailNote {
+  margin-top: 24px;
+  font-size: 13.5px;
+  color: #6b7280;
+  word-break: break-word;
+}
+
+.emailNote strong {
+  color: #101828;
+}
+
+@media (max-width: 620px) {
+  .title {
+    font-size: 30px;
+  }
+
+  .sub {
+    font-size: 15px;
+  }
+
+  .card {
+    padding: 32px 20px 30px;
+  }
+}

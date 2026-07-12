@@ -1,0 +1,633 @@
+.page {
+  min-height: 100vh;
+  background: #eef1f6;
+  color: #1a2130;
+}
+
+/* Top banner */
+.hero {
+  background: #0a1024;
+  color: #ffffff;
+  text-align: center;
+  padding: 30px 20px 34px;
+}
+
+.heroTitle {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.3;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cyan {
+  color: #35d0e6;
+}
+
+.progressWrap {
+  max-width: 900px;
+  margin: 20px auto 26px;
+}
+
+.progressBar {
+  position: relative;
+  height: 26px;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.progressBar::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  bottom: 4px;
+  width: 73%;
+  border-radius: 4px;
+  background-color: #34a853;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.22) 0,
+    rgba(255, 255, 255, 0.22) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.progressPct {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 73%;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  color: #ffffff;
+}
+
+.heroSub {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.heroText {
+  font-size: 16px;
+  color: #d7dce6;
+}
+
+/* Card */
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 26px 16px 60px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(10, 16, 36, 0.12);
+  border-radius: 14px;
+  padding: 30px 26px 34px;
+  box-shadow: 0 20px 50px rgba(10, 16, 36, 0.14);
+}
+
+/* Price header */
+.priceHead {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.regular {
+  font-size: 30px;
+  font-weight: 800;
+  color: #101828;
+}
+
+.regular s {
+  color: #101828;
+  text-decoration-thickness: 2px;
+}
+
+.today {
+  font-size: 42px;
+  font-weight: 900;
+  color: #101828;
+  line-height: 1.15;
+}
+
+.todayAmt {
+  color: #e11d1d;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.err {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+/* Fields */
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.fields input,
+.phoneField input {
+  width: 100%;
+  border: 1px solid #d7dbe3;
+  border-radius: 8px;
+  padding: 15px 16px;
+  font-size: 17px;
+  color: #1a2130;
+  background: #fbfcfd;
+  outline: none;
+}
+
+.fields input:focus,
+.phoneField input:focus {
+  border-color: #3b8dfe;
+  background: #fff;
+}
+
+.phoneField {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d7dbe3;
+  border-radius: 8px;
+  background: #fbfcfd;
+  overflow: hidden;
+}
+
+.phoneField:focus-within {
+  border-color: #3b8dfe;
+  background: #fff;
+}
+
+.phoneField .flag {
+  padding: 0 8px 0 14px;
+  font-size: 18px;
+}
+
+.phoneField input {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* Upsell */
+.upsell {
+  background: #d9f0fb;
+  border: 2px dashed #7cb8d8;
+  border-radius: 12px;
+  padding: 16px 16px 18px;
+  margin-bottom: 16px;
+}
+
+.upsellTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.upsellTop input {
+  width: 20px;
+  height: 20px;
+  accent-color: #1d4ed8;
+  cursor: pointer;
+}
+
+.upsellPill {
+  background: #1e1b4b;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 5px;
+}
+
+.upsellGuide {
+  font-size: 15px;
+  font-weight: 800;
+  color: #101828;
+  margin-bottom: 4px;
+}
+
+.upsellGuide mark {
+  background: #35e0f0;
+  color: #101828;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.upsellHindi {
+  font-weight: 700;
+}
+
+.upsellSub {
+  font-size: 14px;
+  font-weight: 700;
+  color: #101828;
+  margin-bottom: 12px;
+}
+
+.bookImg {
+  margin: 10px 0 12px;
+}
+
+.bookImg img {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  border-radius: 6px;
+}
+
+.bookPlaceholder {
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 38%, #3a2a12, #140d05 75%);
+  border: 1px solid rgba(245, 192, 75, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+}
+
+.bookBrand {
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #d8b25f;
+  text-transform: uppercase;
+}
+
+.bookName {
+  font-size: 22px;
+  font-weight: 800;
+  color: #f3c669;
+  line-height: 1.25;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.upsellPrice {
+  font-size: 14px;
+  font-weight: 800;
+  color: #101828;
+  margin-bottom: 6px;
+}
+
+.priceMark {
+  background: #ffe600;
+  color: #101828;
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.upsellHint {
+  font-size: 14px;
+  font-weight: 800;
+  color: #101828;
+}
+
+/* Summary */
+.sumHeadRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1a2130;
+  margin: 24px 4px 10px;
+}
+
+.planCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f3f4f7;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.radioDot {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 5px solid #101828;
+  background: #fff;
+}
+
+.planText {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.planText strong {
+  font-size: 15px;
+  font-weight: 800;
+  color: #101828;
+}
+
+.planText span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.planPrice {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+}
+
+.planPrice b {
+  font-size: 17px;
+}
+
+.planSub {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.inr {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.itemsCard {
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  padding: 4px 16px;
+  margin-bottom: 14px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  font-size: 14.5px;
+  color: #3a4353;
+  border-bottom: 1px solid #eef0f4;
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+.itemRow b {
+  color: #101828;
+  white-space: nowrap;
+}
+
+.totalCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f3f4f7;
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+}
+
+.totalLabel {
+  font-size: 14px;
+  font-weight: 800;
+  color: #6b7280;
+  letter-spacing: 0.5px;
+}
+
+.totalVal b {
+  font-size: 22px;
+  color: #101828;
+}
+
+/* Pay via */
+.payViaLabel {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1a2130;
+  margin-bottom: 10px;
+}
+
+.payOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: #1a2130;
+  margin-bottom: 16px;
+  cursor: default;
+}
+
+.payOption input {
+  width: 16px;
+  height: 16px;
+  accent-color: #3b8dfe;
+}
+
+.rzpBox {
+  position: relative;
+  border: 1px solid #9cc4fb;
+  border-radius: 10px;
+  padding: 34px 20px 26px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.rzpBoxLabel {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #3b8dfe;
+  white-space: nowrap;
+}
+
+.rzpLogo {
+  width: auto;
+  height: 42px;
+  object-fit: contain;
+}
+
+/* Complete order button */
+.payBtn {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #2fbd57 0%, #1f9c43 100%);
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  font-family: inherit;
+  padding: 18px 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 10px 22px rgba(31, 156, 67, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition: filter 0.18s ease, transform 0.12s ease,
+    box-shadow 0.18s ease;
+}
+
+.payBtn:hover:not(:disabled) {
+  filter: brightness(1.05);
+  box-shadow: 0 14px 28px rgba(31, 156, 67, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.payBtn:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 6px 14px rgba(31, 156, 67, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.payBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.payArrow {
+  flex-shrink: 0;
+}
+
+.badges {
+  margin: 22px auto 8px;
+  text-align: center;
+}
+
+.badgesImg {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.safe {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: #101828;
+}
+
+/* Special bonuses */
+.bonusHead {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+  color: #101828;
+  line-height: 1.3;
+  margin: 30px 0 16px;
+}
+
+.bonusHead u {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.bonusBox {
+  background: #ffffff;
+  border: 1px solid #f2c79a;
+  border-radius: 16px;
+  padding: 22px 22px 10px;
+  box-shadow: 0 6px 18px rgba(233, 138, 40, 0.08);
+}
+
+.bonusList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.bonusList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 16px;
+  color: #1a2130;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.bonusTick {
+  flex-shrink: 0;
+  color: #f5871f;
+  font-size: 17px;
+  font-weight: 900;
+  margin-top: 1px;
+}
+
+.bonusList strong {
+  color: #101828;
+  font-weight: 800;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #eef0f4;
+}
+
+.footerLinks a {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.footerLinks a:hover {
+  color: #3b8dfe;
+}
+
+@media (max-width: 620px) {
+  .heroTitle {
+    font-size: 20px;
+  }
+
+  .heroSub {
+    font-size: 20px;
+  }
+
+  .card {
+    padding: 24px 16px 28px;
+  }
+
+  .regular {
+    font-size: 24px;
+  }
+
+  .today {
+    font-size: 34px;
+  }
+}

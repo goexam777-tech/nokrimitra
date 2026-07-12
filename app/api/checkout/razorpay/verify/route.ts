@@ -5,6 +5,10 @@ import {
   buildPsychologyEmail,
   buildPsychologyEmailText,
 } from "@/lib/psychologyEmailTemplate";
+import {
+  buildVastuEmail,
+  buildVastuEmailText,
+} from "@/lib/vastuEmailTemplate";
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +22,7 @@ export async function POST(req: Request) {
       amountPaid,
       product,
       productName,
+      addons,
     } = body;
 
     if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
@@ -61,9 +66,32 @@ export async function POST(req: Request) {
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const appUrl = `${protocol}://${host}`;
     const isPsychology = product === "psychology";
+    const isVastu = product === "vastu";
     const downloadUrl = isPsychology
       ? `${appUrl}/psychology-notes/go`
+      : isVastu
+      ? `${appUrl}/vastu-plan-checkout/go`
       : `${appUrl}/go`;
+
+    // Build per-item download links for the Vastu bundle (main + purchased upsells)
+    const vastuAddonLabels: Record<string, string> = {
+      vedic: "Vedic Remedies Mastery",
+      "vastu-guide": "Practical Vastu Shastra Guide",
+    };
+    const vastuDownloads = [
+      {
+        label: "Main Bundle (10k Vastu Floor Plans)",
+        url: `${appUrl}/vastu-plan-checkout/go`,
+      },
+      ...String(addons || "")
+        .split(",")
+        .map((a: string) => a.trim())
+        .filter((id: string) => vastuAddonLabels[id])
+        .map((id: string) => ({
+          label: vastuAddonLabels[id],
+          url: `${appUrl}/vastu-plan-checkout/go?item=${id}`,
+        })),
+    ];
 
     // Trigger Email sending via Resend API
     const resendApiKey = process.env.RESEND_API_KEY;
@@ -72,6 +100,8 @@ export async function POST(req: Request) {
     if (resendApiKey && resendApiKey !== "your_resend_key_here" && email) {
       try {
         const psyProductName = productName || "Psychology Notes";
+        const vastuProductName =
+          productName || "10k Vastu Floor Plan Editable Bundle";
         const gsrtcProductName = "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ";
 
         const htmlContent = isPsychology
@@ -81,6 +111,15 @@ export async function POST(req: Request) {
               orderId: razorpay_order_id,
               amount: Number(amountPaid || 149),
               downloadUrl,
+            })
+          : isVastu
+          ? buildVastuEmail({
+              customerName: name || "there",
+              productName: vastuProductName,
+              orderId: razorpay_order_id,
+              amount: Number(amountPaid || 149),
+              downloadUrl,
+              downloads: vastuDownloads,
             })
           : buildOrderEmail({
               customerName: name || "વિદ્યાર્થી",
@@ -98,6 +137,15 @@ export async function POST(req: Request) {
               amount: Number(amountPaid || 149),
               downloadUrl,
             })
+          : isVastu
+          ? buildVastuEmailText({
+              customerName: name || "there",
+              productName: vastuProductName,
+              orderId: razorpay_order_id,
+              amount: Number(amountPaid || 149),
+              downloadUrl,
+              downloads: vastuDownloads,
+            })
           : buildOrderEmailText({
               customerName: name || "વિદ્યાર્થી",
               productName: gsrtcProductName,
@@ -108,6 +156,8 @@ export async function POST(req: Request) {
 
         const subject = isPsychology
           ? `${psyProductName}: Your download link is ready! 🎉`
+          : isVastu
+          ? `${vastuProductName}: Your download link is ready! 🎉`
           : "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ: આપનો ડાઉનલોડ લિંક તૈયાર છે! 📚🎉";
 
         const emailResponse = await fetch("https://api.resend.com/emails", {
@@ -119,7 +169,10 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             from: emailFrom,
             to: [email],
-            reply_to: isPsychology ? "goexam777@gmail.com" : "support@nokrimitra.in",
+            reply_to:
+              isPsychology || isVastu
+                ? "goexam777@gmail.com"
+                : "support@nokrimitra.in",
             subject,
             html: htmlContent,
             text: textContent,
