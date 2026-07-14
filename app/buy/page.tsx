@@ -129,7 +129,7 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: 120,
+          amount: 99,
           name,
           email,
           phone,
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
             name: name,
             email: email,
             phone: phone,
-            amountPaid: "120",
+            amountPaid: "99",
             productName: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
             mock: "true",
           });
@@ -181,7 +181,7 @@ export default function CheckoutPage() {
             name: name,
             email: email,
             phone: phone,
-            amountPaid: "120",
+            amountPaid: "99",
           });
           router.push(`/thank-you?${queryParams.toString()}`);
         },
@@ -257,7 +257,7 @@ export default function CheckoutPage() {
                 <span className={styles.ratingText}>4.9 (400+ રિવ્યુ)</span>
               </div>
               <div className={styles.mobilePrice}>
-                ₹120 <span className={styles.mobilePriceOld}>₹499</span>
+                ₹99 <span className={styles.mobilePriceOld}>₹499</span>
                 <span className={styles.offBadge}>76% OFF</span>
               </div>
             </div>
@@ -364,7 +364,7 @@ export default function CheckoutPage() {
                 ) : (
                   <>
                     <LockIcon />
-                    <span>હમણાં જ PDF મેળવો – ₹120</span>
+                    <span>હમણાં જ PDF મેળવો – ₹99</span>
                   </>
                 )}
               </button>
@@ -438,7 +438,7 @@ export default function CheckoutPage() {
 
               <div className={styles.totalRow}>
                 <span className={styles.totalLabel}>કુલ રકમ</span>
-                <span className={styles.totalValue}>₹120</span>
+                <span className={styles.totalValue}>₹99</span>
               </div>
             </div>
 
@@ -496,7 +496,7 @@ export default function CheckoutPage() {
             </div>
             <div className={styles.reviewCard}>
               <div className={styles.reviewStars}>★★★★★</div>
-              <p>“₹120 પ્રમાણે ખૂબ જ વેલ્યુ ફોર મની. તૈયારી માટે એક જ જગ્યાએ બધું મળી ગયું.”</p>
+              <p>“₹99 પ્રમાણે ખૂબ જ વેલ્યુ ફોર મની. તૈયારી માટે એક જ જગ્યાએ બધું મળી ગયું.”</p>
               <div className={styles.reviewer}>
                 <span className={styles.avatar} style={{ background: "#1d4ed8" }}>જ</span>
                 <span>જયેશ ચૌધરી · મહેસાણા ✓</span>

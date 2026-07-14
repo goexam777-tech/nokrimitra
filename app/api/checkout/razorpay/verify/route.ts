@@ -125,7 +125,7 @@ export async function POST(req: Request) {
               customerName: name || "વિદ્યાર્થી",
               productName: gsrtcProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 120),
+              amount: Number(amountPaid || 99),
               downloadUrl,
             });
 
@@ -150,7 +150,7 @@ export async function POST(req: Request) {
               customerName: name || "વિદ્યાર્થી",
               productName: gsrtcProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 120),
+              amount: Number(amountPaid || 99),
               downloadUrl,
             });
 
