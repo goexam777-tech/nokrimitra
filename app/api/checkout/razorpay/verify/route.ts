@@ -67,10 +67,13 @@ export async function POST(req: Request) {
     const appUrl = `${protocol}://${host}`;
     const isPsychology = product === "psychology";
     const isVastu = product === "vastu";
+    const isMcq = product === "mcq";
     const downloadUrl = isPsychology
       ? `${appUrl}/psychology-notes/go`
       : isVastu
       ? `${appUrl}/vastu-plan-checkout/go`
+      : isMcq
+      ? `${appUrl}/gsrtc-mcq-course/go`
       : `${appUrl}/go`;
 
     // Build per-item download links for the Vastu bundle (main + purchased upsells)
@@ -123,7 +126,7 @@ export async function POST(req: Request) {
             })
           : buildOrderEmail({
               customerName: name || "વિદ્યાર્થી",
-              productName: gsrtcProductName,
+              productName: productName || gsrtcProductName,
               orderId: razorpay_order_id,
               amount: Number(amountPaid || 99),
               downloadUrl,
@@ -148,7 +151,7 @@ export async function POST(req: Request) {
             })
           : buildOrderEmailText({
               customerName: name || "વિદ્યાર્થી",
-              productName: gsrtcProductName,
+              productName: productName || gsrtcProductName,
               orderId: razorpay_order_id,
               amount: Number(amountPaid || 99),
               downloadUrl,
@@ -158,7 +161,7 @@ export async function POST(req: Request) {
           ? `${psyProductName}: Your download link is ready! 🎉`
           : isVastu
           ? `${vastuProductName}: Your download link is ready! 🎉`
-          : "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ: આપનો ડાઉનલોડ લિંક તૈયાર છે! 📚🎉";
+          : `${productName || gsrtcProductName}: આપનો ડાઉનલોડ લિંક તૈયાર છે! 📚🎉`;
 
         const emailResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
