@@ -236,7 +236,9 @@ export default function McqCheckout() {
 
             <a
               className={styles.waHelp}
-              href="https://wa.me/919104826422?text=નમસ્તે, હું GSRTC કંડક્ટર MCQ પેકેજના ચેકઆઉટ પેજ પર છું. મને ખરીદી/પેમેન્ટમાં મદદ જોઈએ છે."
+              href={`https://wa.me/919104826422?text=${encodeURIComponent(
+                "નમસ્તે, હું GSRTC કંડક્ટર MCQ પેકેજના ચેકઆઉટ પેજ પર છું. મને ખરીદી અને પેમેન્ટમાં મદદ જોઈએ છે."
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
             >

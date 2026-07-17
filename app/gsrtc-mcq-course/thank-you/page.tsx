@@ -183,7 +183,9 @@ function Content() {
 
             <a
               className={styles.waBtn}
-              href="https://wa.me/919104826422?text=નમસ્તે, મને GSRTC કંડક્ટર MCQ પેકેજ ડાઉનલોડમાં મદદ જોઈએ છે."
+              href={`https://wa.me/919104826422?text=${encodeURIComponent(
+                "નમસ્તે, મને GSRTC કંડક્ટર MCQ પેકેજ ડાઉનલોડમાં મદદ જોઈએ છે."
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
             >
