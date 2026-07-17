@@ -234,6 +234,20 @@ export default function McqCheckout() {
               </p>
             </form>
 
+            <a
+              className={styles.waHelp}
+              href="https://wa.me/919104826422?text=નમસ્તે, હું GSRTC કંડક્ટર MCQ પેકેજના ચેકઆઉટ પેજ પર છું. મને ખરીદી/પેમેન્ટમાં મદદ જોઈએ છે."
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className={styles.waHelpIcon} aria-hidden="true">
+                <svg viewBox="0 0 32 32" width="22" height="22" fill="#ffffff">
+                  <path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm5.5 14.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.6.1-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5 0-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.2 3.3 5.2 4.6 2 .8 2.7.9 3.7.8.6-.1 1.8-.8 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.2-.6-.4z" />
+                </svg>
+              </span>
+              <span>કોઈ શંકા છે? WhatsApp પર પૂછો — તરત મદદ મળશે</span>
+            </a>
+
             <div className={styles.legal}>
               <a href="/privacy-policy">પ્રાઈવસી</a>
               <a href="/refund-policy">રિફંડ</a>
