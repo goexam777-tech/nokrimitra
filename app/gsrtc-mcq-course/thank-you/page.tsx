@@ -117,7 +117,9 @@ function Content() {
             </p>
             <a
               className={styles.downloadBtn}
-              href={`https://wa.me/919104826422?text=GSRTC%20MCQ%20પેમેન્ટ%20issue.%20Order%20ID:%20${orderId}`}
+              href={`https://wa.me/919104826422?text=${encodeURIComponent(
+                `નમસ્તે, મારું GSRTC MCQ પેકેજ પેમેન્ટ વેરિફિકેશન નિષ્ફળ ગયું છે. ઓર્ડર આઈડી: ${orderId}`
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -181,7 +183,7 @@ function Content() {
 
             <a
               className={styles.waBtn}
-              href="https://wa.me/919104826422?text=%E0%AA%A8%E0%AA%AE%E0%AA%B8%E0%AB%8D%E0%AA%A4%E0%AB%87%2C%20%E0%AA%AE%E0%AA%A8%E0%AB%87%20GSRTC%20MCQ%20%E0%AA%AA%E0%AB%87%E0%AA%95%E0%AB%87%E0%AA%9C%20%E0%AA%A1%E0%AA%BE%E0%AA%89%E0%AA%A8%E0%AA%B2%E0%AB%8B%E0%AA%A1%E0%AA%AE%E0%AA%BE%E0%AA%82%20%E0%AA%AE%E0%AA%A6%E0%AA%A6%20%E0%AA%9C%E0%AB%8B%E0%AA%88%E0%AA%8F%20%E0%AA%9B%E0%AB%87."
+              href="https://wa.me/919104826422?text=નમસ્તે, મને GSRTC કંડક્ટર MCQ પેકેજ ડાઉનલોડમાં મદદ જોઈએ છે."
               target="_blank"
               rel="noopener noreferrer"
             >

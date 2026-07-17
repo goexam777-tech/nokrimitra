@@ -311,7 +311,7 @@ export default function GsrtcMcqCoursePage() {
       <div className={styles.bottomBar}>
         <a
           className={styles.waLink}
-          href="https://wa.me/919104826422?text=%E0%AA%A8%E0%AA%AE%E0%AA%B8%E0%AB%8D%E0%AA%A4%E0%AB%87%2C%20GSRTC%20MCQ%20%E0%AA%95%E0%AB%8B%E0%AA%B0%E0%AB%8D%E0%AA%B8%20%E0%AA%B5%E0%AA%BF%E0%AA%B6%E0%AB%87%20%E0%AA%AA%E0%AB%82%E0%AA%9B%E0%AA%B5%E0%AB%81%E0%AA%82%20%E0%AA%9B%E0%AB%87."
+          href="https://wa.me/919104826422?text=નમસ્તે, મારે GSRTC કંડક્ટર MCQ પેકેજ વિશે પૂછવું છે."
           target="_blank"
           rel="noopener noreferrer"
         >
