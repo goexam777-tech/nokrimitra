@@ -1,31 +1,40 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import heroImg from "@/public/gsrtcmcq.webp";
+import heroImg from "@/public/166b7903-e5fb-4b19-8ac7-a530a7215d05.webp";
 
 import styles from "./mcq-course.module.css";
 
 export const metadata: Metadata = {
   title:
-    "GSRTC કંડક્ટર MCQ કોર્સ | 5000+ MCQ, 20 મોડલ પેપર, 10 કમ્પ્યુટર નોટ્સ | નોકરી મિત્ર",
+    "GSRTC કંડક્ટર MCQ કોર્સ | 20 Content PDFs, 2500+ MCQs, 21 Model Practice Papers, 10 Computer Notes | નોકરી મિત્ર",
   description:
-    "GSRTC કંડક્ટર પરીક્ષાની તૈયારી માટે 5000+ MCQ, 20 મોડલ પ્રેક્ટિસ પેપર અને 10 કમ્પ્યુટર નોટ્સ. તરત ડાઉનલોડ, આજે જ અભ્યાસ શરૂ કરો.",
+    "GSRTC કંડક્ટર પરીક્ષાની તૈયારી માટે 20 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes. તરત ડાઉનલોડ, આજે જ અભ્યાસ શરૂ કરો.",
 };
 
 const includes = [
   {
-    tag: "5000+",
-    title: "MCQ પ્રશ્નબેંક",
-    desc: "તમામ વિષયોના 5000થી વધુ MCQ — જવાબ સાથે, પરીક્ષાના પેટર્ન પ્રમાણે તૈયાર.",
+    quantity: "20",
+    unit: "Content PDFs",
+    title: "વિષયવાર કન્ટેન્ટ",
+    desc: "મુખ્ય વિષયોનું ગોઠવેલું વાંચન મટિરિયલ, જેથી રિવિઝન સરળ અને ઝડપી બને.",
   },
   {
-    tag: "20",
+    quantity: "2500+",
+    unit: "MCQs",
+    title: "જવાબ સાથે પ્રશ્નબેંક",
+    desc: "પરીક્ષા-કેન્દ્રિત પ્રશ્નોની નિયમિત પ્રેક્ટિસથી સમજ અને જવાબ આપવાની ઝડપ મજબૂત કરો.",
+  },
+  {
+    quantity: "21",
+    unit: "Model Practice Papers",
     title: "મોડલ પ્રેક્ટિસ પેપર",
-    desc: "પરીક્ષા જેવા 20 ફુલ મોડલ પેપર, જેથી તમે સમય પ્રમાણે પ્રેક્ટિસ કરી શકો.",
+    desc: "પરીક્ષા જેવા પેપરથી સમય વ્યવસ્થાપન ચકાસો અને નબળા વિષયો વહેલા ઓળખો.",
   },
   {
-    tag: "10",
-    title: "કમ્પ્યુટર નોટ્સ",
-    desc: "કમ્પ્યુટર વિષયની 10 સરળ નોટ્સ — ટૂંકમાં અને સમજાય એવી ભાષામાં.",
+    quantity: "10",
+    unit: "Computer Notes",
+    title: "કમ્પ્યુટર તૈયારી",
+    desc: "કમ્પ્યુટરના જરૂરી મુદ્દાઓને સરળ ભાષામાં સમજીને ટૂંકા સમયમાં પુનરાવર્તન કરો.",
   },
 ];
 
@@ -57,7 +66,7 @@ const reviews = [
     initials: "જ",
     name: "જયેશ પરમાર",
     role: "અમદાવાદ",
-    text: "5000+ MCQ થી પ્રેક્ટિસ બહુ મજબૂત થઈ. મોડલ પેપરથી પરીક્ષાનો ડર નીકળી ગયો.",
+    text: "2500+ MCQsથી પ્રેક્ટિસ બહુ મજબૂત થઈ. 21 મોડલ પેપરથી પરીક્ષાનો ડર નીકળી ગયો.",
   },
   {
     initials: "મ",
@@ -108,12 +117,16 @@ export default function GsrtcMcqCoursePage() {
               </h1>
               <div className={styles.featureCards}>
                 <div className={styles.featureCard}>
+                  <span className={styles.featureIcon}>📚</span>
+                  <span className={styles.featureText}>20 Content PDFs</span>
+                </div>
+                <div className={styles.featureCard}>
                   <span className={styles.featureIcon}>📝</span>
-                  <span className={styles.featureText}>5000+ MCQs</span>
+                  <span className={styles.featureText}>2500+ MCQs</span>
                 </div>
                 <div className={styles.featureCard}>
                   <span className={styles.featureIcon}>📄</span>
-                  <span className={styles.featureText}>20 Practice Papers</span>
+                  <span className={styles.featureText}>21 Model Practice Papers</span>
                 </div>
                 <div className={styles.featureCard}>
                   <span className={styles.featureIcon}>💻</span>
@@ -144,7 +157,7 @@ export default function GsrtcMcqCoursePage() {
                 <span className={styles.bestSeller}>🔥 BEST SELLER</span>
                 <Image
                   src={heroImg}
-                  alt="GSRTC કંડક્ટર MCQ કોર્સ — 5000+ MCQ, 20 મોડલ પેપર અને કમ્પ્યુટર નોટ્સ"
+                  alt="GSRTC કંડક્ટર MCQ કોર્સ — 20 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes"
                   className={styles.heroImage}
                   priority
                 />
@@ -157,16 +170,27 @@ export default function GsrtcMcqCoursePage() {
       </section>
 
       {/* WHAT'S INCLUDED */}
-      <section className={styles.section}>
+      <section className={styles.section} aria-labelledby="package-inventory-title">
         <div className={styles.inner}>
-          <h2 className={styles.h2}>આ પેકેજમાં શું મળશે?</h2>
+          <h2 className={styles.h2} id="package-inventory-title">
+            આ પેકેજમાં શું મળશે?
+          </h2>
+          <p className={styles.sectionIntro}>
+            વાંચન, પ્રેક્ટિસ અને રિવિઝન માટેની જરૂરી સામગ્રી એક જ ગોઠવેલા
+            પેકેજમાં.
+          </p>
           <div className={styles.includeGrid}>
-            {includes.map((it) => (
-              <div className={styles.includeCard} key={it.title}>
-                <span className={styles.includeTag}>{it.tag}</span>
-                <h3>{it.title}</h3>
-                <p>{it.desc}</p>
-              </div>
+            {includes.map((item) => (
+              <article className={styles.includeCard} key={item.title}>
+                <div className={styles.includeQuantity} aria-label={`${item.quantity} ${item.unit}`}>
+                  <strong className={styles.includeTag}>{item.quantity}</strong>
+                  <span className={styles.includeUnit}>{item.unit}</span>
+                </div>
+                <div className={styles.includeContent}>
+                  <h3>{item.title}</h3>
+                  <p>{item.desc}</p>
+                </div>
+              </article>
             ))}
           </div>
         </div>
@@ -182,16 +206,20 @@ export default function GsrtcMcqCoursePage() {
 
           <div className={styles.previewFrame}>
             <iframe
-              src="/gujarat_history_mcqs.pdf#toolbar=0&navpanes=0&view=FitH"
+              src="/GSRTC_Paper_01.pdf#toolbar=0&navpanes=0&view=FitH"
               title="PDF preview"
               className={styles.previewPdf}
             />
           </div>
 
-          <p className={styles.previewNote}>
-            📄 આ ફક્ત નમૂનો છે. સંપૂર્ણ પેકેજમાં 5000+ MCQ, 20 મોડલ પેપર અને 10
-            કમ્પ્યુટર નોટ્સ મળશે.
-          </p>
+          <div className={styles.previewNote}>
+            <span className={styles.previewNoteLabel}>SAMPLE PDF</span>
+            <p>
+              <strong>આ ફક્ત એક નમૂનો છે.</strong> સંપૂર્ણ પેકેજમાં 20 Content
+              PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes
+              મળશે.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -245,20 +273,23 @@ export default function GsrtcMcqCoursePage() {
             <div className={styles.buyImageWrap}>
               <Image
                 src={heroImg}
-                alt="GSRTC કંડક્ટર MCQ કોર્સ પેકેજ"
+                alt="GSRTC કંડક્ટર પેકેજ — 20 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes"
                 className={styles.buyImage}
               />
             </div>
             <h2 className={styles.buyTitle}>સંપૂર્ણ MCQ પેકેજ</h2>
             <ul className={styles.buyList}>
               <li>
-                <span className={styles.buyTick}>✓</span> 5000+ MCQ (જવાબ સાથે)
+                <span className={styles.buyTick}>✓</span> 20 Content PDFs
               </li>
               <li>
-                <span className={styles.buyTick}>✓</span> 20 મોડલ પ્રેક્ટિસ પેપર
+                <span className={styles.buyTick}>✓</span> 2500+ MCQs (જવાબ સાથે)
               </li>
               <li>
-                <span className={styles.buyTick}>✓</span> 10 કમ્પ્યુટર નોટ્સ
+                <span className={styles.buyTick}>✓</span> 21 Model Practice Papers
+              </li>
+              <li>
+                <span className={styles.buyTick}>✓</span> 10 Computer Notes
               </li>
               <li>
                 <span className={styles.buyTick}>✓</span> તરત ડાઉનલોડ + ઈમેલ પર

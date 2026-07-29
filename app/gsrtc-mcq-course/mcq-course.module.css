@@ -331,11 +331,34 @@
 }
 
 .previewNote {
-  max-width: 620px;
-  margin: 20px auto 26px;
-  font-size: 14.5px;
+  max-width: 720px;
+  margin: 22px auto 26px;
+  padding: 16px 0;
+  border-top: 1px solid #cddfd3;
+  border-bottom: 1px solid #cddfd3;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-align: left;
+}
+
+.previewNoteLabel {
+  flex: 0 0 auto;
+  color: var(--primary-dark);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.previewNote p {
+  margin: 0;
   color: var(--muted);
-  line-height: 1.6;
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.previewNote strong {
+  color: var(--primary-dark);
 }
 
 @media (max-width: 720px) {
@@ -358,41 +381,75 @@
 }
 
 /* Includes */
+.sectionIntro {
+  max-width: 650px;
+  margin: -22px auto 30px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
 .includeGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid #d9e4dc;
+  border-bottom: 1px solid #d9e4dc;
 }
 
 .includeCard {
-  background: #ffffff;
-  border: 1px solid #e3ebe5;
-  border-top: 4px solid var(--primary);
-  border-radius: 14px;
-  padding: 26px 22px;
-  text-align: center;
-  box-shadow: 0 6px 18px rgba(11, 107, 58, 0.06);
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+  padding: 28px 30px;
+}
+
+.includeCard:nth-child(odd) {
+  border-right: 1px solid #d9e4dc;
+}
+
+.includeCard:nth-child(n + 3) {
+  border-top: 1px solid #d9e4dc;
+}
+
+.includeQuantity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
 }
 
 .includeTag {
-  display: inline-block;
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 800;
-  color: var(--accent);
-  margin-bottom: 8px;
+  line-height: 1;
+  color: var(--primary-dark);
+  letter-spacing: -0.5px;
 }
 
-.includeCard h3 {
+.includeUnit {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.includeContent h3 {
   font-size: 19px;
   font-weight: 800;
   color: var(--primary-dark);
-  margin-bottom: 8px;
+  margin: 0 0 8px;
 }
 
-.includeCard p {
+.includeContent p {
+  margin: 0;
   font-size: 15px;
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 /* Trust */
@@ -725,6 +782,24 @@
   .includeGrid,
   .reviewGrid {
     grid-template-columns: 1fr;
+  }
+
+  .includeCard {
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 18px;
+    padding: 24px 0;
+  }
+
+  .includeCard:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .includeCard:nth-child(n + 3) {
+    border-top: 0;
+  }
+
+  .includeCard + .includeCard {
+    border-top: 1px solid #d9e4dc;
   }
 
   .trustGrid {

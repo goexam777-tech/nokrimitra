@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import heroImg from "@/public/gsrtcmcq.webp";
+import heroImg from "@/public/166b7903-e5fb-4b19-8ac7-a530a7215d05.webp";
 import razorpayBadge from "@/public/razorpay-logo.webp";
 import styles from "./checkout.module.css";
 
@@ -11,9 +11,10 @@ const PRICE = 99;
 const PRODUCT_NAME = "GSRTC કંડક્ટર MCQ પેકેજ";
 
 const checklist = [
-  "5000+ MCQ (જવાબ સાથે)",
-  "20 મોડલ પ્રેક્ટિસ પેપર",
-  "10 કમ્પ્યુટર નોટ્સ",
+  "20 Content PDFs",
+  "2500+ MCQs (જવાબ સાથે)",
+  "21 Model Practice Papers",
+  "10 Computer Notes",
   "તરત ડાઉનલોડ + ઈમેલ પર લિંક",
 ];
 
@@ -107,7 +108,7 @@ export default function McqCheckout() {
         currency: data.currency || "INR",
         name: "NokriMitra",
         description: PRODUCT_NAME,
-        image: "/gsrtc.avif",
+        image: "/166b7903-e5fb-4b19-8ac7-a530a7215d05.webp",
         order_id: data.orderId,
         handler: (r: {
           razorpay_payment_id: string;
