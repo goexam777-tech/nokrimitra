@@ -5,17 +5,41 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import heroImg from "@/public/166b7903-e5fb-4b19-8ac7-a530a7215d05.webp";
 import razorpayBadge from "@/public/razorpay-logo.webp";
+import waReview1 from "@/public/wa-review-1.png";
+import waReview2 from "@/public/wa-review-2.png";
+import waReview3 from "@/public/wa-review-3.png";
 import styles from "./checkout.module.css";
 
 const PRICE = 99;
+const OLD_PRICE = 299;
+const DISCOUNT = Math.round(((OLD_PRICE - PRICE) / OLD_PRICE) * 100);
 const PRODUCT_NAME = "GSRTC કંડક્ટર MCQ પેકેજ";
 
+// Keep this in sync with your real order count.
+const BUYER_COUNT = "300+";
+
 const checklist = [
-  "10 Content PDFs",
   "2500+ MCQs (જવાબ સાથે)",
   "21 Model Practice Papers",
+  "10 Content PDFs",
   "10 Computer Notes",
   "તરત ડાઉનલોડ + ઈમેલ પર લિંક",
+  "લાઇફટાઇમ એક્સેસ",
+];
+
+const payMethods = [
+  "UPI",
+  "PhonePe",
+  "Google Pay",
+  "Paytm",
+  "Visa",
+  "Mastercard",
+];
+
+const waReviews = [
+  { src: waReview1, alt: "ખરીદનાર ઉમેદવારનો WhatsApp પ્રતિભાવ 1" },
+  { src: waReview2, alt: "ખરીદનાર ઉમેદવારનો WhatsApp પ્રતિભાવ 2" },
+  { src: waReview3, alt: "ખરીદનાર ઉમેદવારનો WhatsApp પ્રતિભાવ 3" },
 ];
 
 function loadRazorpay(): Promise<boolean> {
@@ -158,9 +182,18 @@ export default function McqCheckout() {
         <div className={styles.heading}>
           <p className={styles.eyebrow}>સ્ટેપ 1 / 1 · ઓર્ડર પૂર્ણ કરો</p>
           <h1 className={styles.pageTitle}>ખરીદી પૂર્ણ કરો</h1>
-          <p className={styles.pageSub}>
-            વિગતો ભરો અને ₹99 ચૂકવો — પેમેન્ટ પછી તરત ડાઉનલોડ મળશે.
-          </p>
+
+          <ul className={styles.trustStrip}>
+            <li>⭐ {BUYER_COUNT} ઉમેદવારોએ ખરીદી કરી</li>
+            <li>⚡ તરત PDF ડિલિવરી</li>
+            <li>🔒 સુરક્ષિત Razorpay પેમેન્ટ</li>
+          </ul>
+
+          <div className={styles.headPrice}>
+            <span className={styles.headPriceNow}>આજે માત્ર ₹{PRICE}</span>
+            <span className={styles.headPriceOld}>₹{OLD_PRICE}</span>
+            <span className={styles.headPriceOff}>{DISCOUNT}% OFF</span>
+          </div>
         </div>
 
         <div className={styles.grid}>
@@ -237,17 +270,68 @@ export default function McqCheckout() {
               </div>
 
               <button type="submit" className={styles.payBtn} disabled={loading}>
-                {loading ? "પ્રોસેસ થઈ રહ્યું છે..." : "સુરક્ષિત પેમેન્ટ કરો – ₹99"}
+                {loading ? (
+                  "પ્રોસેસ થઈ રહ્યું છે..."
+                ) : (
+                  <>
+                    <span className={styles.payBtnMain}>
+                      📥 તરત PDF મેળવો – માત્ર ₹{PRICE}
+                    </span>
+                    <span className={styles.payBtnSub}>
+                      ⚡ પેમેન્ટ પછી તરત Download Link મળશે
+                    </span>
+                  </>
+                )}
               </button>
 
               <div className={styles.rzpRow}>
-                <span>Secured by</span>
-                <Image src={razorpayBadge} alt="Razorpay" className={styles.rzpImg} />
+                <span className={styles.rzpLabel}>Secured by</span>
+                <span className={styles.rzpBadge}>
+                  <Image
+                    src={razorpayBadge}
+                    alt="Razorpay સુરક્ષિત પેમેન્ટ"
+                    className={styles.rzpImg}
+                    height={30}
+                    sizes="180px"
+                  />
+                </span>
               </div>
+
+              <ul className={styles.payMethods} aria-label="પેમેન્ટ વિકલ્પો">
+                {payMethods.map((m) => (
+                  <li key={m}>{m}</li>
+                ))}
+              </ul>
+
               <p className={styles.note}>
-                SSL એન્ક્રિપ્ટેડ પેમેન્ટ · UPI, કાર્ડ અને નેટ બેન્કિંગ
+                SSL એન્ક્રિપ્ટેડ પેમેન્ટ · પેમેન્ટ પછી તરત ડાઉનલોડ
               </p>
             </form>
+
+            <div className={styles.reviews}>
+              <p className={styles.reviewsTitle}>
+                ખરીદનાર ઉમેદવારોના WhatsApp પ્રતિભાવ
+              </p>
+              <div className={styles.waMarquee}>
+                <div className={styles.waTrack}>
+                  {[...waReviews, ...waReviews].map((r, i) => (
+                    <figure className={styles.waShot} key={`${r.alt}-${i}`}>
+                      <Image
+                        src={r.src}
+                        alt={i < waReviews.length ? r.alt : ""}
+                        aria-hidden={i >= waReviews.length}
+                        className={styles.waShotImg}
+                        sizes="(max-width: 600px) 82vw, 300px"
+                        loading={i === 0 ? "eager" : "lazy"}
+                      />
+                    </figure>
+                  ))}
+                </div>
+              </div>
+              <p className={styles.reviewsNote}>
+                ખરીદનારાઓ સાથેની અસલ WhatsApp વાતચીતના સ્ક્રીનશોટ.
+              </p>
+            </div>
           </section>
 
           <aside className={styles.summary} aria-labelledby="summary-title">
@@ -277,8 +361,9 @@ export default function McqCheckout() {
             <div className={styles.priceRow}>
               <span>પેકેજ કિંમત</span>
               <span className={styles.priceVals}>
-                <span className={styles.priceOld}>₹299</span>
-                <strong className={styles.priceNow}>₹99</strong>
+                <span className={styles.priceOld}>₹{OLD_PRICE}</span>
+                <strong className={styles.priceNow}>₹{PRICE}</strong>
+                <span className={styles.priceOff}>{DISCOUNT}% OFF</span>
               </span>
             </div>
 
@@ -295,7 +380,7 @@ export default function McqCheckout() {
                   <path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm5.5 14.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.6.1-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5 0-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.2 3.3 5.2 4.6 2 .8 2.7.9 3.7.8.6-.1 1.8-.8 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.2-.6-.4z" />
                 </svg>
               </span>
-              <span>મદદ જોઈએ છે? WhatsApp પર પૂછો</span>
+              <span>ખરીદતા પહેલાં પ્રશ્ન છે? WhatsApp પર વાત કરો</span>
             </a>
 
             <nav className={styles.legal} aria-label="કાનૂની લિંક્સ">
