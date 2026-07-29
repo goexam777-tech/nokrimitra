@@ -6,14 +6,14 @@ import styles from "./mcq-course.module.css";
 
 export const metadata: Metadata = {
   title:
-    "GSRTC કંડક્ટર MCQ કોર્સ | 20 Content PDFs, 2500+ MCQs, 21 Model Practice Papers, 10 Computer Notes | નોકરી મિત્ર",
+    "GSRTC કંડક્ટર MCQ કોર્સ | 10 Content PDFs, 2500+ MCQs, 21 Model Practice Papers, 10 Computer Notes | નોકરી મિત્ર",
   description:
-    "GSRTC કંડક્ટર પરીક્ષાની તૈયારી માટે 20 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes. તરત ડાઉનલોડ, આજે જ અભ્યાસ શરૂ કરો.",
+    "GSRTC કંડક્ટર પરીક્ષાની તૈયારી માટે 10 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes. તરત ડાઉનલોડ, આજે જ અભ્યાસ શરૂ કરો.",
 };
 
 const includes = [
   {
-    quantity: "20",
+    quantity: "10",
     unit: "Content PDFs",
     title: "વિષયવાર કન્ટેન્ટ",
     desc: "મુખ્ય વિષયોનું ગોઠવેલું વાંચન મટિરિયલ, જેથી રિવિઝન સરળ અને ઝડપી બને.",
@@ -118,7 +118,7 @@ export default function GsrtcMcqCoursePage() {
               <div className={styles.featureCards}>
                 <div className={styles.featureCard}>
                   <span className={styles.featureIcon}>📚</span>
-                  <span className={styles.featureText}>20 Content PDFs</span>
+                  <span className={styles.featureText}>10 Content PDFs</span>
                 </div>
                 <div className={styles.featureCard}>
                   <span className={styles.featureIcon}>📝</span>
@@ -157,7 +157,7 @@ export default function GsrtcMcqCoursePage() {
                 <span className={styles.bestSeller}>🔥 BEST SELLER</span>
                 <Image
                   src={heroImg}
-                  alt="GSRTC કંડક્ટર MCQ કોર્સ — 20 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes"
+                  alt="GSRTC કંડક્ટર MCQ કોર્સ — 10 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes"
                   className={styles.heroImage}
                   priority
                 />
@@ -273,14 +273,14 @@ export default function GsrtcMcqCoursePage() {
             <div className={styles.buyImageWrap}>
               <Image
                 src={heroImg}
-                alt="GSRTC કંડક્ટર પેકેજ — 20 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes"
+                alt="GSRTC કંડક્ટર પેકેજ — 10 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes"
                 className={styles.buyImage}
               />
             </div>
             <h2 className={styles.buyTitle}>સંપૂર્ણ MCQ પેકેજ</h2>
             <ul className={styles.buyList}>
               <li>
-                <span className={styles.buyTick}>✓</span> 20 Content PDFs
+                <span className={styles.buyTick}>✓</span> 10 Content PDFs
               </li>
               <li>
                 <span className={styles.buyTick}>✓</span> 2500+ MCQs (જવાબ સાથે)

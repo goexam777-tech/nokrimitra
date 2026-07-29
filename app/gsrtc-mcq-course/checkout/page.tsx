@@ -11,7 +11,7 @@ const PRICE = 99;
 const PRODUCT_NAME = "GSRTC કંડક્ટર MCQ પેકેજ";
 
 const checklist = [
-  "20 Content PDFs",
+  "10 Content PDFs",
   "2500+ MCQs (જવાબ સાથે)",
   "21 Model Practice Papers",
   "10 Computer Notes",
@@ -52,6 +52,15 @@ export default function McqCheckout() {
       );
     }
   }, []);
+
+  const handleBack = () => {
+    // Prefer the actual previous page (homepage, landing page, ads, etc.)
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+      return;
+    }
+    router.push("/gsrtc-mcq-course");
+  };
 
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,56 +145,47 @@ export default function McqCheckout() {
   return (
     <div className={styles.page}>
       <header className={styles.bar}>
-        <a href="/gsrtc-mcq-course" className={styles.back}>
+        <button type="button" className={styles.back} onClick={handleBack}>
           ← પાછા જાઓ
-        </a>
+        </button>
         <div className={styles.brand}>
           Nokri<span>Mitra</span>
         </div>
-        <span className={styles.secure}>🔒 સુરક્ષિત</span>
+        <span className={styles.secure}>સુરક્ષિત ચેકઆઉટ</span>
       </header>
 
-      <div className={styles.wrap}>
+      <main className={styles.wrap}>
+        <div className={styles.heading}>
+          <p className={styles.eyebrow}>સ્ટેપ 1 / 1 · ઓર્ડર પૂર્ણ કરો</p>
+          <h1 className={styles.pageTitle}>ખરીદી પૂર્ણ કરો</h1>
+          <p className={styles.pageSub}>
+            વિગતો ભરો અને ₹99 ચૂકવો — પેમેન્ટ પછી તરત ડાઉનલોડ મળશે.
+          </p>
+        </div>
+
         <div className={styles.grid}>
-          {/* LEFT: product summary */}
-          <aside className={styles.summary}>
-            <div className={styles.prodRow}>
-              <Image src={heroImg} alt={PRODUCT_NAME} className={styles.prodImg} />
-              <div>
-                <h2 className={styles.prodTitle}>{PRODUCT_NAME}</h2>
-                <div className={styles.stars}>★★★★★ <span>4.9</span></div>
-              </div>
-            </div>
-
-            <ul className={styles.check}>
-              {checklist.map((c) => (
-                <li key={c}>
-                  <span className={styles.tick}>✓</span> {c}
-                </li>
-              ))}
-            </ul>
-
-            <div className={styles.priceRow}>
-              <span className={styles.priceOld}>₹299</span>
-              <span className={styles.priceNow}>₹99</span>
-              <span className={styles.off}>67% OFF</span>
-            </div>
-          </aside>
-
-          {/* RIGHT: form */}
-          <div className={styles.formCard}>
-            <h1 className={styles.formTitle}>તમારી વિગતો ભરો</h1>
-            <p className={styles.formSub}>
-              ડાઉનલોડ લિંક તમારા ઈમેલ પર પણ મોકલવામાં આવશે.
+          <section className={styles.formCard} aria-labelledby="form-title">
+            <h2 className={styles.formTitle} id="form-title">
+              તમારી વિગતો
+            </h2>
+            <p className={styles.formSub} id="delivery-note">
+              ડાઉનલોડ લિંક સ્ક્રીન પર અને તમારા ઈમેલ પર મળશે.
             </p>
 
-            <form onSubmit={handlePay}>
-              {error && <div className={styles.err}>{error}</div>}
+            <form onSubmit={handlePay} aria-describedby="delivery-note">
+              {error && (
+                <div className={styles.err} role="alert">
+                  {error}
+                </div>
+              )}
 
               <div className={styles.field}>
-                <label>આખું નામ</label>
+                <label htmlFor="cust-name">આખું નામ</label>
                 <input
+                  id="cust-name"
+                  name="name"
                   type="text"
+                  autoComplete="name"
                   placeholder="દા.ત. અશોકભાઈ પટેલ"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -194,20 +194,31 @@ export default function McqCheckout() {
                 />
               </div>
               <div className={styles.field}>
-                <label>ઈમેલ એડ્રેસ</label>
+                <label htmlFor="cust-email">ઈમેલ એડ્રેસ</label>
                 <input
+                  id="cust-email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
+                  inputMode="email"
                   placeholder="દા.ત. ashok@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
                   required
                 />
+                <span className={styles.hint}>
+                  આ ઈમેલ પર ડાઉનલોડ લિંક મોકલવામાં આવશે.
+                </span>
               </div>
               <div className={styles.field}>
-                <label>વોટ્સએપ નંબર</label>
+                <label htmlFor="cust-phone">વોટ્સએપ નંબર</label>
                 <input
+                  id="cust-phone"
+                  name="phone"
                   type="tel"
+                  autoComplete="tel"
+                  inputMode="numeric"
                   maxLength={10}
                   placeholder="દા.ત. 9876543210"
                   value={phone}
@@ -218,12 +229,15 @@ export default function McqCheckout() {
               </div>
 
               <div className={styles.totalRow}>
-                <span>કુલ રકમ</span>
+                <span>
+                  કુલ રકમ
+                  <small>એક વખતનું પેમેન્ટ</small>
+                </span>
                 <strong>₹99</strong>
               </div>
 
               <button type="submit" className={styles.payBtn} disabled={loading}>
-                {loading ? "પ્રોસેસ થઈ રહ્યું છે..." : "🔒 હમણાં જ ચૂકવો – ₹99"}
+                {loading ? "પ્રોસેસ થઈ રહ્યું છે..." : "સુરક્ષિત પેમેન્ટ કરો – ₹99"}
               </button>
 
               <div className={styles.rzpRow}>
@@ -231,9 +245,42 @@ export default function McqCheckout() {
                 <Image src={razorpayBadge} alt="Razorpay" className={styles.rzpImg} />
               </div>
               <p className={styles.note}>
-                256-bit SSL સુરક્ષિત પેમેન્ટ · તરત ડાઉનલોડ
+                SSL એન્ક્રિપ્ટેડ પેમેન્ટ · UPI, કાર્ડ અને નેટ બેન્કિંગ
               </p>
             </form>
+          </section>
+
+          <aside className={styles.summary} aria-labelledby="summary-title">
+            <p className={styles.summaryLabel}>તમારો ઓર્ડર</p>
+
+            <div className={styles.prodRow}>
+              <Image src={heroImg} alt={PRODUCT_NAME} className={styles.prodImg} />
+              <div>
+                <h2 className={styles.prodTitle} id="summary-title">
+                  {PRODUCT_NAME}
+                </h2>
+                <p className={styles.prodType}>ડિજિટલ PDF · લાઇફટાઇમ એક્સેસ</p>
+              </div>
+            </div>
+
+            <ul className={styles.check}>
+              {checklist.map((c) => (
+                <li key={c}>
+                  <span className={styles.tick} aria-hidden="true">
+                    ✓
+                  </span>
+                  <span>{c}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className={styles.priceRow}>
+              <span>પેકેજ કિંમત</span>
+              <span className={styles.priceVals}>
+                <span className={styles.priceOld}>₹299</span>
+                <strong className={styles.priceNow}>₹99</strong>
+              </span>
+            </div>
 
             <a
               className={styles.waHelp}
@@ -244,21 +291,21 @@ export default function McqCheckout() {
               rel="noopener noreferrer"
             >
               <span className={styles.waHelpIcon} aria-hidden="true">
-                <svg viewBox="0 0 32 32" width="22" height="22" fill="#ffffff">
+                <svg viewBox="0 0 32 32" width="20" height="20" fill="currentColor">
                   <path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.1 1.6 5.9L4 29l8.3-1.6c1.7.9 3.6 1.4 5.7 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm5.5 14.4c-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.2s-.8 1-.9 1.2c-.2.2-.3.2-.6.1-1.8-.9-3-1.6-4.2-3.6-.3-.5.3-.5.8-1.6.1-.2 0-.4 0-.5 0-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.2 3.3 5.2 4.6 2 .8 2.7.9 3.7.8.6-.1 1.8-.8 2.1-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.2-.6-.4z" />
                 </svg>
               </span>
-              <span>કોઈ શંકા છે? WhatsApp પર પૂછો — તરત મદદ મળશે</span>
+              <span>મદદ જોઈએ છે? WhatsApp પર પૂછો</span>
             </a>
 
-            <div className={styles.legal}>
+            <nav className={styles.legal} aria-label="કાનૂની લિંક્સ">
               <a href="/privacy-policy">પ્રાઈવસી</a>
               <a href="/refund-policy">રિફંડ</a>
               <a href="/terms">શરતો</a>
-            </div>
-          </div>
+            </nav>
+          </aside>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

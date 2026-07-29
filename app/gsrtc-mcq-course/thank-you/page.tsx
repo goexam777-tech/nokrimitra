@@ -25,17 +25,43 @@ function Content() {
       sp.get("mock") === "true" || orderId.startsWith("order_mock_");
     const signature = sp.get("razorpay_signature") || "";
 
+    // One order must be counted (and emailed) only once, even if the buyer
+    // refreshes or reopens this page later.
+    const storageKey = `nm_mcq_purchase_${orderId}`;
+
+    const isAlreadyProcessed = () => {
+      try {
+        return window.localStorage.getItem(storageKey) === "done";
+      } catch {
+        return false;
+      }
+    };
+
+    const markProcessed = () => {
+      try {
+        window.localStorage.setItem(storageKey, "done");
+      } catch {
+        // Private mode or storage disabled: tracking simply isn't deduplicated.
+      }
+    };
+
     const track = () => {
       const w = window as unknown as {
         fbq?: (...a: unknown[]) => void;
         gtag?: (...a: unknown[]) => void;
       };
       if (typeof window !== "undefined" && w.fbq) {
-        w.fbq("track", "Purchase", {
-          value: Number(amountPaid),
-          currency: "INR",
-          content_name: productName,
-        });
+        w.fbq(
+          "track",
+          "Purchase",
+          {
+            value: Number(amountPaid),
+            currency: "INR",
+            content_name: productName,
+          },
+          // Same eventID lets Meta drop duplicates of this order.
+          { eventID: `mcq_${orderId}` }
+        );
       }
       if (typeof window !== "undefined" && w.gtag) {
         w.gtag("event", "purchase", {
@@ -47,8 +73,16 @@ function Content() {
       }
     };
 
+    // Already handled earlier: show the success state without re-verifying,
+    // re-sending the email, or re-firing purchase events.
+    if (orderId !== "N/A" && isAlreadyProcessed()) {
+      setLoading(false);
+      return;
+    }
+
     if (isMock) {
       setLoading(false);
+      markProcessed();
       track();
       return;
     }
@@ -76,6 +110,7 @@ function Content() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "વેરિફિકેશન નિષ્ફળ રહ્યું.");
         setLoading(false);
+        markProcessed();
         track();
       } catch (e) {
         setError(

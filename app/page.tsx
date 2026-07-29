@@ -11,9 +11,9 @@ import vipulParmar from "@/public/vipul.jpg";
 import priyaDesai from "@/public/neha-verma.avif";
 
 export const metadata: Metadata = {
-  title: "GSRTC કંડક્ટર PDF કોર્સ | નોકરી મિત્ર",
+  title: "GSRTC MCQ કોર્સ ₹99 | નોકરી મિત્ર",
   description:
-    "GSRTC કંડક્ટર ભરતી પરીક્ષા માટે સંપૂર્ણ ગુજરાતી PDF કોર્સ — અભ્યાસક્રમ પ્રમાણે નોંધ, જૂના પેપર અને પ્રેક્ટિસ પ્રશ્નો. હમણાં જ ડાઉનલોડ કરો.",
+    "GSRTC MCQ પેકેજમાં 10 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes — ₹99 માં તાત્કાલિક ડિજિટલ એક્સેસ.",
 };
 
 type CheckItem = {
@@ -57,76 +57,60 @@ const heroChecklist: CheckItem[] = [
   { bold: "100% અભ્યાસક્રમ આધારિત", rest: "– GSRTC ના દરેક વિષય આવરી લેવાયા" },
   { bold: "તૈયાર નોંધ", rest: "– વાંચો અને યાદ રાખો, બીજી મહેનત નહીં" },
   { bold: "HD ગુણવત્તા", rest: "– સ્પષ્ટ અને વ્યવસ્થિત લેઆઉટ" },
-  { bold: "જૂના પ્રશ્નપત્રો", rest: "– ઉકેલ સહિત, પરીક્ષાની પેટર્ન સમજો" },
-  { bold: "3000+ MCQ પ્રેક્ટિસ", rest: "– જવાબ સાથે, ક્વિઝ ફોર્મેટમાં" },
+  { bold: "21 Model Paper", rest: "– પેપર આધારિત પ્રેક્ટિસ માટે" },
+  { bold: "2500+ MCQ પ્રેક્ટિસ", rest: "– જવાબ સાથે, ક્વિઝ ફોર્મેટમાં" },
   { bold: "તાત્કાલિક ડાઉનલોડ", rest: "– રાહ જોવાની જરૂર નહીં" },
   { bold: "લાઇફટાઇમ એક્સેસ", rest: "– એક વાર ખરીદો, કાયમ વાપરો" },
 ];
 
 const stats: Stat[] = [
-  { num: "35+", label: "PDF ફાઇલ્સ" },
-  { num: "4", label: "જૂના પ્રશ્નપત્રો" },
-  { num: "3000+", label: "MCQ પ્રશ્નો" },
-  { num: "MCQ", label: "ક્વિઝ પ્રેક્ટિસ" },
+  { num: "10", label: "Content PDFs" },
+  { num: "2500+", label: "MCQs" },
+  { num: "21", label: "Model Practice Papers" },
+  { num: "10", label: "Computer Notes" },
 ];
 
 const included: Feature[] = [
   {
     icon: "📘",
-    title: "35+ PDF — સંપૂર્ણ અભ્યાસક્રમ",
-    desc: "GSRTC કંડક્ટરના નવીનતમ અભ્યાસક્રમના દરેક વિષયની વિગતવાર ગુજરાતી નોંધ, 35+ PDF ફાઇલ્સમાં.",
-  },
-  {
-    icon: "🗂️",
-    title: "વિષયવાર નોંધ",
-    desc: "ગુજરાતી, અંગ્રેજી, ગણિત, રિઝનિંગ, સામાન્ય જ્ઞાન અને કરંટ અફેર્સ — બધું અલગ વિભાગમાં.",
-  },
-  {
-    icon: "📄",
-    title: "4 જૂના પ્રશ્નપત્રો",
-    desc: "પાછલા વર્ષોના ઉકેલ સહિતના 4 પ્રશ્નપત્રો, જેથી પરીક્ષાની પેટર્ન બરાબર સમજાય.",
+    title: "10 Content PDFs",
+    desc: "GSRTC MCQ અભ્યાસ માટે વિષયવાર ગોઠવેલી 10 Content PDFs.",
   },
   {
     icon: "✍️",
-    title: "3000+ MCQ પ્રેક્ટિસ સેટ",
-    desc: "જવાબ સાથે 3000+ બહુવિકલ્પ પ્રશ્નો — તમારી તૈયારી ઊંડાણથી ચકાસવા માટે.",
+    title: "2500+ MCQs",
+    desc: "જવાબ સાથે 2500+ બહુવિકલ્પ પ્રશ્નો, નિયમિત પ્રેક્ટિસ માટે.",
   },
   {
-    icon: "🧠",
-    title: "MCQ ક્વિઝ પ્રેક્ટિસ",
-    desc: "વિષયવાર ક્વિઝ ફોર્મેટમાં પ્રેક્ટિસ કરો અને તમારો સ્કોર જાતે ચકાસો.",
+    icon: "📄",
+    title: "21 Model Practice Papers",
+    desc: "પેપર આધારિત તૈયારી અને સ્વ-મૂલ્યાંકન માટે 21 Model Practice Papers.",
   },
   {
-    icon: "📱",
-    title: "મોબાઇલ ફ્રેન્ડલી + ફ્રી અપડેટ",
-    desc: "ફોન, ટેબ્લેટ કે કમ્પ્યુટર પર ઓફલાઇન અભ્યાસ — અને ભવિષ્યના અપડેટ મફતમાં.",
+    icon: "💻",
+    title: "10 Computer Notes",
+    desc: "કમ્પ્યુટર વિષયના અભ્યાસ માટે 10 ગોઠવેલી Computer Notes.",
   },
 ];
 
 const samples: Sample[] = [
   {
-    title: "ગુજરાતી વ્યાકરણ — નમૂનો",
-    desc: "સંધિ, સમાસ અને અલંકારના પસંદ કરેલા પાનાં.",
-    pages: "PDF નમૂનો",
-    href: "/sample-gujarati-vyakaran.pdf",
+    title: "GSRTC Model Practice Paper 01",
+    desc: "GSRTC MCQ પેકેજનું એક વાસ્તવિક મોડેલ પ્રેક્ટિસ પેપર પ્રિવ્યૂ.",
+    pages: "Model Paper Preview",
+    href: "/GSRTC_Paper_01.pdf",
   },
   {
-    title: "GSRTC નિગમ વિશે — નમૂનો",
-    desc: "GSRTC ભરતી અને નિગમ સંબંધિત મહત્વની માહિતી.",
-    pages: "PDF નમૂનો",
-    href: "/sample-gsrtc-nigam.pdf",
+    title: "કમ્પ્યુટર જ્ઞાન — શોર્ટકટ કીઝ અને પૂરા નામ",
+    desc: "Computer Notes માંથી પ્રકરણ ૧૦ નો નમૂનો — શોર્ટકટ કીઝ અને પૂરા નામ.",
+    pages: "Computer Notes નમૂનો",
+    href: "/કમ્પ્યુટર જ્ઞાન - પ્રકરણ ૧૦_ કમ્પ્યુટર શોર્ટકટ કીઝ અને પૂરા નામ.pdf",
   },
   {
-    title: "સ્માર્ટ હેન્ડરિટન નોટ્સ — નમૂનો",
-    desc: "કંડક્ટર સ્પેશિયલ હાથે લખેલી સ્માર્ટ નોંધનો નમૂનો.",
-    pages: "PDF નમૂનો",
-    href: "/sample-smart-notes.pdf",
-  },
-  {
-    title: "ગુજરાતનો ઇતિહાસ — MCQ સેમ્પલ",
-    desc: "ગુજરાતના ઇતિહાસને લગતા જવાબ સહિતના MCQ નમૂના.",
-    pages: "MCQ સેમ્પલ",
-    href: "/gujarat_history_mcqs.pdf",
+    title: "સામાન્ય જ્ઞાન — ઇતિહાસ અને ભૂગોળ MCQs",
+    desc: "ઇતિહાસ અને ભૂગોળના જવાબ સહિતના MCQs સેટ-4 નો નમૂનો.",
+    pages: "MCQ નમૂનો",
+    href: "/સામાન્ય_જ્ઞાન_ઇતિહાસ_ભૂગોળ_સેટ-4_MCQs.pdf",
   },
 ];
 
@@ -137,7 +121,7 @@ const reviews: Review[] = [
     initial: "ર",
     color: "#0b6b3a",
     img: rahulPatel,
-    text: "PDF ખરેખર સરસ છે. અભ્યાસક્રમ પ્રમાણે બધું ગુજરાતીમાં મળી ગયું, અલગ પુસ્તકોની જરૂર જ ના પડી.",
+    text: "PDF ખરેખર સરસ છે. બધું ગુજરાતીમાં વિષયવાર મળી ગયું, અલગ પુસ્તકોની જરૂર જ ના પડી.",
   },
   {
     name: "પ્રિયા દેસાઈ",
@@ -145,7 +129,7 @@ const reviews: Review[] = [
     initial: "પ",
     color: "#b8720a",
     img: priyaDesai,
-    text: "3000+ MCQ અને જૂના પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹99 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
+    text: "MCQ અને મોડલ પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹99 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
   },
   {
     name: "જયેશ ચૌધરી",
@@ -161,7 +145,7 @@ const reviews: Review[] = [
     initial: "વ",
     color: "#9333ea",
     img: vipulParmar,
-    text: "MCQ ક્વિઝ ફોર્મેટ મને બહુ ગમ્યું. જાતે સ્કોર ચકાસી શકાય એટલે તૈયારી ક્યાં કાચી છે એ ખબર પડે.",
+    text: "મોડલ પેપર ઉકેલવાની ટેવ પડી ગઈ. જાતે સ્કોર ચકાસી શકાય એટલે તૈયારી ક્યાં કાચી છે એ ખબર પડે.",
   },
   {
     name: "મનીષ સોલંકી",
@@ -169,7 +153,7 @@ const reviews: Review[] = [
     initial: "મ",
     color: "#dc2626",
     img: manishSolanki,
-    text: "GSRTC કંડક્ટર માટે આનાથી સારી ગુજરાતી સામગ્રી મને ક્યાંય ના મળી. પૈસા વસૂલ.",
+    text: "કમ્પ્યુટર નોટ્સ સરળ ભાષામાં છે. GSRTC કંડક્ટર માટે આનાથી સારી ગુજરાતી સામગ્રી ક્યાંય ના મળી.",
   },
   {
     name: "સ્નેહા રાઠોડ",
@@ -267,7 +251,7 @@ export default function PdfCourse() {
                 <a href="#faq">❓ FAQ</a>
               </div>
             </div>
-            <Link className="header-buy" href="/buy">
+            <Link className="header-buy" href="/gsrtc-mcq-course/checkout">
               <CartIcon /> ખરીદો ₹99
             </Link>
           </nav>
@@ -300,14 +284,13 @@ export default function PdfCourse() {
                   <span className="rating-score">4.9</span>
                   <span className="rating-sep" />
                   <span className="rating-count">
-                    <strong>400+</strong> ઉમેદવારોના રિવ્યુ
+                    <strong>800+</strong> ઉમેદવારોના રિવ્યુ
                   </span>
                 </div>
 
                 <h1 className="product-headline">
                   GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ હમણાં જ મેળવો!! 📗
                 </h1>
-
 
                 <div className="product-tagline">
                   GSRTC કંડક્ટર સંપૂર્ણ તૈયારી PDF (તૈયાર — તરત ડાઉનલોડ)
@@ -343,9 +326,12 @@ export default function PdfCourse() {
                 ફક્ત ₹99/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
               </h2>
 
-              <Link className="btn btn-accent hero-buy" href="/buy">
+              <Link
+                className="btn btn-accent hero-buy"
+                href="/gsrtc-mcq-course/checkout"
+              >
                 <CartIcon /> હમણાં ખરીદો ₹99{" "}
-                <span className="final-old">₹499</span>
+                <span className="final-old">₹299</span>
               </Link>
 
               <div className="final-badges">
@@ -369,7 +355,7 @@ export default function PdfCourse() {
         {/* Included */}
         <section className="section included-section" id="included">
           <div className="container">
-            <h2 className="section-title">આ PDF કોર્સમાં શું મળશે</h2>
+            <h2 className="section-title">આ GSRTC MCQ પેકેજમાં શું મળશે</h2>
 
             {/* Stats strip */}
             <div className="stats-strip">
@@ -400,7 +386,7 @@ export default function PdfCourse() {
           <div className="container">
             <h2 className="section-title">ફ્રી સેમ્પલ જુઓ</h2>
             <p className="section-subtitle">
-              ખરીદતાં પહેલાં અમારી PDF ની ગુણવત્તા જાતે તપાસો — 4 ફ્રી નમૂના.
+              ખરીદતાં પહેલાં અમારી PDF ની ગુણવત્તા જાતે તપાસો — 3 ફ્રી નમૂના.
             </p>
 
             <div className="samples-grid">
@@ -408,7 +394,7 @@ export default function PdfCourse() {
                 <div className="sample-card" key={s.title}>
                   <a
                     className="sample-thumb"
-                    href={s.href}
+                    href={encodeURI(s.href)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${s.title} — સેમ્પલ જુઓ`}
@@ -416,7 +402,7 @@ export default function PdfCourse() {
                     <span className="pdf-badge">PDF</span>
                     <iframe
                       className="pdf-preview"
-                      src={`${s.href}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                      src={`${encodeURI(s.href)}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
                       title={s.title}
                       loading="lazy"
                     />
@@ -428,7 +414,7 @@ export default function PdfCourse() {
                     <span className="sample-pages">📄 {s.pages}</span>
                     <a
                       className="sample-btn"
-                      href={s.href}
+                      href={encodeURI(s.href)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -446,7 +432,7 @@ export default function PdfCourse() {
           <div className="container">
             <h2 className="section-title">ઉમેદવારો શું કહે છે</h2>
             <p className="section-subtitle">
-              400+ ઉમેદવારોએ આ PDF કોર્સથી પોતાની તૈયારી મજબૂત બનાવી.
+              800+ ઉમેદવારોએ આ PDF કોર્સથી પોતાની તૈયારી મજબૂત બનાવી.
             </p>
 
             <div className="reviews-grid">
@@ -474,12 +460,7 @@ export default function PdfCourse() {
                       </span>
                     )}
                     <span className="author-info">
-                      <span className="author-name">
-                        {r.name}
-                        <span className="verified" title="ખરીદી ચકાસાયેલ">
-                          ✓
-                        </span>
-                      </span>
+                      <span className="author-name">{r.name}</span>
                       <span className="author-place">{r.place}</span>
                     </span>
                   </figcaption>
@@ -510,7 +491,7 @@ export default function PdfCourse() {
         <div className="container buy-bar-inner">
           <a
             className="wa-contact"
-            href="https://wa.me/919104826422?text=નમસ્તે,%20મારે%20GSRTC%20કંડક્ટર%20PDF%20કોર્સ%20વિશે%20પૂછવું%20છે."
+            href="https://wa.me/919104826422?text=નમસ્તે,%20મારે%20GSRTC%20MCQ%20પેકેજ%20વિશે%20પૂછવું%20છે."
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -524,7 +505,10 @@ export default function PdfCourse() {
               <span className="wa-sub">કોઈ પ્રશ્ન હોય તો મેસેજ કરો</span>
             </span>
           </a>
-          <Link className="btn buy-bar-btn" href="/buy">
+          <Link
+            className="btn buy-bar-btn"
+            href="/gsrtc-mcq-course/checkout"
+          >
             <CartIcon /> ખરીદો ₹99/-
           </Link>
         </div>
