@@ -104,13 +104,13 @@ const samples: Sample[] = [
     title: "કમ્પ્યુટર જ્ઞાન — શોર્ટકટ કીઝ અને પૂરા નામ",
     desc: "Computer Notes માંથી પ્રકરણ ૧૦ નો નમૂનો — શોર્ટકટ કીઝ અને પૂરા નામ.",
     pages: "Computer Notes નમૂનો",
-    href: "/કમ્પ્યુટર જ્ઞાન - પ્રકરણ ૧૦_ કમ્પ્યુટર શોર્ટકટ કીઝ અને પૂરા નામ.pdf",
+    href: "/GSRTC_Computer_Shortcut_Keys_Sample.pdf",
   },
   {
     title: "સામાન્ય જ્ઞાન — ઇતિહાસ અને ભૂગોળ MCQs",
     desc: "ઇતિહાસ અને ભૂગોળના જવાબ સહિતના MCQs સેટ-4 નો નમૂનો.",
     pages: "MCQ નમૂનો",
-    href: "/સામાન્ય_જ્ઞાન_ઇતિહાસ_ભૂગોળ_સેટ-4_MCQs.pdf",
+    href: "/GSRTC_GK_History_Geography_MCQs_Sample.pdf",
   },
 ];
 
@@ -394,7 +394,7 @@ export default function PdfCourse() {
                 <div className="sample-card" key={s.title}>
                   <a
                     className="sample-thumb"
-                    href={encodeURI(s.href)}
+                    href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${s.title} — સેમ્પલ જુઓ`}
@@ -402,7 +402,7 @@ export default function PdfCourse() {
                     <span className="pdf-badge">PDF</span>
                     <iframe
                       className="pdf-preview"
-                      src={`${encodeURI(s.href)}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                      src={`${s.href}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
                       title={s.title}
                       loading="lazy"
                     />
@@ -414,7 +414,7 @@ export default function PdfCourse() {
                     <span className="sample-pages">📄 {s.pages}</span>
                     <a
                       className="sample-btn"
-                      href={encodeURI(s.href)}
+                      href={s.href}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
