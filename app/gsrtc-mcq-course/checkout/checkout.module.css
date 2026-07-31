@@ -437,8 +437,16 @@
   animation: waScroll 26s linear infinite;
 }
 
-.waMarquee:hover .waTrack {
+/* Pause only while the user actively presses (touch-safe) */
+.waMarquee:active .waTrack {
   animation-play-state: paused;
+}
+
+/* Hover pause only on real pointer devices, so taps don't stick on mobile */
+@media (hover: hover) and (pointer: fine) {
+  .waMarquee:hover .waTrack {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes waScroll {

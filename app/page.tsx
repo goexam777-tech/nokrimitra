@@ -4,10 +4,15 @@ import Link from "next/link";
 import SiteFooter from "@/app/components/SiteFooter";
 import pdfHero from "@/public/pdfhero.webp";
 import razorpayBadge from "@/public/razorpay-logo.webp";
+import waReview1 from "@/public/wa-review-1.jpg";
+import waReview2 from "@/public/wa-review-2.png";
+import waReview3 from "@/public/wa-review-3.png";
+import pdfPreview1 from "@/public/pdf-preview-1.png";
+import pdfPreview2 from "@/public/pdf-preview-2.png";
+import pdfPreview3 from "@/public/pdf-preview-3.png";
+import pdfPreview4 from "@/public/pdf-preview-4.png";
 import rahulPatel from "@/public/rahul-patel.webp";
 import jayeshChaudhary from "@/public/jayesh.jpg";
-import manishSolanki from "@/public/manish.jpg";
-import vipulParmar from "@/public/vipul.jpg";
 import priyaDesai from "@/public/neha-verma.avif";
 
 export const metadata: Metadata = {
@@ -30,13 +35,6 @@ type Feature = {
 type Stat = {
   num: string;
   label: string;
-};
-
-type Sample = {
-  title: string;
-  desc: string;
-  pages: string;
-  href: string;
 };
 
 type Review = {
@@ -93,25 +91,11 @@ const included: Feature[] = [
   },
 ];
 
-const samples: Sample[] = [
-  {
-    title: "GSRTC Model Practice Paper 01",
-    desc: "GSRTC MCQ પેકેજનું એક વાસ્તવિક મોડેલ પ્રેક્ટિસ પેપર પ્રિવ્યૂ.",
-    pages: "Model Paper Preview",
-    href: "/GSRTC_Paper_01.pdf",
-  },
-  {
-    title: "કમ્પ્યુટર જ્ઞાન — શોર્ટકટ કીઝ અને પૂરા નામ",
-    desc: "Computer Notes માંથી પ્રકરણ ૧૦ નો નમૂનો — શોર્ટકટ કીઝ અને પૂરા નામ.",
-    pages: "Computer Notes નમૂનો",
-    href: "/GSRTC_Computer_Shortcut_Keys_Sample.pdf",
-  },
-  {
-    title: "સામાન્ય જ્ઞાન — ઇતિહાસ અને ભૂગોળ MCQs",
-    desc: "ઇતિહાસ અને ભૂગોળના જવાબ સહિતના MCQs સેટ-4 નો નમૂનો.",
-    pages: "MCQ નમૂનો",
-    href: "/GSRTC_GK_History_Geography_MCQs_Sample.pdf",
-  },
+const pdfPreviews = [
+  { src: pdfPreview1, alt: "GSRTC PDF પેકેજનો પ્રિવ્યૂ પાનું 1" },
+  { src: pdfPreview2, alt: "GSRTC PDF પેકેજનો પ્રિવ્યૂ પાનું 2" },
+  { src: pdfPreview3, alt: "GSRTC PDF પેકેજનો પ્રિવ્યૂ પાનું 3" },
+  { src: pdfPreview4, alt: "GSRTC PDF પેકેજનો પ્રિવ્યૂ પાનું 4" },
 ];
 
 const reviews: Review[] = [
@@ -139,29 +123,12 @@ const reviews: Review[] = [
     img: jayeshChaudhary,
     text: "તરત ડાઉનલોડ થઈ ગયું અને મોબાઇલમાં સરળતાથી વંચાય છે. નોંધ મુદ્દાસર છે, સમય બચે છે.",
   },
-  {
-    name: "વિપુલ પરમાર",
-    place: "રાજકોટ",
-    initial: "વ",
-    color: "#9333ea",
-    img: vipulParmar,
-    text: "મોડલ પેપર ઉકેલવાની ટેવ પડી ગઈ. જાતે સ્કોર ચકાસી શકાય એટલે તૈયારી ક્યાં કાચી છે એ ખબર પડે.",
-  },
-  {
-    name: "મનીષ સોલંકી",
-    place: "વડોદરા",
-    initial: "મ",
-    color: "#dc2626",
-    img: manishSolanki,
-    text: "કમ્પ્યુટર નોટ્સ સરળ ભાષામાં છે. GSRTC કંડક્ટર માટે આનાથી સારી ગુજરાતી સામગ્રી ક્યાંય ના મળી.",
-  },
-  {
-    name: "સ્નેહા રાઠોડ",
-    place: "ભાવનગર",
-    initial: "સ",
-    color: "#0891b2",
-    text: "સપોર્ટ પણ સારો છે અને અપડેટ મફત મળે છે. વિશ્વાસથી ખરીદી શકાય.",
-  },
+];
+
+const waReviews = [
+  { src: waReview1, alt: "ખરીદનાર ઉમેદવારનો WhatsApp પ્રતિભાવ 1" },
+  { src: waReview2, alt: "ખરીદનાર ઉમેદવારનો WhatsApp પ્રતિભાવ 2" },
+  { src: waReview3, alt: "ખરીદનાર ઉમેદવારનો WhatsApp પ્રતિભાવ 3" },
 ];
 
 const faqs: Faq[] = [
@@ -246,7 +213,7 @@ export default function PdfCourse() {
               </span>
               <div className="submenu">
                 <a href="#included">📦 શું મળશે</a>
-                <a href="#samples">📄 ફ્રી સેમ્પલ</a>
+                <a href="#samples">📄 PDF પ્રિવ્યૂ</a>
                 <a href="#reviews">⭐ રિવ્યુ</a>
                 <a href="#faq">❓ FAQ</a>
               </div>
@@ -381,49 +348,34 @@ export default function PdfCourse() {
           </div>
         </section>
 
-        {/* Sample PDFs */}
+        {/* PDF preview screenshots */}
         <section className="section samples-section" id="samples">
           <div className="container">
-            <h2 className="section-title">ફ્રી સેમ્પલ જુઓ</h2>
+            <h2 className="section-title">PDF નો પ્રિવ્યૂ જુઓ</h2>
             <p className="section-subtitle">
-              ખરીદતાં પહેલાં અમારી PDF ની ગુણવત્તા જાતે તપાસો — 3 ફ્રી નમૂના.
+              ખરીદતાં પહેલાં અમારી PDF ની ગુણવત્તા અને ગોઠવણી જાતે જુઓ.
             </p>
 
-            <div className="samples-grid">
-              {samples.map((s) => (
-                <div className="sample-card" key={s.title}>
-                  <a
-                    className="sample-thumb"
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${s.title} — સેમ્પલ જુઓ`}
-                  >
-                    <span className="pdf-badge">PDF</span>
-                    <iframe
-                      className="pdf-preview"
-                      src={`${s.href}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-                      title={s.title}
+            <div className="wa-marquee">
+              <div className="wa-track">
+                {[...pdfPreviews, ...pdfPreviews].map((p, i) => (
+                  <figure className="wa-shot" key={`${p.alt}-${i}`}>
+                    <Image
+                      src={p.src}
+                      alt={i < pdfPreviews.length ? p.alt : ""}
+                      aria-hidden={i >= pdfPreviews.length}
+                      className="wa-shot-img"
+                      sizes="(max-width: 600px) 82vw, 300px"
                       loading="lazy"
                     />
-                    <span className="thumb-overlay">🔍 મોટું જુઓ</span>
-                  </a>
-                  <div className="sample-body">
-                    <h3>{s.title}</h3>
-                    <p>{s.desc}</p>
-                    <span className="sample-pages">📄 {s.pages}</span>
-                    <a
-                      className="sample-btn"
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      સેમ્પલ જુઓ →
-                    </a>
-                  </div>
-                </div>
-              ))}
+                  </figure>
+                ))}
+              </div>
             </div>
+            <p className="wa-proof-note">
+              આ ફક્ત નમૂનારૂપ પાનાં છે — સંપૂર્ણ પેકેજમાં 10 Content PDFs, 2500+
+              MCQs, 21 Model Practice Papers અને 10 Computer Notes મળશે.
+            </p>
           </div>
         </section>
 
@@ -467,6 +419,29 @@ export default function PdfCourse() {
                 </figure>
               ))}
             </div>
+
+            <p className="wa-proof-title">
+              ખરીદનાર ઉમેદવારોના WhatsApp પ્રતિભાવ
+            </p>
+            <div className="wa-marquee">
+              <div className="wa-track">
+                {[...waReviews, ...waReviews].map((r, i) => (
+                  <figure className="wa-shot" key={`${r.alt}-${i}`}>
+                    <Image
+                      src={r.src}
+                      alt={i < waReviews.length ? r.alt : ""}
+                      aria-hidden={i >= waReviews.length}
+                      className="wa-shot-img"
+                      sizes="(max-width: 600px) 82vw, 300px"
+                      loading="lazy"
+                    />
+                  </figure>
+                ))}
+              </div>
+            </div>
+            <p className="wa-proof-note">
+              ખરીદનારાઓ સાથેની અસલ WhatsApp વાતચીતના સ્ક્રીનશોટ.
+            </p>
           </div>
         </section>
 

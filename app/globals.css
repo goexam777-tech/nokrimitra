@@ -1884,3 +1884,108 @@ body {
   font-size: 15.5px;
   line-height: 1.7;
 }
+
+/* ===== WhatsApp proof carousel (homepage reviews) ===== */
+
+.wa-proof-title {
+  margin: 34px 0 14px;
+  text-align: center;
+  color: var(--primary-dark, #084d2a);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.wa-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 24px,
+    #000 calc(100% - 24px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 24px,
+    #000 calc(100% - 24px),
+    transparent 100%
+  );
+}
+
+.wa-track {
+  display: flex;
+  width: max-content;
+  gap: 14px;
+  animation: waHomeScroll 26s linear infinite;
+}
+
+/* Pause only while the user actively presses (touch-safe) */
+.wa-marquee:active .wa-track {
+  animation-play-state: paused;
+}
+
+/* Hover pause only on real pointer devices, so taps don't stick on mobile */
+@media (hover: hover) and (pointer: fine) {
+  .wa-marquee:hover .wa-track {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes waHomeScroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-50% - 7px), 0, 0);
+  }
+}
+
+.wa-shot {
+  flex: 0 0 auto;
+  width: min(300px, 82vw);
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #e3ebe5;
+  border-radius: 12px;
+  background: #f4f8f5;
+}
+
+.wa-shot-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wa-proof-note {
+  margin: 12px 0 0;
+  text-align: center;
+  color: #667a70;
+  font-size: 13px;
+}
+
+@media (max-width: 560px) {
+  .wa-proof-title {
+    font-size: 16.5px;
+  }
+
+  .wa-shot {
+    width: min(300px, 84vw);
+  }
+
+  .wa-track {
+    animation-duration: 22s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-track {
+    animation: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .wa-shot {
+    scroll-snap-align: center;
+  }
+}

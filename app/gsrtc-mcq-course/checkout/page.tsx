@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import heroImg from "@/public/166b7903-e5fb-4b19-8ac7-a530a7215d05.webp";
 import razorpayBadge from "@/public/razorpay-logo.webp";
-import waReview1 from "@/public/wa-review-1.png";
+import waReview1 from "@/public/wa-review-1.jpg";
 import waReview2 from "@/public/wa-review-2.png";
 import waReview3 from "@/public/wa-review-3.png";
 import styles from "./checkout.module.css";
