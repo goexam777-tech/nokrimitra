@@ -9,6 +9,11 @@ import {
   buildVastuEmail,
   buildVastuEmailText,
 } from "@/lib/vastuEmailTemplate";
+import {
+  buildEscooterEmail,
+  buildEscooterEmailText,
+} from "@/lib/escooterEmailTemplate";
+import { createDownloadToken } from "@/lib/downloadToken";
 
 export async function POST(req: Request) {
   try {
@@ -37,7 +42,26 @@ export async function POST(req: Request) {
       razorpay_order_id.startsWith("order_mock_") ||
       razorpay_payment_id.startsWith("pay_mock_")
     ) {
-      return NextResponse.json({ success: true, verified: true, mock: true });
+      // Mock orders exist only while Razorpay keys are placeholders (local dev).
+      // With real keys configured, a mock order can never unlock a download.
+      const liveSecret = process.env.RAZORPAY_KEY_SECRET;
+      const inMockMode =
+        !liveSecret ||
+        liveSecret.includes("your_key_secret") ||
+        liveSecret.trim() === "";
+      const mockToken =
+        inMockMode && product === "escooter"
+          ? createDownloadToken("escooter", razorpay_order_id)
+          : null;
+
+      return NextResponse.json({
+        success: true,
+        verified: true,
+        mock: true,
+        ...(mockToken
+          ? { downloadPath: `/electric-scooter-repairing/go?t=${mockToken}` }
+          : {}),
+      });
     }
 
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -68,12 +92,24 @@ export async function POST(req: Request) {
     const isPsychology = product === "psychology";
     const isVastu = product === "vastu";
     const isMcq = product === "mcq";
+    const isEscooter = product === "escooter";
+
+    // Only buyers get a signed download link (issued after signature check).
+    const escooterToken = isEscooter
+      ? createDownloadToken("escooter", razorpay_order_id)
+      : null;
+    const escooterDownloadUrl = `${appUrl}/electric-scooter-repairing/go${
+      escooterToken ? `?t=${escooterToken}` : ""
+    }`;
+
     const downloadUrl = isPsychology
       ? `${appUrl}/psychology-notes/go`
       : isVastu
       ? `${appUrl}/vastu-plan-checkout/go`
       : isMcq
       ? `${appUrl}/gsrtc-mcq-course/go`
+      : isEscooter
+      ? escooterDownloadUrl
       : `${appUrl}/go`;
 
     // Build per-item download links for the Vastu bundle (main + purchased upsells)
@@ -106,11 +142,21 @@ export async function POST(req: Request) {
         const vastuProductName =
           productName || "10k Vastu Floor Plan Editable Bundle";
         const gsrtcProductName = "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ";
+        const escooterProductName =
+          productName || "Electric Scooter Repairing Complete Practical Guide";
 
         const htmlContent = isPsychology
           ? buildPsychologyEmail({
               customerName: name || "there",
               productName: psyProductName,
+              orderId: razorpay_order_id,
+              amount: Number(amountPaid || 149),
+              downloadUrl,
+            })
+          : isEscooter
+          ? buildEscooterEmail({
+              customerName: name || "there",
+              productName: escooterProductName,
               orderId: razorpay_order_id,
               amount: Number(amountPaid || 149),
               downloadUrl,
@@ -140,6 +186,14 @@ export async function POST(req: Request) {
               amount: Number(amountPaid || 149),
               downloadUrl,
             })
+          : isEscooter
+          ? buildEscooterEmailText({
+              customerName: name || "there",
+              productName: escooterProductName,
+              orderId: razorpay_order_id,
+              amount: Number(amountPaid || 149),
+              downloadUrl,
+            })
           : isVastu
           ? buildVastuEmailText({
               customerName: name || "there",
@@ -159,6 +213,10 @@ export async function POST(req: Request) {
 
         const subject = isPsychology
           ? `${psyProductName}: Your download link is ready! 🎉`
+          : isEscooter
+          ? // Short, transactional subject: long subjects get truncated and
+            // emoji/exclamation styling reads as promotional to spam filters.
+            `आपकी PDF तैयार है — EV Scooter Repair Guide (Hindi)`
           : isVastu
           ? `${vastuProductName}: Your download link is ready! 🎉`
           : `${productName || gsrtcProductName}: આપનો ડાઉનલોડ લિંક તૈયાર છે! 📚🎉`;
@@ -197,7 +255,12 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ success: true, verified: true, mock: false });
+    return NextResponse.json({
+      success: true,
+      verified: true,
+      mock: false,
+      ...(isEscooter ? { downloadPath: `/electric-scooter-repairing/go${escooterToken ? `?t=${escooterToken}` : ""}` } : {}),
+    });
   } catch (error: any) {
     console.error("Signature verification error:", error);
     return NextResponse.json(
