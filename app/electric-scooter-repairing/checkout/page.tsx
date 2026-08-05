@@ -19,9 +19,12 @@ import {
 import coverImg from "@/public/evguide.webp";
 import styles from "./checkout.module.css";
 
-const PRICE = 149;
+const PRICE = 128;
 const PRODUCT_NAME =
   "Electric Scooter Repairing Complete Practical Guide (Hindi)";
+// UPI apps (Google Pay, PhonePe) cut long payment notes, so the gateway gets a
+// short label while emails and the thank-you page keep the full product name.
+const PAYMENT_LABEL = "EV Scooter Repair Guide Hindi PDF";
 
 const checklist = [
   "Complete Practical Guide (Hindi PDF)",
@@ -154,7 +157,7 @@ export default function EscooterCheckout() {
         amount: data.amount,
         currency: data.currency || "INR",
         name: "NokriMitra",
-        description: PRODUCT_NAME,
+        description: PAYMENT_LABEL,
         order_id: data.orderId,
         handler: (r: {
           razorpay_payment_id: string;

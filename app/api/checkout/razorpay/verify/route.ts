@@ -158,7 +158,7 @@ export async function POST(req: Request) {
               customerName: name || "there",
               productName: escooterProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 149),
+              amount: Number(amountPaid || 128),
               downloadUrl,
             })
           : isVastu
@@ -191,7 +191,7 @@ export async function POST(req: Request) {
               customerName: name || "there",
               productName: escooterProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 149),
+              amount: Number(amountPaid || 128),
               downloadUrl,
             })
           : isVastu

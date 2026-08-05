@@ -36,7 +36,7 @@ const pdfShots = [
 ];
 
 const CHECKOUT = "/electric-scooter-repairing/checkout";
-const PRICE = 149;
+const PRICE = 128;
 
 const heroPoints = [
   "Battery, BMS, BLDC Motor और Controller की साफ़ समझ",
@@ -127,7 +127,7 @@ const faqs = [
   },
   {
     q: "Payment के कौन-से options मिलेंगे?",
-    a: "Razorpay checkout पर उपलब्ध UPI, debit/credit card और net banking options से ₹149 का one-time payment किया जा सकता है।",
+    a: "Razorpay checkout पर उपलब्ध UPI, debit/credit card और net banking options से ₹128 का one-time payment किया जा सकता है।",
   },
   {
     q: "Download में परेशानी आए तो क्या करें?",

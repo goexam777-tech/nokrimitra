@@ -27,7 +27,7 @@ export default function EvTerms() {
           English.
         </li>
         <li>
-          A one-time payment of <strong>₹149</strong>, with no recurring
+          A one-time payment of <strong>₹128</strong>, with no recurring
           charges.
         </li>
         <li>

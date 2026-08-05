@@ -55,7 +55,7 @@ const productJsonLd = {
   },
   offers: {
     "@type": "Offer",
-    price: 149,
+    price: 128,
     priceCurrency: "INR",
     availability: "https://schema.org/InStock",
   },

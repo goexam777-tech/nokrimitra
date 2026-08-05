@@ -18,7 +18,7 @@ function Content() {
   const orderId = sp.get("orderId") || sp.get("razorpay_order_id") || "N/A";
   const paymentId = sp.get("razorpay_payment_id") || "";
   const productName = sp.get("productName") || DEFAULT_PRODUCT_NAME;
-  const amountPaid = sp.get("amountPaid") || "149";
+  const amountPaid = sp.get("amountPaid") || "128";
   const email = sp.get("email") || "";
   const name = sp.get("name") || "";
 
