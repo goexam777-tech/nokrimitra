@@ -1,61 +1,54 @@
 import { NextResponse } from "next/server";
 
+const OPD_BASE_PRICE = 199;
+const OPD_ADDON_ID = "emergency-handbook";
+const OPD_ADDON_PRICE = 49;
+
 export async function POST(req: Request) {
   try {
+    const body = await req.json().catch(() => ({}));
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const isOpd = body.product === "opd";
+    const requestedAddons = Array.isArray(body.addons)
+      ? body.addons.map(String)
+      : [];
+    const unknownAddons = isOpd
+      ? requestedAddons.filter((id: string) => id !== OPD_ADDON_ID)
+      : [];
 
-    // Check if we are in mock mode (using placeholders)
-    const isMock =
-      !keyId ||
-      keyId.includes("your_key_id") ||
-      !keySecret ||
-      keySecret.includes("your_key_secret");
-
-    if (isMock) {
-      console.log("Razorpay mock mode: Using simulated Order ID");
-      return NextResponse.json({
-        orderId: `order_mock_${Math.random().toString(36).substring(2, 11)}`,
-        amount: 9900,
-        currency: "INR",
-        mock: true,
-      });
+    if (unknownAddons.length) {
+      return NextResponse.json({ error: "Invalid OPD add-on selected" }, { status: 400 });
     }
 
-    const body = await req.json().catch(() => ({}));
-    const amount = body.amount ? Number(body.amount) : 99;
-    const amountInPaise = amount * 100;
+    const addons = isOpd
+      ? requestedAddons.filter((id: string) => id === OPD_ADDON_ID).slice(0, 1)
+      : [];
+    const amount = isOpd
+      ? OPD_BASE_PRICE + (addons.length ? OPD_ADDON_PRICE : 0)
+      : Number(body.amount || 99);
 
-    // Call Razorpay API to create an order
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return NextResponse.json({ error: "Invalid order amount" }, { status: 400 });
+    }
+
+    const amountInPaise = Math.round(amount * 100);
+    const isMock = !keyId || keyId.includes("your_key_id") || !keySecret || keySecret.includes("your_key_secret");
+    if (isMock) {
+      return NextResponse.json({ orderId: `order_mock_${Math.random().toString(36).substring(2, 11)}`, amount: amountInPaise, total: amount, addons, currency: "INR", mock: true });
+    }
+
     const response = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
-      },
-      body: JSON.stringify({
-        amount: amountInPaise,
-        currency: "INR",
-        receipt: `rcpt_${Date.now()}`,
-      }),
+      headers: { "Content-Type": "application/json", Authorization: "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64") },
+      body: JSON.stringify({ amount: amountInPaise, currency: "INR", receipt: `rcpt_${Date.now()}`, ...(isOpd ? { notes: { product: "opd", addons: addons.join(","), catalogVersion: "1" } } : {}) }),
     });
-
     const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error?.description || "Razorpay API error");
-    }
+    if (!response.ok) throw new Error(data.error?.description || "Razorpay API error");
 
-    return NextResponse.json({
-      orderId: data.id,
-      amount: data.amount,
-      currency: data.currency,
-      mock: false,
-    });
-  } catch (error: any) {
+    return NextResponse.json({ orderId: data.id, amount: data.amount, total: amount, addons, currency: data.currency, mock: false });
+  } catch (error: unknown) {
     console.error("Razorpay order API error:", error);
-    return NextResponse.json(
-      { error: error?.message || "Failed to create order" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Failed to create order" }, { status: 500 });
   }
 }

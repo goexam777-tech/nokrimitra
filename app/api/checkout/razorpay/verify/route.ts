@@ -13,7 +13,13 @@ import {
   buildEscooterEmail,
   buildEscooterEmailText,
 } from "@/lib/escooterEmailTemplate";
+import { buildOpdEmail, buildOpdEmailText } from "@/lib/opdEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
+
+const OPD_BASE_PRICE = 199;
+const OPD_ADDON_ID = "emergency-handbook";
+const OPD_ADDON_PRICE = 49;
+const OPD_ADDON_NAME = "Emergency Medicine Handbook";
 
 export async function POST(req: Request) {
   try {
@@ -49,18 +55,44 @@ export async function POST(req: Request) {
         !liveSecret ||
         liveSecret.includes("your_key_secret") ||
         liveSecret.trim() === "";
-      const mockToken =
-        inMockMode && product === "escooter"
-          ? createDownloadToken("escooter", razorpay_order_id)
+      const mockTokenProduct =
+        inMockMode && (product === "escooter" || product === "opd")
+          ? (product as "escooter" | "opd")
           : null;
+      const mockToken = mockTokenProduct
+        ? createDownloadToken(mockTokenProduct, razorpay_order_id)
+        : null;
+      const mockBase =
+        mockTokenProduct === "opd"
+          ? "/opd-mastery/go"
+          : "/electric-scooter-repairing/go";
+      const mockHasOpdAddon =
+        product === "opd" &&
+        String(addons || "").split(",").includes(OPD_ADDON_ID);
+      const mockAddonToken =
+        inMockMode && mockHasOpdAddon
+          ? createDownloadToken("opd-emergency-handbook", razorpay_order_id)
+          : null;
+      const mockAmount =
+        product === "opd"
+          ? OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
+          : Number(amountPaid || 0);
+      const mockDownloads = [
+        ...(mockTokenProduct === "opd" && mockToken
+          ? [{ label: "OPD Mastery E-book", path: `${mockBase}?t=${mockToken}` }]
+          : []),
+        ...(mockAddonToken
+          ? [{ label: OPD_ADDON_NAME, path: `/opd-mastery/go?item=${OPD_ADDON_ID}&t=${mockAddonToken}` }]
+          : []),
+      ];
 
       return NextResponse.json({
         success: true,
         verified: true,
         mock: true,
-        ...(mockToken
-          ? { downloadPath: `/electric-scooter-repairing/go?t=${mockToken}` }
-          : {}),
+        amountPaid: mockAmount,
+        downloads: mockDownloads,
+        ...(mockToken ? { downloadPath: `${mockBase}?t=${mockToken}` } : {}),
       });
     }
 
@@ -85,6 +117,53 @@ export async function POST(req: Request) {
       );
     }
 
+    let verifiedOpdAddons: string[] = [];
+    let verifiedOpdAmount = Number(amountPaid || OPD_BASE_PRICE);
+    if (product === "opd") {
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        return NextResponse.json(
+          { error: "Razorpay key ID not configured on server" },
+          { status: 500 }
+        );
+      }
+
+      const orderResponse = await fetch(
+        `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+        {
+          headers: {
+            Authorization:
+              "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+          },
+          cache: "no-store",
+        }
+      );
+      const order = await orderResponse.json();
+      if (!orderResponse.ok || order.notes?.product !== "opd") {
+        return NextResponse.json(
+          { error: "Could not verify OPD order details" },
+          { status: 400 }
+        );
+      }
+
+      verifiedOpdAddons = String(order.notes?.addons || "")
+        .split(",")
+        .map((id: string) => id.trim())
+        .filter((id: string) => id === OPD_ADDON_ID);
+      verifiedOpdAmount =
+        OPD_BASE_PRICE +
+        (verifiedOpdAddons.includes(OPD_ADDON_ID) ? OPD_ADDON_PRICE : 0);
+      if (
+        order.currency !== "INR" ||
+        Number(order.amount) !== verifiedOpdAmount * 100
+      ) {
+        return NextResponse.json(
+          { error: "OPD order amount verification failed" },
+          { status: 400 }
+        );
+      }
+    }
+
     // Dynamic APP URL resolution based on request headers
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = req.headers.get("x-forwarded-proto") || "http";
@@ -93,11 +172,31 @@ export async function POST(req: Request) {
     const isVastu = product === "vastu";
     const isMcq = product === "mcq";
     const isEscooter = product === "escooter";
+    const isOpd = product === "opd";
 
     // Only buyers get a signed download link (issued after signature check).
     const escooterToken = isEscooter
       ? createDownloadToken("escooter", razorpay_order_id)
       : null;
+    const opdToken = isOpd
+      ? createDownloadToken("opd", razorpay_order_id)
+      : null;
+    const opdAddonToken =
+      isOpd && verifiedOpdAddons.includes(OPD_ADDON_ID)
+        ? createDownloadToken("opd-emergency-handbook", razorpay_order_id)
+        : null;
+    const opdDownloadUrl = `${appUrl}/opd-mastery/go${
+      opdToken ? `?t=${opdToken}` : ""
+    }`;
+    const opdAddonDownloadUrl = `${appUrl}/opd-mastery/go?item=${OPD_ADDON_ID}${
+      opdAddonToken ? `&t=${opdAddonToken}` : ""
+    }`;
+    const opdDownloads = [
+      { label: "OPD Mastery E-book", url: opdDownloadUrl },
+      ...(opdAddonToken
+        ? [{ label: OPD_ADDON_NAME, url: opdAddonDownloadUrl }]
+        : []),
+    ];
     const escooterDownloadUrl = `${appUrl}/electric-scooter-repairing/go${
       escooterToken ? `?t=${escooterToken}` : ""
     }`;
@@ -110,6 +209,8 @@ export async function POST(req: Request) {
       ? `${appUrl}/gsrtc-mcq-course/go`
       : isEscooter
       ? escooterDownloadUrl
+      : isOpd
+      ? opdDownloadUrl
       : `${appUrl}/go`;
 
     // Build per-item download links for the Vastu bundle (main + purchased upsells)
@@ -144,8 +245,18 @@ export async function POST(req: Request) {
         const gsrtcProductName = "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ";
         const escooterProductName =
           productName || "Electric Scooter Repairing Complete Practical Guide";
+        const opdProductName = productName || "OPD Mastery E-book (2026 Edition)";
 
-        const htmlContent = isPsychology
+        const htmlContent = isOpd
+          ? buildOpdEmail({
+              customerName: name || "there",
+              productName: opdProductName,
+              orderId: razorpay_order_id,
+              amount: verifiedOpdAmount,
+              downloadUrl,
+              downloads: opdDownloads,
+            })
+          : isPsychology
           ? buildPsychologyEmail({
               customerName: name || "there",
               productName: psyProductName,
@@ -178,7 +289,16 @@ export async function POST(req: Request) {
               downloadUrl,
             });
 
-        const textContent = isPsychology
+        const textContent = isOpd
+          ? buildOpdEmailText({
+              customerName: name || "there",
+              productName: opdProductName,
+              orderId: razorpay_order_id,
+              amount: verifiedOpdAmount,
+              downloadUrl,
+              downloads: opdDownloads,
+            })
+          : isPsychology
           ? buildPsychologyEmailText({
               customerName: name || "there",
               productName: psyProductName,
@@ -211,7 +331,9 @@ export async function POST(req: Request) {
               downloadUrl,
             });
 
-        const subject = isPsychology
+        const subject = isOpd
+          ? `Your download is ready — OPD Mastery E-book (2026)`
+          : isPsychology
           ? `${psyProductName}: Your download link is ready! 🎉`
           : isEscooter
           ? // Short, transactional subject: long subjects get truncated and
@@ -260,6 +382,26 @@ export async function POST(req: Request) {
       verified: true,
       mock: false,
       ...(isEscooter ? { downloadPath: `/electric-scooter-repairing/go${escooterToken ? `?t=${escooterToken}` : ""}` } : {}),
+      ...(isOpd
+        ? {
+            amountPaid: verifiedOpdAmount,
+            downloadPath: `/opd-mastery/go${opdToken ? `?t=${opdToken}` : ""}`,
+            downloads: [
+              {
+                label: "OPD Mastery E-book",
+                path: `/opd-mastery/go${opdToken ? `?t=${opdToken}` : ""}`,
+              },
+              ...(opdAddonToken
+                ? [
+                    {
+                      label: OPD_ADDON_NAME,
+                      path: `/opd-mastery/go?item=${OPD_ADDON_ID}&t=${opdAddonToken}`,
+                    },
+                  ]
+                : []),
+            ],
+          }
+        : {}),
     });
   } catch (error: any) {
     console.error("Signature verification error:", error);
