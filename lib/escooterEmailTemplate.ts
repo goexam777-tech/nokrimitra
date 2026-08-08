@@ -4,25 +4,25 @@ interface EscooterEmailParams {
   orderId: string;
   amount: number;
   downloadUrl: string;
-  brandName?: string;
   supportEmail?: string;
 }
 
-const INK = "#17201c";
-const PAPER = "#f4f0e7";
-const GREEN_DARK = "#116437";
-const LIME = "#d0eb63";
-const ORANGE = "#df642e";
-const MUTED = "#657068";
-
-const chapters = [
-  "EV system, tools और safety basics",
-  "Battery pack, BMS और charging faults",
-  "BLDC motor, hall sensor और motor noise",
-  "Controller, wiring diagram और connectors",
-  "Throttle, brake sensor और charger testing",
-  "Error codes, fault finding और maintenance",
+const INCLUDED_BOOKS = [
+  {
+    title: "The Ultimate Electric Scooter Repair Masterclass",
+    note: "Main guide · 180+ diagnostic recipes",
+  },
+  {
+    title: "The E-Bike Conversion & Repair Guide",
+    note: "Bonus 1 · conversion and hub motor repair",
+  },
+  {
+    title: "The EV Technician's Quick Toolkit",
+    note: "Bonus 2 · multimeter checkpoints and error codes",
+  },
 ];
+
+const SUPPORT_WHATSAPP = "+91 91048 26422";
 
 export function buildEscooterEmailText({
   customerName,
@@ -30,33 +30,28 @@ export function buildEscooterEmailText({
   orderId,
   amount,
   downloadUrl,
-  brandName = "NokriMitra",
   supportEmail = "support@nokrimitra.in",
 }: EscooterEmailParams): string {
-  return `Payment successful - aapki PDF taiyar hai
+  return `Payment confirmed - your EV repair bundle is ready
 
-Namaste ${customerName || "dost"},
+Hi ${customerName || "there"},
 
-${productName} ke liye aapka payment successful raha. Guide download ke liye taiyar hai.
+Your payment is confirmed and ${productName} is ready to download.
 
-Download link:
-${downloadUrl}
+Download all 3 books: ${downloadUrl}
 
-Order details:
-- Order ID: ${orderId}
-- Amount paid: Rs.${amount}
-- Product: ${productName}
+Included in your order:
+${INCLUDED_BOOKS.map((book) => `- ${book.title} (${book.note})`).join("\n")}
 
-Guide me kya milega:
-${chapters.map((c) => `- ${c}`).join("\n")}
+Order ID: ${orderId}
+Amount paid: Rs ${amount}
+Language: Hindi & English
 
-Suggestion: PDF ko phone ya computer me save kar lein, taki baad me bhi kaam aaye.
+Keep this link private and save the files on your own device. The link stays
+valid for one year and works on any device; contact support any time if you
+need it reissued.
 
-Safety: Battery pack aur high-current circuits khatarnak ho sakte hain. Kaam se pehle battery disconnect karein, insulated tools use karein, aur uncertain fault ke liye qualified technician ki madad lein.
-
-Kisi bhi madad ke liye is email ka reply karein ya ${supportEmail} / WhatsApp +91 91048 26422 par sampark karein.
-
-${brandName} Team`;
+Need help? ${supportEmail} / WhatsApp ${SUPPORT_WHATSAPP}`;
 }
 
 export function buildEscooterEmail({
@@ -65,112 +60,99 @@ export function buildEscooterEmail({
   orderId,
   amount,
   downloadUrl,
-  brandName = "NokriMitra",
   supportEmail = "support@nokrimitra.in",
 }: EscooterEmailParams): string {
-  const chapterRows = chapters
-    .map(
-      (c, i) => `
-                <tr>
-                  <td width="34" valign="top" style="padding:9px 0;border-bottom:1px solid #ded8cc;color:${GREEN_DARK};font-size:12px;font-weight:bold;letter-spacing:1px;">${String(
-        i + 1
-      ).padStart(2, "0")}</td>
-                  <td valign="top" style="padding:9px 0;border-bottom:1px solid #ded8cc;color:#3f4a43;font-size:14px;">${c}</td>
-                </tr>`
-    )
-    .join("");
+  const bookRows = INCLUDED_BOOKS.map(
+    (book, index) => `
+              <tr>
+                <td width="30" valign="top" style="padding:12px 0 12px 0;border-top:1px solid #EDEDF0;color:#E5142B;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:bold;">0${
+                  index + 1
+                }</td>
+                <td valign="top" style="padding:12px 0;border-top:1px solid #EDEDF0;">
+                  <div style="color:#1B1F2A;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;line-height:1.4;">${
+                    book.title
+                  }</div>
+                  <div style="margin-top:3px;color:#7B818D;font-family:Arial,Helvetica,sans-serif;font-size:12px;">${
+                    book.note
+                  }</div>
+                </td>
+                <td width="70" valign="top" align="right" style="padding:12px 0;border-top:1px solid #EDEDF0;color:#00A152;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:bold;">Included</td>
+              </tr>`
+  ).join("");
 
-  return `<!DOCTYPE html>
-<html lang="hi">
+  return `<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>${productName}</title>
 </head>
-<body style="margin:0;padding:0;background-color:${PAPER};font-family:'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:${INK};">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Payment successful — ${productName} download ke liye taiyar hai.</div>
+<body style="margin:0;padding:0;background-color:#F4F4F6;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Payment confirmed - all 3 EV repair books are ready to download.</div>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${PAPER};padding:24px 12px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F4F4F6;">
     <tr>
-      <td align="center">
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#fffefa;border:1px solid #d8d2c6;">
+      <td align="center" style="padding:26px 12px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background-color:#FFFFFF;border-radius:16px;overflow:hidden;">
 
+          <!-- Header -->
           <tr>
-            <td style="background-color:${INK};padding:26px 26px;">
-              <p style="margin:0 0 10px 0;color:${LIME};font-size:11px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;">Payment successful</p>
-              <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:800;line-height:1.25;">आपकी Hindi PDF Guide तैयार है</h1>
-              <p style="margin:10px 0 0 0;color:#b6c0b9;font-size:14px;">${productName}</p>
+            <td style="padding:26px 28px;background-color:#14161C;">
+              <div style="color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:19px;font-weight:bold;letter-spacing:.4px;">EV Scooter Repairing &middot; 3-Book Bundle</div>
+            </td>
+          </tr>
+          <tr><td style="height:4px;background-color:#E5142B;"></td></tr>
+
+          <!-- Intro -->
+          <tr>
+            <td style="padding:30px 28px 0;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding:7px 12px;background-color:#E8F8EF;border-radius:999px;color:#00A152;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:bold;letter-spacing:.8px;text-transform:uppercase;">Payment confirmed</td>
+                </tr>
+              </table>
+
+              <h1 style="margin:18px 0 10px;color:#14161C;font-family:Arial,Helvetica,sans-serif;font-size:26px;font-weight:bold;line-height:1.25;letter-spacing:-.5px;">Your 3-book bundle is ready</h1>
+              <p style="margin:0;color:#5C6270;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;">Hi <strong style="color:#14161C;">${
+                customerName || "there"
+              }</strong>, thanks for your order. Tap the button below to download all three books in one go.</p>
             </td>
           </tr>
 
+          <!-- Download CTA -->
           <tr>
-            <td style="padding:26px 26px 0 26px;">
-              <p style="margin:0 0 12px 0;font-size:16px;">नमस्ते <strong>${
-                customerName || "दोस्त"
-              }</strong>,</p>
-              <p style="margin:0 0 22px 0;font-size:15px;line-height:1.65;color:#3f4a43;">
-                आपका payment successful रहा। नीचे दिए button से guide अभी download करें।
-              </p>
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <td style="padding:24px 28px 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background-color:${GREEN_DARK};padding:0;">
-                    <a href="${downloadUrl}" target="_blank"
-                       style="display:block;padding:17px 24px;color:#ffffff;font-size:17px;font-weight:800;text-decoration:none;text-align:center;">
-                      अभी PDF Download करें
-                    </a>
+                  <td align="center" style="background-color:#E5142B;border-radius:10px;">
+                    <a href="${downloadUrl}" target="_blank" style="display:block;padding:17px 24px;color:#FFFFFF;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;text-align:center;text-decoration:none;">Download all 3 books</a>
                   </td>
                 </tr>
               </table>
-
-              <p style="margin:14px 0 24px 0;font-size:12px;color:${MUTED};text-align:center;line-height:1.6;">
-                Button काम न करे तो यह link browser में खोलें:<br />
-                <a href="${downloadUrl}" style="color:${GREEN_DARK};word-break:break-all;">${downloadUrl}</a>
-              </p>
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${PAPER};border:1px solid #d8d2c6;border-left:5px solid ${ORANGE};margin:0 0 26px 0;">
-                <tr>
-                  <td style="padding:16px 18px;">
-                    <p style="margin:0 0 10px 0;font-size:11px;font-weight:bold;color:${GREEN_DARK};letter-spacing:1.6px;text-transform:uppercase;">Order details</p>
-                    <p style="margin:0;font-size:14px;color:#3f4a43;">Order ID: <strong style="color:${INK};">${orderId}</strong></p>
-                    <p style="margin:5px 0 0 0;font-size:14px;color:#3f4a43;">चुकाई गई रकम: <strong style="color:${INK};">₹${amount}</strong></p>
-                    <p style="margin:5px 0 0 0;font-size:14px;color:#3f4a43;">Product: <strong style="color:${INK};">${productName}</strong></p>
-                  </td>
-                </tr>
-              </table>
-
-              <p style="margin:0 0 4px 0;font-size:11px;font-weight:bold;color:${GREEN_DARK};letter-spacing:1.6px;text-transform:uppercase;">Guide में क्या मिलेगा</p>
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:2px solid ${INK};margin:8px 0 24px 0;">
-                ${chapterRows}
-              </table>
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#fff5ee;border:1px solid #e6b294;border-left:5px solid ${ORANGE};margin:0 0 22px 0;">
-                <tr>
-                  <td style="padding:15px 18px;">
-                    <p style="margin:0 0 5px 0;font-size:14px;font-weight:bold;color:${INK};">Safety पहले</p>
-                    <p style="margin:0;font-size:13px;line-height:1.6;color:#6f5648;">
-                      Battery pack और high-current circuits खतरनाक हो सकते हैं। काम से पहले battery disconnect करें, insulated tools इस्तेमाल करें और uncertain fault के लिए qualified technician की मदद लें।
-                    </p>
-                  </td>
-                </tr>
-              </table>
-
-              <p style="margin:0 0 22px 0;font-size:13px;color:${MUTED};line-height:1.6;">
-                सुझाव: PDF को अपने phone या computer में save कर लें, ताकि बाद में भी काम आए।
+              <p style="margin:12px 0 0;color:#8A909C;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.6;text-align:center;">Button not working? Paste this link in your browser:<br>
+                <a href="${downloadUrl}" style="color:#3F4756;word-break:break-all;">${downloadUrl}</a>
               </p>
             </td>
           </tr>
 
+          <!-- Included books -->
           <tr>
-            <td style="padding:0 26px 26px 26px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #d8d2c6;">
+            <td style="padding:28px 28px 0;">
+              <div style="color:#9AA0AC;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:bold;letter-spacing:1.4px;text-transform:uppercase;">Included in your order</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px;">${bookRows}
+              </table>
+            </td>
+          </tr>
+
+          <!-- Order summary -->
+          <tr>
+            <td style="padding:24px 28px 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F7F7F9;border-radius:10px;">
                 <tr>
-                  <td style="padding:16px 0 0 0;">
-                    <p style="margin:0;font-size:14px;color:#3f4a43;line-height:1.6;">
-                      किसी भी मदद के लिए इस email का reply करें या
-                      <a href="mailto:${supportEmail}" style="color:${GREEN_DARK};">${supportEmail}</a> / WhatsApp <strong>+91 91048 26422</strong> पर संपर्क करें।
-                    </p>
-                    <p style="margin:12px 0 0 0;font-size:14px;color:#3f4a43;"><strong>${brandName} Team</strong></p>
+                  <td style="padding:16px 18px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;color:#5C6270;">
+                    <strong style="color:#14161C;">Order ID:</strong> ${orderId}<br>
+                    <strong style="color:#14161C;">Amount paid:</strong> &#8377;${amount}<br>
+                    <strong style="color:#14161C;">Language:</strong> Hindi &amp; English
                   </td>
                 </tr>
               </table>
@@ -178,8 +160,23 @@ export function buildEscooterEmail({
           </tr>
 
           <tr>
-            <td style="background-color:${INK};padding:16px 26px;text-align:center;">
-              <p style="margin:0;font-size:12px;color:#8f9a92;">© ${new Date().getFullYear()} ${brandName}</p>
+            <td style="padding:20px 28px 0;">
+              <p style="margin:0;color:#8A909C;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.65;">Save the files on your own device and keep this link private. It stays valid for one year and works on any device.</p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 28px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #EDEDF0;">
+                <tr>
+                  <td style="padding:18px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;color:#5C6270;">
+                    Need help? Reply to this email or write to
+                    <a href="mailto:${supportEmail}" style="color:#14161C;font-weight:bold;">${supportEmail}</a><br>
+                    WhatsApp: <strong style="color:#14161C;">${SUPPORT_WHATSAPP}</strong>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 

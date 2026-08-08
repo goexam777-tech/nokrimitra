@@ -4,9 +4,9 @@ import styles from "../legal.module.css";
 
 export const metadata: Metadata = {
   title:
-    "Terms & Conditions — Electric Scooter Repairing Guide (Hindi) | NokriMitra",
+    "Terms & Conditions — Electric Scooter Repairing 3-Book Bundle | NokriMitra",
   description:
-    "Terms and Conditions for purchasing and using the Electric Scooter Repairing Complete Practical Guide (Hindi) digital PDF.",
+    "Terms and Conditions for purchasing and using the ₹149 Electric Scooter Repairing 3-Book Digital Bundle.",
   robots: { index: true, follow: true },
 };
 
@@ -14,24 +14,28 @@ export default function EvTerms() {
   return (
     <EvLegal title="Terms & Conditions" updated="August 2026">
       <p>
-        By purchasing or using the <strong>Electric Scooter Repairing Complete
-        Practical Guide (Hindi)</strong> from NokriMitra, you agree to the terms
-        below. Please read them before buying.
+        By purchasing or using the <strong>Electric Scooter Repairing 3-Book
+        Digital Bundle</strong> from NokriMitra, you agree to the terms below.
+        Please read them before buying.
       </p>
 
       <h2>What You Are Buying</h2>
       <ul>
-        <li>A digital guide delivered as a <strong>PDF file</strong>.</li>
         <li>
-          Written in <strong>Hindi</strong>, with common technical terms kept in
-          English.
+          Three digital PDF books: the Main Repairing Guide, E-Bike Conversion
+          Guide and Quick Diagnostic Toolkit.
         </li>
         <li>
-          A one-time payment of <strong>₹128</strong>, with no recurring
-          charges.
+          Content presented in a practical <strong>Hindi and English</strong>
+          mix, including common technical terms.
         </li>
         <li>
-          Lifetime access to the file you download, for your own personal use.
+          A one-time payment of <strong>₹149</strong>, with no recurring charges.
+        </li>
+        <li>
+          Lifetime personal use of the files you download. The protected
+          delivery link itself is issued for one year and can be reissued by
+          support after order verification.
         </li>
       </ul>
 
@@ -46,11 +50,11 @@ export default function EvTerms() {
 
       <h2>Delivery</h2>
       <p>
-        After a successful payment, the download link appears on the thank-you
-        page and is also emailed to the address you provide. Please enter your
-        email carefully — an incorrect address is the most common reason a
-        buyer does not receive the email. If the email is missing, check your
-        Spam or Promotions folder, then contact us.
+        After a successful payment, the protected bundle link appears on the
+        thank-you page. We also attempt to email the same link to the address
+        you provide. Please enter your email carefully. If the email is missing,
+        check your Spam or Promotions folder; the verified on-screen download
+        remains available for that order.
       </p>
 
       <h2>Download Links</h2>

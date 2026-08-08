@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { verifyDownloadToken } from "@/lib/downloadToken";
 
 /**
- * Branded download link for the Electric Scooter Repairing guide.
+ * Branded download link for the Electric Scooter Repairing 3-book bundle.
  * e.g. https://nokrimitra.in/electric-scooter-repairing/go?t=<token>
  *
  * The token is issued only after a Razorpay payment signature is verified,
@@ -52,11 +52,11 @@ export async function GET(req: Request) {
 
   return new NextResponse(
     `<!DOCTYPE html>
-    <html lang="hi">
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Download link तैयार नहीं है</title>
+      <title>Download link is not ready yet</title>
       <style>
         :root { --ink:#17201c; --paper:#f4f0e7; --white:#fffefa; --green-dark:#116437; --lime:#d0eb63; --orange:#df642e; --line:#d8d2c6; --muted:#657068; }
         * { box-sizing:border-box; }
@@ -83,16 +83,16 @@ export async function GET(req: Request) {
       <div class="box">
         <div class="strip">Download pending</div>
         <div class="body">
-          <h1>Download link अभी तैयार नहीं है</h1>
-          <p>कृपया कुछ देर बाद फिर प्रयास करें, या हमारी support team से संपर्क करें.</p>
+          <h1>Your download link is not ready yet</h1>
+          <p>Please try again in a little while, or contact our support team.</p>
           <div class="safe">
             <div>
-              <strong>आपका order सुरक्षित है</strong>
-              आपका payment record हमारे पास है. Support से संपर्क करने पर link तुरंत भेज दिया जाएगा.
+              <strong>Your order is safe</strong>
+              We have your payment on record. Contact support and the link will be sent to you right away.
             </div>
           </div>
           <a href="https://wa.me/919104826422" class="btn">WhatsApp Support</a>
-          <a href="/electric-scooter-repairing" class="back">मुख्य page पर जाएँ</a>
+          <a href="/electric-scooter-repairing" class="back">Back to the product page</a>
         </div>
       </div>
     </body>
@@ -115,15 +115,15 @@ function readCookie(header: string | null, name: string): string | null {
 function blockedResponse(reason: "missing" | "malformed" | "invalid" | "expired") {
   const expired = reason === "expired";
   const title = expired
-    ? "यह download link expire हो गया है"
-    : "यह download link valid नहीं है";
+    ? "This download link has expired"
+    : "This download link is not valid";
   const message = expired
-    ? "आपकी guide अभी भी आपकी है. नया link पाने के लिए अपना Order ID के साथ WhatsApp पर message करें."
-    : "Download link सिर्फ payment करने वाले खरीदार के लिए काम करता है. कृपया अपने confirmation email में मिला link इस्तेमाल करें.";
+    ? "Your bundle is still yours. Message us on WhatsApp with your Order ID and we will issue a fresh link."
+    : "Download links only work for the buyer who completed the payment. Please use the link from your confirmation email.";
 
   return new NextResponse(
     `<!DOCTYPE html>
-    <html lang="hi">
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -159,12 +159,12 @@ function blockedResponse(reason: "missing" | "malformed" | "invalid" | "expired"
           <p>${message}</p>
           <div class="safe">
             <div>
-              <strong>पहले से खरीद चुके हैं?</strong>
-              अपना Order ID WhatsApp पर भेजें, हम download link तुरंत फिर भेज देंगे.
+              <strong>Already bought the bundle?</strong>
+              Send your Order ID on WhatsApp and we will resend your download link right away.
             </div>
           </div>
           <a href="https://wa.me/919104826422" class="btn">WhatsApp Support</a>
-          <a href="/electric-scooter-repairing" class="back">मुख्य page पर जाएँ</a>
+          <a href="/electric-scooter-repairing" class="back">Back to the product page</a>
         </div>
       </div>
     </body>

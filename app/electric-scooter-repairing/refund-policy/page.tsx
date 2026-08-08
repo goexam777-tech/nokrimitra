@@ -4,9 +4,9 @@ import styles from "../legal.module.css";
 
 export const metadata: Metadata = {
   title:
-    "Refund Policy — Electric Scooter Repairing Guide (Hindi) | NokriMitra",
+    "Refund Policy — Electric Scooter Repairing 3-Book Bundle | NokriMitra",
   description:
-    "Refund Policy for the Electric Scooter Repairing Complete Practical Guide (Hindi) — digital PDF, no refunds after delivery.",
+    "Refund Policy for the ₹149 Electric Scooter Repairing 3-Book Digital Bundle.",
   robots: { index: true, follow: true },
 };
 
@@ -14,43 +14,40 @@ export default function EvRefundPolicy() {
   return (
     <EvLegal title="Refund Policy" updated="August 2026">
       <div className={styles.callout}>
-        The <strong>Electric Scooter Repairing Complete Practical Guide
-        (Hindi)</strong> is a <strong>digital product (PDF)</strong>. Once the
-        payment is completed and the download link is delivered,{" "}
-        <strong>no refunds, returns or exchanges are provided</strong>.
+        The <strong>Electric Scooter Repairing 3-Book Digital Bundle</strong>
+        contains three downloadable PDF books. Once payment is completed and
+        the protected bundle link is delivered, <strong>no refunds, returns or
+        exchanges are provided</strong>.
       </div>
 
       <h2>Why Refunds Are Not Available</h2>
       <p>
-        The guide is delivered instantly as a downloadable PDF. A digital file
-        cannot be returned once it has been accessed, so all sales are final.
+        The bundle is delivered as downloadable digital files. Digital files
+        cannot be returned once access has been provided, so all sales are final.
       </p>
 
       <h2>Please Check Before You Buy</h2>
       <ul>
+        <li>Review the three included book titles and topics on the product page.</li>
+        <li>Look at the actual sample page screenshots on the product page.</li>
         <li>
-          Read the chapter list and the topics covered on the product page.
+          Note that the content uses <strong>Hindi and English</strong>,
+          including English technical terms.
         </li>
         <li>
-          Look at the sample page screenshots shown on the product page.
-        </li>
-        <li>
-          Note that the guide is written in <strong>Hindi</strong>, with English
-          used for technical terms.
-        </li>
-        <li>
-          Note that this is a <strong>PDF guide</strong> — not a video course,
-          printed book, or personal training programme.
+          Note that this is a <strong>digital PDF bundle</strong> — not a video
+          course, printed book, or personal training programme.
         </li>
         <li>If anything is unclear, contact us before purchasing.</li>
       </ul>
 
-      <h2>If You Paid But Did Not Receive the PDF</h2>
+      <h2>If You Paid But Did Not Receive the Bundle</h2>
       <p>
-        If your payment succeeded but you did not receive access, we will fix it
-        or send your download link again. This is not a refund case — you get
-        the product you paid for. Contact us with your{" "}
-        <strong>Order ID</strong> or payment reference and we will resolve it.
+        If your payment succeeded but you did not receive bundle access, we
+        will fix the delivery or send your protected download link again. This
+        is not a refund case — you receive the three-book bundle you paid for.
+        Contact us with your <strong>Order ID</strong> or payment reference and
+        we will resolve it.
       </p>
 
       <h2>Duplicate Payments</h2>

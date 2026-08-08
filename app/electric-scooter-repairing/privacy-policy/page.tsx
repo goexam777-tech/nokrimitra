@@ -4,9 +4,9 @@ import styles from "../legal.module.css";
 
 export const metadata: Metadata = {
   title:
-    "Privacy Policy — Electric Scooter Repairing Guide (Hindi) | NokriMitra",
+    "Privacy Policy — Electric Scooter Repairing 3-Book Bundle | NokriMitra",
   description:
-    "Privacy Policy for the Electric Scooter Repairing Complete Practical Guide (Hindi) digital PDF — what data we collect and how it is used.",
+    "Privacy Policy for the Electric Scooter Repairing 3-Book Digital Bundle and its secure payment and delivery process.",
   robots: { index: true, follow: true },
 };
 
@@ -15,8 +15,8 @@ export default function EvPrivacyPolicy() {
     <EvLegal title="Privacy Policy" updated="August 2026">
       <p>
         This Privacy Policy explains what information we collect when you buy
-        the <strong>Electric Scooter Repairing Complete Practical Guide
-        (Hindi)</strong> from NokriMitra, and how that information is used.
+        the <strong>Electric Scooter Repairing 3-Book Digital Bundle</strong>
+        from NokriMitra, and how that information is used.
       </p>
 
       <h2>Information We Collect</h2>
@@ -25,12 +25,8 @@ export default function EvPrivacyPolicy() {
           <strong>Name</strong> — used to address your order confirmation.
         </li>
         <li>
-          <strong>Email address</strong> — used to send your PDF download link
-          and order details.
-        </li>
-        <li>
-          <strong>WhatsApp number</strong> — used only to contact you about your
-          order or a delivery issue.
+          <strong>Email address</strong> — used to send your bundle download
+          link and order details.
         </li>
         <li>
           <strong>Order information</strong> — order ID, payment ID and amount
@@ -49,7 +45,7 @@ export default function EvPrivacyPolicy() {
 
       <h2>How We Use Your Information</h2>
       <ul>
-        <li>To deliver your purchased PDF and download link.</li>
+        <li>To deliver your purchased bundle and protected download link.</li>
         <li>To verify your payment and prevent fraudulent orders.</li>
         <li>To provide support if you have a download or access problem.</li>
         <li>To keep basic records of completed transactions.</li>

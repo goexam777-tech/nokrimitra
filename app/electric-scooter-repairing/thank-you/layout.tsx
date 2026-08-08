@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title:
-    "धन्यवाद | Electric Scooter Repairing Complete Practical Guide (Hindi) | NokriMitra",
-  description:
-    "आपका order confirm हो गया है. Electric Scooter Repairing Guide अभी download करें.",
+  title: "Payment Confirmed | EV Repair 3-Book Bundle | NokriMitra",
+  description: "Verified buyers can download the Electric Scooter Repairing 3-Book Digital Bundle here.",
   robots: { index: false, follow: false },
 };
 
-export default function EscooterThankYouLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function EscooterThankYouLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

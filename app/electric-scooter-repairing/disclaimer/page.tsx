@@ -4,9 +4,9 @@ import styles from "../legal.module.css";
 
 export const metadata: Metadata = {
   title:
-    "Disclaimer — Electric Scooter Repairing Guide (Hindi) | NokriMitra",
+    "Disclaimer — Electric Scooter Repairing 3-Book Bundle | NokriMitra",
   description:
-    "Safety and educational disclaimer for the Electric Scooter Repairing Complete Practical Guide (Hindi) digital PDF.",
+    "Safety and educational disclaimer for the Electric Scooter Repairing 3-Book Digital Bundle.",
   robots: { index: true, follow: true },
 };
 
@@ -22,11 +22,11 @@ export default function EvDisclaimer() {
 
       <h2>Educational Material Only</h2>
       <p>
-        The <strong>Electric Scooter Repairing Complete Practical Guide
-        (Hindi)</strong> explains how electric scooter systems work and how
-        faults are commonly diagnosed. It is not a substitute for formal
-        training, manufacturer service documentation, or the judgement of a
-        qualified technician.
+        The <strong>Electric Scooter Repairing 3-Book Digital Bundle</strong>
+        explains how electric scooter systems work, how faults are commonly
+        diagnosed, and how conversion components are planned. It is not a
+        substitute for formal training, manufacturer service documentation, or
+        the judgement of a qualified technician.
       </p>
 
       <h2>Safety Responsibilities</h2>

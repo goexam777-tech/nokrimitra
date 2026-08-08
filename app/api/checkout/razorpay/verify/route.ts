@@ -15,6 +15,7 @@ import {
 } from "@/lib/escooterEmailTemplate";
 import { buildOpdEmail, buildOpdEmailText } from "@/lib/opdEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
+import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
 const OPD_BASE_PRICE = 199;
 const OPD_ADDON_ID = "emergency-handbook";
@@ -76,7 +77,9 @@ export async function POST(req: Request) {
       const mockAmount =
         product === "opd"
           ? OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
-          : Number(amountPaid || 0);
+          : product === ESCOOTER_CATALOG.product
+            ? ESCOOTER_CATALOG.price
+            : Number(amountPaid || 0);
       const mockDownloads = [
         ...(mockTokenProduct === "opd" && mockToken
           ? [{ label: "OPD Mastery E-book", path: `${mockBase}?t=${mockToken}` }]
@@ -164,10 +167,72 @@ export async function POST(req: Request) {
       }
     }
 
-    // Dynamic APP URL resolution based on request headers
+    let verifiedEscooterAmount: number = ESCOOTER_CATALOG.price;
+    // Razorpay order notes double as the fulfilment record, so a repeat visit
+    // (new browser, cleared storage) cannot trigger a second delivery email or
+    // a second Purchase conversion.
+    let escooterNotes: Record<string, string> = {};
+    let escooterAlreadyFulfilled = false;
+    if (product === ESCOOTER_CATALOG.product) {
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        return NextResponse.json(
+          { error: "Razorpay key ID not configured on server" },
+          { status: 500 }
+        );
+      }
+
+      const orderResponse = await fetch(
+        `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+        {
+          headers: {
+            Authorization:
+              "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+          },
+          cache: "no-store",
+        }
+      );
+      const order = await orderResponse.json();
+      const notesMatch =
+        order.notes?.product === ESCOOTER_CATALOG.product &&
+        order.notes?.bundle === ESCOOTER_CATALOG.bundleId;
+
+      if (!orderResponse.ok || !notesMatch) {
+        return NextResponse.json(
+          { error: "Could not verify Electric Scooter bundle order details" },
+          { status: 400 }
+        );
+      }
+
+      // The price the server charged is read back from the order, so a later
+      // catalogue price change cannot invalidate an already-paid order.
+      const notedPrice = Number(order.notes?.price);
+      const expectedPrice = Number.isFinite(notedPrice) && notedPrice > 0
+        ? notedPrice
+        : ESCOOTER_CATALOG.price;
+
+      if (
+        order.currency !== "INR" ||
+        Number(order.amount) !== expectedPrice * 100
+      ) {
+        return NextResponse.json(
+          { error: "Electric Scooter bundle amount verification failed" },
+          { status: 400 }
+        );
+      }
+      verifiedEscooterAmount = expectedPrice;
+      escooterNotes = (order.notes || {}) as Record<string, string>;
+      escooterAlreadyFulfilled = Boolean(escooterNotes.fulfilledAt);
+    }
+
+    // Prefer an explicitly configured public origin for links included in email.
+    const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = req.headers.get("x-forwarded-proto") || "http";
-    const appUrl = `${protocol}://${host}`;
+    const appUrl = (configuredAppUrl ||
+      (process.env.NODE_ENV === "production"
+        ? "https://nokrimitra.in"
+        : `${protocol}://${host}`)).replace(/\/$/, "");
     const isPsychology = product === "psychology";
     const isVastu = product === "vastu";
     const isMcq = product === "mcq";
@@ -237,14 +302,21 @@ export async function POST(req: Request) {
     const resendApiKey = process.env.RESEND_API_KEY;
     const emailFrom = process.env.EMAIL_FROM || "NokriMitra <onboarding@resend.dev>";
 
-    if (resendApiKey && resendApiKey !== "your_resend_key_here" && email) {
+    let emailDelivered = false;
+    const skipDuplicateDelivery = isEscooter && escooterAlreadyFulfilled;
+
+    if (
+      resendApiKey &&
+      resendApiKey !== "your_resend_key_here" &&
+      email &&
+      !skipDuplicateDelivery
+    ) {
       try {
         const psyProductName = productName || "Psychology Notes";
         const vastuProductName =
           productName || "10k Vastu Floor Plan Editable Bundle";
         const gsrtcProductName = "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ";
-        const escooterProductName =
-          productName || "Electric Scooter Repairing Complete Practical Guide";
+        const escooterProductName = ESCOOTER_CATALOG.name;
         const opdProductName = productName || "OPD Mastery E-book (2026 Edition)";
 
         const htmlContent = isOpd
@@ -269,7 +341,7 @@ export async function POST(req: Request) {
               customerName: name || "there",
               productName: escooterProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 128),
+              amount: verifiedEscooterAmount,
               downloadUrl,
             })
           : isVastu
@@ -311,7 +383,7 @@ export async function POST(req: Request) {
               customerName: name || "there",
               productName: escooterProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 128),
+              amount: verifiedEscooterAmount,
               downloadUrl,
             })
           : isVastu
@@ -336,9 +408,7 @@ export async function POST(req: Request) {
           : isPsychology
           ? `${psyProductName}: Your download link is ready! 🎉`
           : isEscooter
-          ? // Short, transactional subject: long subjects get truncated and
-            // emoji/exclamation styling reads as promotional to spam filters.
-            `आपकी PDF तैयार है — EV Scooter Repair Guide (Hindi)`
+          ? `Your EV Repair 3-Book Bundle is ready`
           : isVastu
           ? `${vastuProductName}: Your download link is ready! 🎉`
           : `${productName || gsrtcProductName}: આપનો ડાઉનલોડ લિંક તૈયાર છે! 📚🎉`;
@@ -366,22 +436,66 @@ export async function POST(req: Request) {
           const errText = await emailResponse.text();
           console.error("Resend API failed:", errText);
         } else {
+          emailDelivered = true;
           console.log(`Email successfully sent to ${email}`);
         }
       } catch (emailErr) {
         console.error("Failed to send email via Resend:", emailErr);
       }
+    } else if (skipDuplicateDelivery) {
+      console.log(
+        `[DELIVERY SKIPPED] Order ${razorpay_order_id} was already fulfilled.`
+      );
     } else {
       console.log(
         "[RESEND SKIPPED] Resend key is missing or not configured. No email sent."
       );
     }
 
+    // Stamp the order once delivery succeeded. A failed send stays unmarked so
+    // the buyer can retry and still receive the email.
+    if (isEscooter && !escooterAlreadyFulfilled && emailDelivered) {
+      try {
+        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+        const stampResponse = await fetch(
+          `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+            },
+            // Notes are replaced wholesale, so the catalogue keys are re-sent.
+            body: JSON.stringify({
+              notes: { ...escooterNotes, fulfilledAt: new Date().toISOString() },
+            }),
+          }
+        );
+        if (!stampResponse.ok) {
+          console.error(
+            "Could not mark order as fulfilled:",
+            await stampResponse.text()
+          );
+        }
+      } catch (stampErr) {
+        console.error("Could not mark order as fulfilled:", stampErr);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       verified: true,
       mock: false,
-      ...(isEscooter ? { downloadPath: `/electric-scooter-repairing/go${escooterToken ? `?t=${escooterToken}` : ""}` } : {}),
+      ...(isEscooter
+        ? {
+            amountPaid: verifiedEscooterAmount,
+            downloadPath: `/electric-scooter-repairing/go${escooterToken ? `?t=${escooterToken}` : ""}`,
+            // Lets the client skip re-firing Purchase for an order that was
+            // already counted, even on a different device.
+            alreadyFulfilled: escooterAlreadyFulfilled,
+          }
+        : {}),
       ...(isOpd
         ? {
             amountPaid: verifiedOpdAmount,

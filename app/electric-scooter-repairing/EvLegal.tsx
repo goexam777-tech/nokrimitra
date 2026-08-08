@@ -37,7 +37,7 @@ export default function EvLegal({
 
       <main className={styles.wrap}>
         <p className={styles.eyebrow}>
-          Electric Scooter Repairing Guide (Hindi)
+          Electric Scooter Repairing 3-Book Bundle
         </p>
         <h1 className={styles.title}>{title}</h1>
         <p className={styles.updated}>Last updated: {updated}</p>
@@ -57,7 +57,7 @@ export default function EvLegal({
         <div className={styles.barInner}>
           <span>© {new Date().getFullYear()} NokriMitra</span>
           <Link href="/electric-scooter-repairing">
-            Electric Scooter Repairing Guide
+            Electric Scooter Repairing Bundle
           </Link>
         </div>
       </footer>

@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title:
-    "सुरक्षित Checkout | Electric Scooter Repairing Complete Practical Guide (Hindi) | NokriMitra",
+  title: "Secure Checkout | Electric Scooter Repairing 3-Book Bundle | NokriMitra",
   description:
-    "Electric Scooter Repairing Complete Practical Guide (Hindi) के लिए secure checkout. Payment के बाद तुरंत PDF download link मिलेगा.",
+    "Secure checkout for the ₹149 Electric Scooter Repairing 3-Book Digital Bundle. The protected bundle download is released after your payment is verified.",
   robots: { index: false, follow: false },
 };
 
-export default function EscooterCheckoutLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function EscooterCheckoutLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

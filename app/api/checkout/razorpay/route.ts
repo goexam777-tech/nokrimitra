@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
 const OPD_BASE_PRICE = 199;
 const OPD_ADDON_ID = "emergency-handbook";
@@ -10,15 +11,16 @@ export async function POST(req: Request) {
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     const isOpd = body.product === "opd";
-    const requestedAddons = Array.isArray(body.addons)
-      ? body.addons.map(String)
-      : [];
+    const isEscooter = body.product === ESCOOTER_CATALOG.product;
+    const requestedAddons = Array.isArray(body.addons) ? body.addons.map(String) : [];
     const unknownAddons = isOpd
       ? requestedAddons.filter((id: string) => id !== OPD_ADDON_ID)
-      : [];
+      : isEscooter
+        ? requestedAddons
+        : [];
 
     if (unknownAddons.length) {
-      return NextResponse.json({ error: "Invalid OPD add-on selected" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid add-on selected" }, { status: 400 });
     }
 
     const addons = isOpd
@@ -26,7 +28,9 @@ export async function POST(req: Request) {
       : [];
     const amount = isOpd
       ? OPD_BASE_PRICE + (addons.length ? OPD_ADDON_PRICE : 0)
-      : Number(body.amount || 99);
+      : isEscooter
+        ? ESCOOTER_CATALOG.price
+        : Number(body.amount || 99);
 
     if (!Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json({ error: "Invalid order amount" }, { status: 400 });
@@ -38,17 +42,48 @@ export async function POST(req: Request) {
       return NextResponse.json({ orderId: `order_mock_${Math.random().toString(36).substring(2, 11)}`, amount: amountInPaise, total: amount, addons, currency: "INR", mock: true });
     }
 
+    const notes = isOpd
+      ? { product: "opd", addons: addons.join(","), catalogVersion: "1" }
+      : isEscooter
+        ? {
+            product: ESCOOTER_CATALOG.product,
+            bundle: ESCOOTER_CATALOG.bundleId,
+            catalogVersion: ESCOOTER_CATALOG.catalogVersion,
+            // Recording the price here keeps verification correct even after
+            // the catalogue price changes later.
+            price: String(ESCOOTER_CATALOG.price),
+          }
+        : undefined;
+
     const response = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64") },
-      body: JSON.stringify({ amount: amountInPaise, currency: "INR", receipt: `rcpt_${Date.now()}`, ...(isOpd ? { notes: { product: "opd", addons: addons.join(","), catalogVersion: "1" } } : {}) }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+      },
+      body: JSON.stringify({
+        amount: amountInPaise,
+        currency: "INR",
+        receipt: `rcpt_${Date.now()}`,
+        ...(notes ? { notes } : {}),
+      }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error?.description || "Razorpay API error");
 
-    return NextResponse.json({ orderId: data.id, amount: data.amount, total: amount, addons, currency: data.currency, mock: false });
+    return NextResponse.json({
+      orderId: data.id,
+      amount: data.amount,
+      total: amount,
+      addons,
+      currency: data.currency,
+      mock: false,
+    });
   } catch (error: unknown) {
     console.error("Razorpay order API error:", error);
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Failed to create order" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Failed to create order" },
+      { status: 500 }
+    );
   }
 }
