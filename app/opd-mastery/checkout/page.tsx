@@ -12,7 +12,6 @@ import {
   Clock,
   Download,
   FileText,
-  Infinity as InfinityIcon,
   Lock,
   Mail,
   Smartphone,
@@ -23,6 +22,8 @@ import {
 
 import opdHero from "@/public/opd.jpg";
 import razorpayLogo from "@/public/checkoutrazorpay.png";
+import trustBadges from "@/public/trust.webp";
+import reviewerRohit from "@/public/scdr1.webp";
 import styles from "./checkout.module.css";
 
 const PRICE = 199;
@@ -66,7 +67,8 @@ export default function OpdCheckout() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [addonSelected, setAddonSelected] = useState(true);
+  // Opt-in by choice: the buyer ticks the add-on when they want it.
+  const [addonSelected, setAddonSelected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const total = PRICE + (addonSelected ? ADDON_PRICE : 0);
@@ -76,13 +78,15 @@ export default function OpdCheckout() {
       fbq?: (...a: unknown[]) => void;
       gtag?: (...a: unknown[]) => void;
     };
+    // Checkout starts with the main product only, so the reported value must
+    // not include the optional add-on.
     w.fbq?.("track", "InitiateCheckout", {
-      value: PRICE + ADDON_PRICE,
+      value: PRICE,
       currency: "INR",
       content_name: PRODUCT_NAME,
     });
     w.gtag?.("event", "begin_checkout", {
-      value: PRICE + ADDON_PRICE,
+      value: PRICE,
       currency: "INR",
       items: [{ item_name: PRODUCT_NAME, price: PRICE }],
     });
@@ -462,29 +466,62 @@ export default function OpdCheckout() {
                     </>
                   )}
                 </button>
+
+                <Image
+                  src={trustBadges}
+                  alt="Secure checkout, privacy protected and satisfaction guaranteed"
+                  className={styles.trustBadges}
+                  sizes="(max-width: 640px) 90vw, 420px"
+                />
               </form>
 
               <div className={styles.assuranceGrid}>
                 <div className={styles.assuranceItem}>
-                  <Download size={16} /> Instant PDF Access
+                  <Lock size={16} /> Payment secured by Razorpay
                 </div>
                 <div className={styles.assuranceItem}>
-                  <Mail size={16} /> Download Link by Email
+                  <Download size={16} /> Download right after payment
                 </div>
                 <div className={styles.assuranceItem}>
-                  <Smartphone size={16} /> Mobile & Tablet Ready
+                  <Mail size={16} /> Same link sent to your email
                 </div>
                 <div className={styles.assuranceItem}>
-                  <InfinityIcon size={16} /> Lifetime Download
+                  <Smartphone size={16} /> Opens on mobile, tablet &amp; laptop
                 </div>
               </div>
 
               <nav className={styles.legalNav} aria-label="Legal links">
                 <a href="/opd-mastery/privacy-policy">Privacy Policy</a>
                 <a href="/opd-mastery/refund-policy">Refund Policy</a>
-                <a href="/opd-mastery/terms">Terms & Conditions</a>
+                <a href="/opd-mastery/terms">Terms &amp; Conditions</a>
                 <a href="/opd-mastery/disclaimer">Disclaimer</a>
               </nav>
+
+              <figure className={styles.miniQuote}>
+                <div className={styles.miniStars} aria-label="Rated 5 out of 5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={13} fill="#f59e0b" stroke="none" />
+                  ))}
+                </div>
+                <blockquote>
+                  Downloaded this e-book before starting my first emergency OPD
+                  duty. The prescription examples, drug dosages, and red flags
+                  are explained very clearly. A very useful reference for every
+                  RMO.
+                </blockquote>
+                <figcaption>
+                  <Image
+                    src={reviewerRohit}
+                    alt="Dr. Rohit Sharma"
+                    className={styles.miniAvatar}
+                    sizes="34px"
+                  />
+                  <span>
+                    <strong>Dr. Rohit Sharma, MBBS</strong>
+                    <small>Resident Medical Officer</small>
+                  </span>
+                </figcaption>
+              </figure>
             </div>
           </div>
         </div>
