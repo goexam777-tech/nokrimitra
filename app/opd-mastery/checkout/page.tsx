@@ -5,19 +5,18 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   ArrowLeft,
-  ArrowRight,
-  Award,
+  BadgeCheck,
   Check,
   CheckCircle2,
   Clock,
   Download,
-  FileText,
   Lock,
   Mail,
+  RefreshCw,
+  ShieldCheck,
   Smartphone,
-  Sparkles,
   Star,
-  User,
+  Users,
 } from "lucide-react";
 
 import opdHero from "@/public/opd.jpg";
@@ -34,16 +33,19 @@ const PRODUCT_NAME = "OPD Mastery E-book (2026 Edition)";
 const PAYMENT_LABEL = "OPD Mastery E-book 2026";
 
 const included = [
-  "Comprehensive OPD Reference",
-  "Practical & Evidence-Based",
-  "Drug Dosages & Prescriptions",
+  "60+ Common OPD Cases",
+  "Ready-to-Use Prescriptions",
+  "Drug Choice, Dosage & Duration",
+  "Red Flags & Referral Criteria",
+  "Instant PDF + Email Delivery",
   "Lifetime Access",
 ];
 
-const highlights = [
-  { title: "60+ OPD Cases", desc: "Quick reference for frequently seen clinical cases" },
-  { title: "Ready Prescriptions", desc: "Drug choice, dosage and duration in one practical guide" },
-  { title: "Instant Access", desc: "Download immediately after successful payment" },
+const trustPoints = [
+  { icon: Lock, text: "Secured by Razorpay" },
+  { icon: Download, text: "Instant access after payment" },
+  { icon: Mail, text: "Link emailed to you" },
+  { icon: RefreshCw, text: "Support if any issue" },
 ];
 
 function loadRazorpay(): Promise<boolean> {
@@ -78,8 +80,6 @@ export default function OpdCheckout() {
       fbq?: (...a: unknown[]) => void;
       gtag?: (...a: unknown[]) => void;
     };
-    // Checkout starts with the main product only, so the reported value must
-    // not include the optional add-on.
     w.fbq?.("track", "InitiateCheckout", {
       value: PRICE,
       currency: "INR",
@@ -156,7 +156,8 @@ export default function OpdCheckout() {
       }
 
       const ok = await loadRazorpay();
-      if (!ok) throw new Error("Could not load the secure payment window. Please retry.");
+      if (!ok)
+        throw new Error("Could not load the secure payment window. Please retry.");
 
       const rzp = new (
         window as unknown as {
@@ -182,7 +183,7 @@ export default function OpdCheckout() {
             razorpay_signature: r.razorpay_signature,
           }),
         prefill: { name, email },
-        theme: { color: "#136fd1" },
+        theme: { color: "#1689ef" },
         modal: { ondismiss: () => setLoading(false) },
       });
       rzp.open();
@@ -198,121 +199,116 @@ export default function OpdCheckout() {
 
   return (
     <div className={styles.page}>
-      {/* Top Header */}
       <header className={styles.topBar}>
         <div className={styles.topBarInner}>
           <button type="button" className={styles.backBtn} onClick={handleBack}>
-            <ArrowLeft size={16} /> Back to Overview
+            <ArrowLeft size={16} /> Back
           </button>
-
-          <div className={styles.brandWrap}>
-            <span className={styles.brand}>
-              Nokri<span>Mitra</span>
-            </span>
-            <span className={styles.medicalBadge}>
-              <Award size={12} /> Clinical Guide
-            </span>
-          </div>
-
-          <div className={styles.secureTag}>
+          <span className={styles.secureTag}>
             <Lock size={13} /> Secure checkout
-          </div>
+          </span>
         </div>
       </header>
 
-      {/* Main Content Area */}
       <main className={styles.wrap}>
+        <div className={styles.intro}>
+          <span className={styles.edition}>OPD Mastery · 2026 Edition</span>
+          <h1>
+            You&apos;re one step away from your <span>OPD Mastery</span> e-book
+          </h1>
+          <p className={styles.introSub}>
+            Enter your details, pay securely, and download instantly.
+          </p>
+          <div className={styles.socialProof}>
+            <span className={styles.stars}>
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={15} fill="#ffb020" stroke="none" />
+              ))}
+              <b>4.9/5</b>
+            </span>
+            <span className={styles.proofDot} />
+            <span className={styles.proofUsers}>
+              <Users size={14} /> Trusted by 800+ doctors &amp; students
+            </span>
+          </div>
+        </div>
+
         <div className={styles.grid}>
-          {/* Left Column: Product Info & Social Proof */}
+          {/* Left: product + trust */}
           <div className={styles.productColumn}>
             <div className={styles.productCard}>
-              <div className={styles.editionPill}>
-                <Sparkles size={13} /> OPD Mastery · 2026 Edition
+              <div className={styles.coverContainer}>
+                <Image
+                  src={opdHero}
+                  alt="OPD Mastery e-book cover"
+                  fill
+                  priority
+                  className={styles.coverImg}
+                />
               </div>
-              <h1 className={styles.productTitle}>Complete OPD Guide E-Book</h1>
-              <p className={styles.productSub}>
-                Master Common OPD Cases with Confidence.
-              </p>
-
-              <div className={styles.ratingBar}>
-                <div className={styles.stars}>
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={15} fill="#f59e0b" stroke="none" />
-                  ))}
-                </div>
-                <span className={styles.ratingText}>4.9/5.0</span>
-                <span className={styles.ratingSub}>
-                  (Trusted by 4,520+ Doctors & Practitioners)
+              <div className={styles.productInfo}>
+                <strong className={styles.productName}>
+                  OPD Mastery E-book
+                </strong>
+                <span className={styles.productMeta}>
+                  Digital PDF · 2026 Edition
                 </span>
-              </div>
-
-              {/* Book Cover + High-level highlights */}
-              <div className={styles.visualRow}>
-                <div className={styles.coverContainer}>
-                  <Image
-                    src={opdHero}
-                    alt="OPD Mastery Book Cover"
-                    fill
-                    priority
-                    className={styles.coverImg}
-                  />
-                </div>
-                <div className={styles.highlightsList}>
-                  <strong className={styles.mobileProductTitle}>
-                    OPD Mastery E-book
-                  </strong>
-                  {highlights.map((h, idx) => (
-                    <div key={idx} className={styles.highlightItem}>
-                      <CheckCircle2 size={18} className={styles.highlightIcon} />
-                      <div>
-                        <strong>{h.title}:</strong> {h.desc}
-                      </div>
-                    </div>
-                  ))}
+                <div className={styles.miniPrice}>
+                  <s>₹{OLD_PRICE}</s>
+                  <b>₹{PRICE}</b>
                 </div>
               </div>
+            </div>
 
-              <div className={styles.divider} />
+            <ul className={styles.includedGrid}>
+              {included.map((item) => (
+                <li key={item}>
+                  <CheckCircle2 size={17} /> {item}
+                </li>
+              ))}
+            </ul>
 
-              <h2 className={styles.includedHeader}>What You Get Instantly</h2>
-              <ul className={styles.includedGrid}>
-                {included.map((item) => (
-                  <li key={item}>
-                    <Check size={16} strokeWidth={3} /> {item}
-                  </li>
+            <figure className={styles.quoteCard}>
+              <div className={styles.quoteStars} aria-label="Rated 5 out of 5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={14} fill="#ffb020" stroke="none" />
                 ))}
-              </ul>
-            </div>
-
-            {/* Testimonial Quote */}
-            <div className={styles.quoteCard}>
-              <p className={styles.quoteText}>
-                &ldquo;Downloaded this e-book right before my first emergency OPD duty. Prescriptions, drug dosages, and red flags are explained so clearly. A must-have for every RMO!&rdquo;
-              </p>
-              <div className={styles.quoteAuthor}>
-                <div className={styles.avatar}>DR</div>
-                <div className={styles.authorDetails}>
-                  <span className={styles.authorName}>Dr. Rohit Sharma, MBBS</span>
-                  <span className={styles.authorMeta}>Resident Medical Officer · Verified Buyer</span>
-                </div>
               </div>
-            </div>
+              <blockquote>
+                Downloaded this e-book before starting my first emergency OPD
+                duty. The prescription examples, drug dosages, and red flags are
+                explained very clearly. A very useful reference for every RMO.
+              </blockquote>
+              <figcaption>
+                <Image
+                  src={reviewerRohit}
+                  alt="Dr. Rohit Sharma"
+                  className={styles.quoteAvatar}
+                  sizes="42px"
+                />
+                <span>
+                  <strong>Dr. Rohit Sharma, MBBS</strong>
+                  <small>Resident Medical Officer</small>
+                </span>
+              </figcaption>
+            </figure>
           </div>
 
-          {/* Right Column: High Converting Form */}
+          {/* Right: form */}
           <div className={styles.formColumn}>
             <div className={styles.formCard}>
               <div className={styles.formHeader}>
                 <span className={styles.discountBadge}>
-                  🔥 Limited-Time Launch Price
+                  🔥 Limited-time launch price
                 </span>
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
                   <span className={styles.priceCurrent}>₹{PRICE}</span>
+                  <span className={styles.priceSave}>Save 85%</span>
                 </div>
-                <h2 className={styles.formHeaderTitle}>Complete Your Secure Order</h2>
+                <h2 className={styles.formHeaderTitle}>Complete your order</h2>
                 <p className={styles.formHeaderSub}>
-                  Instant access — download in seconds after checkout
+                  Instant download in seconds after checkout
                 </p>
               </div>
 
@@ -324,94 +320,71 @@ export default function OpdCheckout() {
                 )}
 
                 <div className={styles.field}>
-                  <label htmlFor="opd-name">Full Name (Dr. / Mr. / Ms.)</label>
-                  <div className={styles.inputWrap}>
-                    <User size={18} className={styles.inputIcon} />
-                    <input
-                      id="opd-name"
-                      type="text"
-                      autoComplete="name"
-                      placeholder="First Name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      disabled={loading}
-                      required
-                    />
-                  </div>
+                  <label htmlFor="opd-name">Full name</label>
+                  <input
+                    id="opd-name"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="e.g. Dr. Rahul Sharma"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
                 </div>
 
                 <div className={styles.field}>
-                  <label htmlFor="opd-email">Email Address</label>
-                  <div className={styles.inputWrap}>
-                    <Mail size={18} className={styles.inputIcon} />
-                    <input
-                      id="opd-email"
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      placeholder="Email ID"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={loading}
-                      required
-                    />
-                  </div>
+                  <label htmlFor="opd-email">Email address</label>
+                  <input
+                    id="opd-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
                   <span className={styles.fieldHelp}>
-                    PDF download link will be sent directly to this email.
+                    <Mail size={13} /> Your download link is sent here.
                   </span>
                 </div>
 
                 <div className={styles.upsell}>
-                  <div className={styles.upsellTop}>
-                    <label
-                      className={styles.upsellToggle}
-                      htmlFor="emergency-handbook-addon"
-                    >
-                      <input
-                        id="emergency-handbook-addon"
-                        type="checkbox"
-                        checked={addonSelected}
-                        onChange={(e) => setAddonSelected(e.target.checked)}
-                        disabled={loading}
-                      />
-                      <span className={styles.upsellCheck} aria-hidden="true">
-                        <Check size={15} strokeWidth={3} />
-                      </span>
-                      <span className={styles.upsellYes}>Yes! I Want this!</span>
-                    </label>
-                    <span className={styles.upsellPrice}>
-                      <s>₹499</s><b>₹{ADDON_PRICE}</b>
+                  <label
+                    className={styles.upsellToggle}
+                    htmlFor="emergency-handbook-addon"
+                  >
+                    <input
+                      id="emergency-handbook-addon"
+                      type="checkbox"
+                      checked={addonSelected}
+                      onChange={(e) => setAddonSelected(e.target.checked)}
+                      disabled={loading}
+                    />
+                    <span className={styles.upsellCheck} aria-hidden="true">
+                      <Check size={15} strokeWidth={3} />
                     </span>
-                  </div>
-
+                    <span className={styles.upsellYes}>Yes! I Want this!</span>
+                  </label>
                   <div className={styles.upsellBody}>
-                    <span className={styles.upsellKicker}>
-                      Special One Time Offer, Regularly ₹499!
-                    </span>
-                    <strong>🚑 Emergency Medicine Handbook — Only ₹{ADDON_PRICE}</strong>
-                    <p>Be prepared for every emergency with this practical clinical handbook.</p>
-                    <ul>
-                      <li><Check size={13} /> <b>60+ emergency protocols</b> in one PDF</li>
-                      <li><Check size={13} /> Covers medicine, trauma, obstetrics &amp; paediatrics</li>
-                      <li><Check size={13} /> <b>6-step management format</b> for quick decisions</li>
-                      <li><Check size={13} /> First 30 seconds &amp; first 5 minutes management</li>
-                      <li><Check size={13} /> Exact medicines, treatment &amp; admission criteria</li>
-                      <li><Check size={13} /> Critical red flags you should never miss</li>
-                      <li><Check size={13} /> For MBBS students, interns, doctors &amp; nurses</li>
+                    <strong>🚑 Emergency Medicine Handbook — ₹{ADDON_PRICE}</strong>
+                    <ul className={styles.upsellList}>
+                      <li>60+ Emergency Protocols</li>
+                      <li>Medicine • Trauma • Obstetrics • Paediatrics</li>
+                      <li>6-Step Management + Critical Red Flags</li>
+                      <li>Essential Treatment &amp; Admission Criteria</li>
+                      <li>📥 Instant PDF Access</li>
                     </ul>
-                    <small>📥 <b>Instant PDF access after payment</b></small>
-                    <p className={styles.upsellGift}>
-                      🎁 Add this exclusive handbook today for just ₹{ADDON_PRICE}!
-                    </p>
-                    <p className={styles.upsellLimit}>
-                      <b>LIMITED OFFER:</b> Available only with this order.
-                    </p>
                   </div>
                 </div>
 
                 <div className={styles.summaryHead}>
-                  <span>Item</span><span>Price</span>
+                  <span>Item</span>
+                  <span>Price</span>
                 </div>
+
                 <div className={styles.pricingChoice}>
                   <span className={styles.radioDot} aria-hidden="true" />
                   <span className={styles.pricingChoiceCopy}>
@@ -419,14 +392,16 @@ export default function OpdCheckout() {
                     <small>One-time payment</small>
                   </span>
                   <span className={styles.pricingChoicePrice}>
-                    <strong><i>INR</i> {PRICE}</strong>
+                    <strong>
+                      <i>INR</i> {total}
+                    </strong>
                     <small>one-time</small>
                   </span>
                 </div>
 
                 <div className={styles.priceBreakdown}>
                   <div className={styles.priceRow}>
-                    <span>OPD Guide</span>
+                    <span>OPD Mastery E-book</span>
                     <span>INR {PRICE}</span>
                   </div>
                   {addonSelected && (
@@ -439,89 +414,73 @@ export default function OpdCheckout() {
 
                 <div className={styles.orderTotal}>
                   <span>TOTAL</span>
-                  <strong><i>INR</i> {total}.00</strong>
+                  <strong>
+                    <i>INR</i> {total}.00
+                  </strong>
                 </div>
 
-                <div className={styles.paymentMethods}>
-                  <span className={styles.paymentLabel}>Pay via</span>
-                  <span className={styles.payVia}>
-                    <i aria-hidden="true" /> Razorpay
-                  </span>
-                  <div className={styles.paymentIcons}>
-                    <Image
-                      src={razorpayLogo}
-                      alt="Razorpay secure payments"
-                      className={styles.razorpayLogo}
-                      sizes="(max-width: 640px) 90vw, 410px"
-                    />
-                  </div>
-                </div>
-
-                <button type="submit" className={styles.payBtn} disabled={loading}>
+                <button
+                  type="submit"
+                  className={styles.payBtn}
+                  disabled={loading}
+                >
                   {loading ? (
-                    "Initiating Payment..."
+                    "Initiating payment…"
                   ) : (
                     <>
-                      Complete Order <ArrowRight size={18} />
+                      <Lock size={17} />
+                      <span>Pay ₹{total} &nbsp;&amp;&nbsp; Download</span>
                     </>
                   )}
                 </button>
 
+                <p className={styles.payNote}>
+                  <ShieldCheck size={14} /> Card, UPI &amp; net-banking details
+                  are handled securely by Razorpay — never stored by us.
+                </p>
+
                 <Image
-                  src={trustBadges}
-                  alt="Secure checkout, privacy protected and satisfaction guaranteed"
-                  className={styles.trustBadges}
-                  sizes="(max-width: 640px) 90vw, 420px"
+                  src={razorpayLogo}
+                  alt="Secured by Razorpay"
+                  className={styles.razorpayLogo}
+                  sizes="(max-width: 640px) 90vw, 380px"
                 />
               </form>
 
-              <div className={styles.assuranceGrid}>
-                <div className={styles.assuranceItem}>
-                  <Lock size={16} /> Payment secured by Razorpay
-                </div>
-                <div className={styles.assuranceItem}>
-                  <Download size={16} /> Download right after payment
-                </div>
-                <div className={styles.assuranceItem}>
-                  <Mail size={16} /> Same link sent to your email
-                </div>
-                <div className={styles.assuranceItem}>
-                  <Smartphone size={16} /> Opens on mobile, tablet &amp; laptop
-                </div>
+              <ul className={styles.trustStrip}>
+                {trustPoints.map(({ icon: Icon, text }) => (
+                  <li key={text}>
+                    <Icon size={15} /> {text}
+                  </li>
+                ))}
+              </ul>
+
+              <Image
+                src={trustBadges}
+                alt="Secure checkout, privacy protected and satisfaction guaranteed"
+                className={styles.trustBadges}
+                sizes="(max-width: 640px) 90vw, 380px"
+              />
+
+              <div className={styles.guarantee}>
+                <BadgeCheck size={20} />
+                <p>
+                  <strong>Instant delivery guarantee.</strong> Your download
+                  appears right after payment and is emailed to you. Any problem?
+                  Write to{" "}
+                  <a href="mailto:support@nokrimitra.in">
+                    support@nokrimitra.in
+                  </a>
+                  .
+                </p>
               </div>
 
               <nav className={styles.legalNav} aria-label="Legal links">
-                <a href="/opd-mastery/privacy-policy">Privacy Policy</a>
-                <a href="/opd-mastery/refund-policy">Refund Policy</a>
-                <a href="/opd-mastery/terms">Terms &amp; Conditions</a>
+                <a href="/opd-mastery/privacy-policy">Privacy</a>
+                <a href="/opd-mastery/refund-policy">Refund</a>
+                <a href="/opd-mastery/terms">Terms</a>
                 <a href="/opd-mastery/disclaimer">Disclaimer</a>
               </nav>
-
-              <figure className={styles.miniQuote}>
-                <div className={styles.miniStars} aria-label="Rated 5 out of 5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={13} fill="#f59e0b" stroke="none" />
-                  ))}
-                </div>
-                <blockquote>
-                  Downloaded this e-book before starting my first emergency OPD
-                  duty. The prescription examples, drug dosages, and red flags
-                  are explained very clearly. A very useful reference for every
-                  RMO.
-                </blockquote>
-                <figcaption>
-                  <Image
-                    src={reviewerRohit}
-                    alt="Dr. Rohit Sharma"
-                    className={styles.miniAvatar}
-                    sizes="34px"
-                  />
-                  <span>
-                    <strong>Dr. Rohit Sharma, MBBS</strong>
-                    <small>Resident Medical Officer</small>
-                  </span>
-                </figcaption>
-              </figure>
             </div>
           </div>
         </div>

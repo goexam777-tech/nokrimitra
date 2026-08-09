@@ -1,0 +1,31 @@
+import type { Metadata } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-opd",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-opd-display",
+});
+
+export const metadata: Metadata = {
+  title: "Checkout | OPD Mastery E-book 2026 | NokriMitra",
+  description:
+    "Complete your purchase of the OPD Mastery e-book (2026 Edition). Instant PDF download after payment.",
+  robots: { index: false, follow: true },
+};
+
+export default function OpdCheckoutLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={`${inter.variable} ${playfair.variable}`}>{children}</div>
+  );
+}
