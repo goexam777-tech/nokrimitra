@@ -5,16 +5,21 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   ArrowLeft,
-  Check,
+  BadgeCheck,
   Download,
   FileText,
+  Globe,
+  Infinity as InfinityIcon,
   LockKeyhole,
   Mail,
   ShieldCheck,
+  Star,
+  Zap,
 } from "lucide-react";
 
 import coverImg from "@/public/evguide.webp";
-import razorpayImg from "@/public/razorpay-logo.webp";
+import trustImg from "@/public/trust.webp";
+import reviewerImg from "@/public/rahul-patel.webp";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 import styles from "./checkout.module.css";
 
@@ -147,9 +152,18 @@ export default function EscooterCheckout() {
           <section className={styles.product}>
             <p className={styles.eyebrow}>Your digital bundle</p>
             <h1>Master EV Scooter Repairing - All in One Bundle</h1>
-            <p className={styles.productLead}>
-              3 Practical Digital Books - Hindi &amp; English - Instant Download
-            </p>
+            <div className={styles.socialProof}>
+              <span className={styles.spStars} aria-hidden="true">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={16} fill="#f5a623" stroke="none" />
+                ))}
+              </span>
+              <span className={styles.spRating}>4.9/5</span>
+              <span className={styles.spDivider} aria-hidden="true" />
+              <span className={styles.spText}>
+                Trusted by <b>2000+</b> EV technicians &amp; students
+              </span>
+            </div>
             <div className={styles.productRow}>
               <Image className={styles.cover} src={coverImg} alt="Electric Scooter Repairing bundle" priority />
               <div>
@@ -158,13 +172,24 @@ export default function EscooterCheckout() {
               </div>
             </div>
             <ul className={styles.included}>
-              {ESCOOTER_CATALOG.books.map((book) => <li key={book.title}><Check size={16} />{book.title}</li>)}
+              {ESCOOTER_CATALOG.books.map((book, index) => (
+                <li key={book.title}>
+                  <span className={styles.bookNum}>{index + 1}</span>
+                  {book.title}
+                </li>
+              ))}
+            </ul>
+            <ul className={styles.chips}>
+              <li><Zap size={15} /> Instant download</li>
+              <li><Globe size={15} /> Hindi &amp; English</li>
+              <li><InfinityIcon size={15} /> Lifetime access</li>
+              <li><ShieldCheck size={15} /> Secure payment</li>
             </ul>
           </section>
 
           <section className={styles.checkoutCard} aria-labelledby="checkout-title">
             <p className={styles.step}>Complete your order</p>
-            <h2 id="checkout-title">Delivery details</h2>
+            <h2 id="checkout-title">Enter your details</h2>
             <p className={styles.cardLead}>
               Your bundle link will be sent to this email after payment.
             </p>
@@ -193,17 +218,48 @@ export default function EscooterCheckout() {
                 )}
               </button>
               <Image
-                className={styles.razorpay}
-                src={razorpayImg}
-                alt="Secured by Razorpay"
-                sizes="330px"
+                className={styles.trust}
+                src={trustImg}
+                alt="Trusted, secure checkout"
+                sizes="360px"
               />
               <p className={styles.note}><ShieldCheck size={14} /> Payment details are handled securely by Razorpay.</p>
             </form>
-            <p className={styles.deliveryNote}>
-              <Mail size={15} /> The download button appears on screen once your
-              payment is verified.
-            </p>
+            <div className={styles.steps}>
+              <p className={styles.stepsTitle}>What happens next</p>
+              <ol>
+                <li>
+                  <span className={styles.stepNum}><LockKeyhole size={15} /></span>
+                  <div>
+                    <strong>Pay securely</strong>
+                    <small>Complete your ₹{ESCOOTER_CATALOG.price} payment via Razorpay.</small>
+                  </div>
+                </li>
+                <li>
+                  <span className={styles.stepNum}><Mail size={15} /></span>
+                  <div>
+                    <strong>Get your email</strong>
+                    <small>Your download link is emailed instantly.</small>
+                  </div>
+                </li>
+                <li>
+                  <span className={styles.stepNum}><Download size={15} /></span>
+                  <div>
+                    <strong>Download &amp; start</strong>
+                    <small>Open all 3 books right away, on any device.</small>
+                  </div>
+                </li>
+              </ol>
+            </div>
+            <div className={styles.guarantee}>
+              <BadgeCheck size={20} />
+              <p>
+                <strong>Instant delivery guarantee.</strong> Your download
+                appears right after payment and is emailed to you. Any problem?
+                Write to{" "}
+                <a href="mailto:support@nokrimitra.in">support@nokrimitra.in</a>.
+              </p>
+            </div>
             <nav className={styles.legal} aria-label="Legal links">
               <a href="/electric-scooter-repairing/privacy-policy">Privacy</a>
               <a href="/electric-scooter-repairing/refund-policy">Refund</a>
@@ -212,6 +268,28 @@ export default function EscooterCheckout() {
             </nav>
           </section>
         </div>
+
+        <figure className={styles.review}>
+          <span className={styles.reviewStars} aria-label="Rated 5 out of 5">
+            ★★★★★
+          </span>
+          <blockquote>
+            Electric scooters were coming into my shop with dead batteries and
+            motor grinding issues. After reading this guide I traced a BMS fault
+            in 10 minutes. Extremely useful handbook.
+          </blockquote>
+          <figcaption>
+            <Image
+              className={styles.reviewAvatar}
+              src={reviewerImg}
+              alt="Ramesh Kumar"
+            />
+            <span>
+              <strong>Ramesh Kumar</strong>
+              <small>EV Technician, Lucknow</small>
+            </span>
+          </figcaption>
+        </figure>
       </main>
     </div>
   );
