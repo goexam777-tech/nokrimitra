@@ -36,6 +36,21 @@ export default function AboutPage() {
           +91 91048 26422
         </a>
       </p>
+      <h2>વ્યવસાયિક વિગતો (Business Details)</h2>
+      <ul>
+        <li>
+          <strong>Legal Name:</strong> ROHITKUMAR RAMESHBHAI VADAVIYA
+        </li>
+        <li>
+          <strong>Email:</strong>{" "}
+          <a href="mailto:vadaviyarohit785@gmail.com">
+            vadaviyarohit785@gmail.com
+          </a>
+        </li>
+        <li>
+          <strong>Phone:</strong> <a href="tel:+919104826422">+91 91048 26422</a>
+        </li>
+      </ul>
     </LegalPage>
   );
 }
