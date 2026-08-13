@@ -4,10 +4,13 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import styles from "./ty.module.css";
 
+type PsyDownload = { label: string; path: string };
+
 function Content() {
   const sp = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [downloads, setDownloads] = useState<PsyDownload[]>([]);
   const done = useRef(false);
 
   const orderId =
@@ -16,6 +19,7 @@ function Content() {
   const productName = sp.get("productName") || "Psychology Notes";
   const amountPaid = sp.get("amountPaid") || "149";
   const email = sp.get("email") || "";
+  const addons = sp.get("addons") || "";
 
   useEffect(() => {
     if (done.current) return;
@@ -23,22 +27,74 @@ function Content() {
 
     const isMock = sp.get("mock") === "true" || orderId.startsWith("order_mock_");
     const signature = sp.get("razorpay_signature") || "";
+    const cacheKey = orderId && orderId !== "N/A" ? `psy_order_${orderId}` : "";
 
-    const track = () => {
-      if (typeof window !== "undefined" && (window as unknown as { fbq?: (...a: unknown[]) => void }).fbq) {
-        (window as unknown as { fbq: (...a: unknown[]) => void }).fbq("track", "Purchase", {
-          value: Number(amountPaid),
-          currency: "INR",
-        });
+    const track = (value: number, items: PsyDownload[]) => {
+      const w = window as unknown as {
+        fbq?: (...a: unknown[]) => void;
+        gtag?: (...a: unknown[]) => void;
+      };
+      w.fbq?.("track", "Purchase", { value, currency: "INR" });
+      w.gtag?.("event", "purchase", {
+        transaction_id: orderId,
+        value,
+        currency: "INR",
+        items: items.length
+          ? items.map((item) => ({ item_name: item.label }))
+          : [{ item_name: productName, price: value }],
+      });
+    };
+
+    // A page refresh keeps the same query string. Without this guard the verify
+    // call would run again, re-sending the delivery email and double-counting
+    // the Purchase conversion. So we remember a verified order for this browser
+    // and simply restore it instead of verifying a second time.
+    if (cacheKey) {
+      try {
+        const cached = sessionStorage.getItem(cacheKey);
+        if (cached) {
+          const saved = JSON.parse(cached) as { downloads?: PsyDownload[] };
+          setDownloads(saved.downloads?.length ? saved.downloads : []);
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Storage unavailable/blocked — fall through and verify normally.
+      }
+    }
+
+    const remember = (dl: PsyDownload[]) => {
+      if (!cacheKey) return;
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify({ downloads: dl }));
+      } catch {
+        // Storage is optional; verification already succeeded.
       }
     };
 
+    const fallbackDownloads = (includeMockAddon = false): PsyDownload[] => [
+      { label: "Psychology Notes", path: "/psychology-notes/go" },
+      ...(includeMockAddon &&
+      addons.split(",").map((a) => a.trim()).includes("therapeutic-interventions")
+        ? [
+            {
+              label: "800 Therapeutic Interventions",
+              path: "/psychology-notes/go?item=therapeutic-interventions",
+            },
+          ]
+        : []),
+    ];
+
     if (isMock) {
+      const dl = fallbackDownloads(true);
+      setDownloads(dl);
       setLoading(false);
-      track();
+      remember(dl);
+      track(Number(amountPaid), dl);
       return;
     }
     if (!paymentId || !signature) {
+      setError("Payment verification details are missing. Please use the link from your completed checkout or contact support.");
       setLoading(false);
       return;
     }
@@ -61,14 +117,22 @@ function Content() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Verification failed.");
+        const dl =
+          Array.isArray(data.downloads) && data.downloads.length
+            ? (data.downloads as PsyDownload[])
+            : fallbackDownloads();
+        setDownloads(dl);
         setLoading(false);
-        track();
+        remember(dl);
+        if (!data.alreadyFulfilled) {
+          track(Number(data.amountPaid ?? amountPaid), dl);
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Payment verification failed.");
         setLoading(false);
       }
     })();
-  }, [sp, orderId, paymentId, amountPaid, email, productName]);
+  }, [sp, orderId, paymentId, amountPaid, email, productName, addons]);
 
   if (loading) {
     return (
@@ -96,16 +160,14 @@ function Content() {
               <h1 className={styles.title} style={{ color: "#c53030" }}>Verification Failed</h1>
               <p className={styles.subtitle}>{error}</p>
               <p className={styles.emailNote}>
-                If money was deducted, don&apos;t worry — send us your Order ID
-                (<b>{orderId}</b>) on WhatsApp and we&apos;ll sort it out.
+                If money was deducted, please don&apos;t worry. Email us your
+                Order ID (<b>{orderId}</b>) and we&apos;ll sort it out quickly.
               </p>
               <a
-                className={styles.wa}
-                href={`https://wa.me/919104826422?text=Psychology%20Notes%20payment%20verification%20failed.%20Order%20ID:%20${orderId}`}
-                target="_blank"
-                rel="noopener noreferrer"
+                className={styles.support}
+                href={`mailto:goexam777@gmail.com?subject=Psychology%20Notes%20payment%20verification%20failed&body=Order%20ID:%20${orderId}`}
               >
-                💬 WhatsApp Support
+                ✉️ Email Support
               </a>
             </>
           ) : (
@@ -114,20 +176,32 @@ function Content() {
                 <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
               </div>
               <h1 className={styles.title}>Payment Successful!</h1>
-              <p className={styles.subtitle}>Thank you for your purchase</p>
+              <p className={styles.subtitle}>
+                {downloads.length > 1
+                  ? "Both of your downloads are ready below."
+                  : "Your Psychology Notes are ready to download."}
+              </p>
 
-              <a
-                className={styles.downloadBtn}
-                href="/psychology-notes/go"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                ⬇ Download Now
-              </a>
+              <div className={styles.downloadList}>
+                {(downloads.length
+                  ? downloads
+                  : [{ label: "Psychology Notes", path: "/psychology-notes/go" }]
+                ).map((item) => (
+                  <a
+                    key={item.path}
+                    className={styles.downloadBtn}
+                    href={item.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    ⬇ Download {downloads.length > 1 ? item.label : "Now"}
+                  </a>
+                ))}
+              </div>
 
               {email && (
                 <p className={styles.emailNote}>
-                  📩 The download link has also been sent to your email <strong>{email}</strong>.
+                  📩 We&apos;ve also emailed the download link to <strong>{email}</strong>.
                 </p>
               )}
 
@@ -153,16 +227,15 @@ function Content() {
               </div>
 
               <p className={styles.emailNote}>
-                Tip: If you don&apos;t see the email, check your Spam or Promotions folder.
+                Can&apos;t find the email? Please check your Spam or Promotions
+                folder. Still need help? We&apos;re here for you.
               </p>
 
               <a
-                className={styles.wa}
-                href="https://wa.me/919104826422?text=I%20need%20help%20with%20my%20Psychology%20Notes%20download."
-                target="_blank"
-                rel="noopener noreferrer"
+                className={styles.support}
+                href="mailto:goexam777@gmail.com?subject=Help%20with%20my%20Psychology%20Notes%20download"
               >
-                💬 WhatsApp Support
+                ✉️ Email Support
               </a>
             </>
           )}

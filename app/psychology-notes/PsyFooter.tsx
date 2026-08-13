@@ -5,7 +5,7 @@ const SUPPORT_EMAIL = "goexam777@gmail.com";
 export default function PsyFooter() {
   return (
     <footer className={styles.footer}>
-      <div className={styles.footerBrand}>NokriMitra</div>
+      <div className={styles.footerBrand}>Psychology Notes</div>
       <nav className={styles.footerLinks}>
         <a href="/psychology-notes/privacy-policy">Privacy Policy</a>
         <a href="/psychology-notes/refund-policy">Refund Policy</a>

@@ -1,41 +1,23 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import styles from "./psy.module.css";
 
-const START = 10 * 60; // 10 minutes in seconds
-const pad = (n: number) => String(n).padStart(2, "0");
-
+/**
+ * Sticky mobile purchase bar (no countdown timer).
+ * Named CountdownBar for backward-compatible imports.
+ */
 export default function CountdownBar() {
-  const [left, setLeft] = useState(START);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setLeft((s) => (s > 0 ? s - 1 : 0));
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const hh = Math.floor(left / 3600);
-  const mm = Math.floor((left % 3600) / 60);
-  const ss = left % 60;
-
   return (
     <div className={styles.bar}>
       <div className={styles.barInner}>
-        <div className={styles.barLeft}>
-          <span className={styles.barLabel}>Limited Time Offer</span>
-          <div className={styles.timer} aria-label="Offer countdown">
-            <span className={styles.timeBox}>{pad(hh)}</span>
-            <span className={styles.colon}>:</span>
-            <span className={styles.timeBox}>{pad(mm)}</span>
-            <span className={styles.colon}>:</span>
-            <span className={styles.timeBox}>{pad(ss)}</span>
-          </div>
+        <div className={styles.barPrice}>
+          <span className={styles.barNow}>₹149</span>
+          <span className={styles.barOld}>₹2,499</span>
+          <span className={styles.barOff}>90% OFF</span>
         </div>
 
         <a className={styles.barBtn} href="/psychology-notes/checkout">
-          BUY NOW
+          Get Instant Access
+          <ArrowRight size={18} aria-hidden="true" />
         </a>
       </div>
     </div>

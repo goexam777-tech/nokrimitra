@@ -2,7 +2,11 @@
   min-height: 100vh;
   background: #ffffff;
   color: #1f2933;
+  /* Room for the fixed sticky bar... */
   padding-bottom: 74px;
+  /* ...while cancelling the site-wide body padding-bottom so there is no blank
+     gap under the footer. */
+  margin-bottom: -76px;
 }
 
 /* Title (no background band) */
@@ -67,7 +71,7 @@
 @media (max-width: 860px) {
   .grid {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 18px;
   }
 }
 
@@ -80,6 +84,13 @@
   width: 100%;
   height: auto;
   max-width: 480px;
+}
+
+@media (max-width: 640px) {
+  .wrap { padding-top: 18px; }
+  .imageWrap { margin: -6px 0; }
+  /* The book PNG carries its own top/bottom whitespace, so trim it visually. */
+  .image { max-width: 300px; margin-block: -18px; }
 }
 
 /* Right info (no card box) */
@@ -470,7 +481,9 @@
   animation: marqueeScroll 30s linear infinite;
 }
 
-.track:hover {
+/* Pause while the user presses/holds (mouse or touch); resume on release. */
+.marquee { cursor: pointer; }
+.marquee:active .track {
   animation-play-state: paused;
 }
 
@@ -745,118 +758,92 @@
   color: #8b97ac;
 }
 
-/* Sticky countdown bar */
+/* Sticky purchase bar (no timer) */
 .bar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 60;
-  background: linear-gradient(135deg, #b5471c 0%, #8a3410 100%);
-  box-shadow: 0 -6px 22px rgba(138, 52, 16, 0.3);
+  border-top: 1px solid #eceef3;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -8px 24px rgba(17, 24, 39, 0.1);
 }
 
 .barInner {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 12px 20px;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
 }
 
-.barLeft {
+.barPrice {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 7px;
+  align-items: baseline;
+  gap: 8px;
+  line-height: 1;
 }
-
-.barLabel {
-  color: #ffe8d3;
-  font-size: 14px;
+.barNow {
+  color: #111827;
+  font-size: 26px;
   font-weight: 800;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  white-space: nowrap;
+  letter-spacing: -0.02em;
 }
-
-.timer {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex-shrink: 0;
+.barOld {
+  color: #9aa5b5;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: line-through;
 }
-
-.timeBox {
-  display: grid;
-  place-items: center;
-  min-width: 44px;
+.barOff {
   padding: 4px 8px;
-  background: #ffffff;
-  color: #8a3410;
-  font-size: 19px;
-  font-weight: 800;
-  border-radius: 8px;
-  font-variant-numeric: tabular-nums;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16), inset 0 -2px 0 rgba(0, 0, 0, 0.09);
-}
-
-.colon {
-  color: #ffd9a8;
-  font-size: 22px;
+  border-radius: 6px;
+  background: #e7f7ec;
+  color: #12813c;
+  font-size: 11.5px;
   font-weight: 800;
 }
 
 .barBtn {
-  flex-shrink: 0;
+  flex: 1;
+  max-width: 340px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 300px;
-  background: linear-gradient(135deg, #2fd968 0%, #16a34a 55%, #12813c 100%);
+  gap: 8px;
+  background: linear-gradient(135deg, #ef4b3c 0%, #d5321f 55%, #b5231a 100%);
   color: #ffffff;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
-  letter-spacing: 0.6px;
-  padding: 14px 56px;
+  letter-spacing: 0.2px;
+  min-height: 54px;
+  padding: 12px 24px;
   border-radius: 12px;
   white-space: nowrap;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.22);
-  box-shadow: 0 8px 20px rgba(18, 129, 60, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 20px rgba(181, 35, 26, 0.4);
   transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
 }
-
+.barBtn svg { flex: none; }
 .barBtn:hover {
   transform: translateY(-2px);
-  filter: brightness(1.05);
-  box-shadow: 0 12px 28px rgba(18, 129, 60, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  filter: brightness(1.04);
+  box-shadow: 0 12px 28px rgba(181, 35, 26, 0.5);
 }
+.barBtn:active { transform: translateY(0); }
 
 @media (max-width: 560px) {
-  .barBtn {
-    min-width: 0;
-  }
+  .barInner { padding: 9px 12px calc(9px + env(safe-area-inset-bottom)); gap: 10px; }
+  .barNow { font-size: 23px; }
+  .barOld { font-size: 13.5px; }
+  .barOff { font-size: 11px; padding: 3px 7px; }
+  .barBtn { font-size: 15.5px; min-height: 50px; padding: 11px 16px; }
 }
 
-@media (max-width: 560px) {
-  .barInner {
-    padding: 10px 14px;
-    gap: 12px;
-  }
-  .barLabel {
-    font-size: 13px;
-    letter-spacing: 0.8px;
-  }
-  .timeBox {
-    min-width: 40px;
-    font-size: 19px;
-  }
-  .barBtn {
-    font-size: 15px;
-    padding: 12px 22px;
-  }
+@media (max-width: 360px) {
+  .barOld { display: none; }
 }

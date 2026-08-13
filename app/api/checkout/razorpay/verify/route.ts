@@ -22,6 +22,11 @@ const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 const OPD_ADDON_NAME = "Emergency Medicine Handbook";
 
+const PSY_BASE_PRICE = 149;
+const PSY_ADDON_ID = "therapeutic-interventions";
+const PSY_ADDON_PRICE = 99;
+const PSY_ADDON_NAME = "800 Therapeutic Interventions";
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -70,6 +75,9 @@ export async function POST(req: Request) {
       const mockHasOpdAddon =
         product === "opd" &&
         String(addons || "").split(",").includes(OPD_ADDON_ID);
+      const mockHasPsyAddon =
+        product === "psychology" &&
+        String(addons || "").split(",").includes(PSY_ADDON_ID);
       const mockAddonToken =
         inMockMode && mockHasOpdAddon
           ? createDownloadToken("opd-emergency-handbook", razorpay_order_id)
@@ -77,15 +85,25 @@ export async function POST(req: Request) {
       const mockAmount =
         product === "opd"
           ? OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
-          : product === ESCOOTER_CATALOG.product
-            ? ESCOOTER_CATALOG.price
-            : Number(amountPaid || 0);
+          : product === "psychology"
+            ? PSY_BASE_PRICE + (mockHasPsyAddon ? PSY_ADDON_PRICE : 0)
+            : product === ESCOOTER_CATALOG.product
+              ? ESCOOTER_CATALOG.price
+              : Number(amountPaid || 0);
       const mockDownloads = [
         ...(mockTokenProduct === "opd" && mockToken
           ? [{ label: "OPD Mastery E-book", path: `${mockBase}?t=${mockToken}` }]
           : []),
         ...(mockAddonToken
           ? [{ label: OPD_ADDON_NAME, path: `/opd-mastery/go?item=${OPD_ADDON_ID}&t=${mockAddonToken}` }]
+          : []),
+        ...(product === "psychology"
+          ? [
+              { label: "Psychology Notes", path: "/psychology-notes/go" },
+              ...(mockHasPsyAddon
+                ? [{ label: PSY_ADDON_NAME, path: `/psychology-notes/go?item=${PSY_ADDON_ID}` }]
+                : []),
+            ]
           : []),
       ];
 
@@ -225,6 +243,81 @@ export async function POST(req: Request) {
       escooterAlreadyFulfilled = Boolean(escooterNotes.fulfilledAt);
     }
 
+    // Read the Psychology add-on from Razorpay itself. The browser's amount,
+    // product name, and query string are never trusted for fulfilment.
+    let verifiedPsyAddon = false;
+    let verifiedPsyAmount = PSY_BASE_PRICE;
+    let verifiedPsyEmail = String(email || "").trim().toLowerCase();
+    let verifiedPsyName = String(name || "there").trim() || "there";
+    let psyNotes: Record<string, string> = {};
+    let psyAlreadyFulfilled = false;
+    if (product === "psychology") {
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        return NextResponse.json(
+          { error: "Razorpay key ID not configured on server" },
+          { status: 500 }
+        );
+      }
+
+      const orderResponse = await fetch(
+        `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+        {
+          headers: {
+            Authorization:
+              "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+          },
+          cache: "no-store",
+        }
+      );
+      const order = await orderResponse.json();
+      if (!orderResponse.ok || order.currency !== "INR") {
+        return NextResponse.json(
+          { error: "Could not verify Psychology order details" },
+          { status: 400 }
+        );
+      }
+
+      psyNotes = (order.notes || {}) as Record<string, string>;
+      verifiedPsyEmail = String(
+        psyNotes.customerEmail || verifiedPsyEmail
+      ).trim().toLowerCase();
+      verifiedPsyName = String(
+        psyNotes.customerName || verifiedPsyName
+      ).trim() || "there";
+      const paidAmount = Number(order.amount) / 100;
+      if (psyNotes.product === "psychology") {
+        verifiedPsyAddon = String(psyNotes.addons || "")
+          .split(",")
+          .map((id: string) => id.trim())
+          .includes(PSY_ADDON_ID);
+        verifiedPsyAmount =
+          PSY_BASE_PRICE + (verifiedPsyAddon ? PSY_ADDON_PRICE : 0);
+      } else if (
+        !psyNotes.product &&
+        (paidAmount === PSY_BASE_PRICE ||
+          paidAmount === PSY_BASE_PRICE + PSY_ADDON_PRICE)
+      ) {
+        // Compatibility for orders created just before Psychology order notes
+        // were introduced. The paid Razorpay amount is still server-verified.
+        verifiedPsyAddon = paidAmount === PSY_BASE_PRICE + PSY_ADDON_PRICE;
+        verifiedPsyAmount = paidAmount;
+      } else {
+        return NextResponse.json(
+          { error: "Could not verify Psychology product details" },
+          { status: 400 }
+        );
+      }
+
+      if (Number(order.amount) !== verifiedPsyAmount * 100) {
+        return NextResponse.json(
+          { error: "Psychology order amount verification failed" },
+          { status: 400 }
+        );
+      }
+      psyAlreadyFulfilled = Boolean(psyNotes.fulfilledAt);
+    }
+
     // Prefer an explicitly configured public origin for links included in email.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
     const host = req.headers.get("host") || "localhost:3000";
@@ -238,6 +331,8 @@ export async function POST(req: Request) {
     const isMcq = product === "mcq";
     const isEscooter = product === "escooter";
     const isOpd = product === "opd";
+    const deliveryEmail = isPsychology ? verifiedPsyEmail : email;
+    const deliveryName = isPsychology ? verifiedPsyName : name;
 
     // Only buyers get a signed download link (issued after signature check).
     const escooterToken = isEscooter
@@ -265,9 +360,34 @@ export async function POST(req: Request) {
     const escooterDownloadUrl = `${appUrl}/electric-scooter-repairing/go${
       escooterToken ? `?t=${escooterToken}` : ""
     }`;
+    const psyToken = isPsychology
+      ? createDownloadToken("psychology", razorpay_order_id)
+      : null;
+    const psyAddonToken =
+      isPsychology && verifiedPsyAddon
+        ? createDownloadToken(
+            "psychology-therapeutic-interventions",
+            razorpay_order_id
+          )
+        : null;
+    const psyDownloadUrl = `${appUrl}/psychology-notes/go${
+      psyToken ? `?t=${psyToken}` : ""
+    }`;
+    const psyAddonDownloadUrl = `${appUrl}/psychology-notes/go?item=${PSY_ADDON_ID}${
+      psyAddonToken ? `&t=${psyAddonToken}` : ""
+    }`;
+
+    // Main notes are always included. The signed add-on URL is created only
+    // when Razorpay confirms the buyer paid the extra ₹99.
+    const psyDownloads = [
+      { label: "Psychology Notes", url: psyDownloadUrl },
+      ...(psyAddonToken
+        ? [{ label: PSY_ADDON_NAME, url: psyAddonDownloadUrl }]
+        : []),
+    ];
 
     const downloadUrl = isPsychology
-      ? `${appUrl}/psychology-notes/go`
+      ? psyDownloadUrl
       : isVastu
       ? `${appUrl}/vastu-plan-checkout/go`
       : isMcq
@@ -303,16 +423,20 @@ export async function POST(req: Request) {
     const emailFrom = process.env.EMAIL_FROM || "NokriMitra <onboarding@resend.dev>";
 
     let emailDelivered = false;
-    const skipDuplicateDelivery = isEscooter && escooterAlreadyFulfilled;
+    const skipDuplicateDelivery =
+      (isEscooter && escooterAlreadyFulfilled) ||
+      (isPsychology && psyAlreadyFulfilled);
 
     if (
       resendApiKey &&
       resendApiKey !== "your_resend_key_here" &&
-      email &&
+      deliveryEmail &&
       !skipDuplicateDelivery
     ) {
       try {
-        const psyProductName = productName || "Psychology Notes";
+        const psyProductName = verifiedPsyAddon
+          ? "Psychology Notes + 800 Therapeutic Interventions"
+          : "Psychology Notes";
         const vastuProductName =
           productName || "10k Vastu Floor Plan Editable Bundle";
         const gsrtcProductName = "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ";
@@ -330,11 +454,12 @@ export async function POST(req: Request) {
             })
           : isPsychology
           ? buildPsychologyEmail({
-              customerName: name || "there",
+              customerName: deliveryName || "there",
               productName: psyProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 149),
+              amount: verifiedPsyAmount,
               downloadUrl,
+              downloads: psyDownloads,
             })
           : isEscooter
           ? buildEscooterEmail({
@@ -372,11 +497,12 @@ export async function POST(req: Request) {
             })
           : isPsychology
           ? buildPsychologyEmailText({
-              customerName: name || "there",
+              customerName: deliveryName || "there",
               productName: psyProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 149),
+              amount: verifiedPsyAmount,
               downloadUrl,
+              downloads: psyDownloads,
             })
           : isEscooter
           ? buildEscooterEmailText({
@@ -421,9 +547,9 @@ export async function POST(req: Request) {
           },
           body: JSON.stringify({
             from: emailFrom,
-            to: [email],
+            to: [deliveryEmail],
             reply_to:
-              isPsychology || isVastu
+              isVastu
                 ? "goexam777@gmail.com"
                 : "support@nokrimitra.in",
             subject,
@@ -483,6 +609,40 @@ export async function POST(req: Request) {
       }
     }
 
+    if (isPsychology && !psyAlreadyFulfilled && emailDelivered) {
+      try {
+        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+        const stampResponse = await fetch(
+          `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+            },
+            body: JSON.stringify({
+              notes: {
+                ...psyNotes,
+                product: "psychology",
+                addons: verifiedPsyAddon ? PSY_ADDON_ID : "",
+                catalogVersion: psyNotes.catalogVersion || "1",
+                fulfilledAt: new Date().toISOString(),
+              },
+            }),
+          }
+        );
+        if (!stampResponse.ok) {
+          console.error(
+            "Could not mark Psychology order as fulfilled:",
+            await stampResponse.text()
+          );
+        }
+      } catch (stampErr) {
+        console.error("Could not mark Psychology order as fulfilled:", stampErr);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       verified: true,
@@ -514,6 +674,31 @@ export async function POST(req: Request) {
                   ]
                 : []),
             ],
+          }
+        : {}),
+      ...(isPsychology
+        ? {
+            amountPaid: verifiedPsyAmount,
+            downloadPath: `/psychology-notes/go${
+              psyToken ? `?t=${psyToken}` : ""
+            }`,
+            downloads: [
+              {
+                label: "Psychology Notes",
+                path: `/psychology-notes/go${
+                  psyToken ? `?t=${psyToken}` : ""
+                }`,
+              },
+              ...(psyAddonToken
+                ? [
+                    {
+                      label: PSY_ADDON_NAME,
+                      path: `/psychology-notes/go?item=${PSY_ADDON_ID}&t=${psyAddonToken}`,
+                    },
+                  ]
+                : []),
+            ],
+            alreadyFulfilled: psyAlreadyFulfilled,
           }
         : {}),
     });

@@ -1,9 +1,15 @@
+interface PsyDownload {
+  label: string;
+  url: string;
+}
+
 interface PsyEmailParams {
   customerName: string;
   productName: string;
   orderId: string;
   amount: number;
   downloadUrl: string;
+  downloads?: PsyDownload[];
   brandName?: string;
   supportEmail?: string;
 }
@@ -14,17 +20,25 @@ export function buildPsychologyEmailText({
   orderId,
   amount,
   downloadUrl,
+  downloads,
   brandName = "NokriMitra",
-  supportEmail = "goexam777@gmail.com",
+  supportEmail = "support@nokrimitra.in",
 }: PsyEmailParams): string {
+  const links = downloads?.length
+    ? downloads
+    : [{ label: productName, url: downloadUrl }];
+  const downloadLines = links
+    .map((item) => `${item.label}: ${item.url}`)
+    .join("\n");
+
   return `Payment Successful!
 
 Hi ${customerName || "there"},
 
 Thank you for purchasing ${productName}. Your payment was successful and your material is ready to download.
 
-Download your notes here:
-${downloadUrl}
+Download here:
+${downloadLines}
 
 Order details:
 - Order ID: ${orderId}
@@ -33,7 +47,7 @@ Order details:
 
 Tip: Please download and save your files safely on your phone or computer.
 
-For any help, reply to this email or contact ${supportEmail} / WhatsApp +91 91048 26422.
+For any help, reply to this email or contact ${supportEmail}.
 
 Happy learning!
 ${brandName} Team`;
@@ -45,12 +59,29 @@ export function buildPsychologyEmail({
   orderId,
   amount,
   downloadUrl,
+  downloads,
   brandName = "NokriMitra",
-  supportEmail = "goexam777@gmail.com",
+  supportEmail = "support@nokrimitra.in",
 }: PsyEmailParams): string {
   const navy = "#12213f";
   const navyDark = "#0b172f";
   const green = "#16a34a";
+
+  const links = downloads?.length
+    ? downloads
+    : [{ label: "Download Now", url: downloadUrl }];
+
+  const downloadButtons = links
+    .map((item, index) => {
+      const primary = index === 0;
+      const bg = primary ? green : "#ffffff";
+      const color = primary ? "#ffffff" : navy;
+      const border = primary ? green : "#cbd5e1";
+      const label =
+        links.length > 1 ? `Download ${item.label}` : "Download Now";
+      return `<a href="${item.url}" target="_blank" style="display:block;margin:0 0 10px 0;padding:14px 24px;border:1.5px solid ${border};border-radius:10px;background:${bg};color:${color};font-size:16px;font-weight:700;text-decoration:none;text-align:center;">${label}</a>`;
+    })
+    .join("");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -93,20 +124,20 @@ export function buildPsychologyEmail({
                 </tr>
               </table>
 
+              <p style="margin:0 0 10px;font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:${navy};">
+                Your downloads
+              </p>
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td align="center" style="padding:10px 0 14px 0;">
-                    <a href="${downloadUrl}" target="_blank"
-                       style="background-color:${green};color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:14px 36px;border-radius:8px;display:inline-block;">
-                      Download Now
-                    </a>
+                  <td style="padding:0 0 6px 0;">
+                    ${downloadButtons}
                   </td>
                 </tr>
               </table>
 
-              <p style="margin:16px 0 0 0;font-size:13px;color:#6b7280;text-align:center;">
-                If the button doesn't work, copy and paste this link:<br />
-                <a href="${downloadUrl}" style="color:${navy};word-break:break-all;">${downloadUrl}</a>
+              <p style="margin:12px 0 0 0;font-size:12.5px;color:#6b7280;text-align:center;line-height:1.6;">
+                ${links.length > 1 ? "Both purchased downloads are included above." : "Your purchased download is included above."}<br />
+                Keep this email safe. These links work later on any device.
               </p>
 
               <p style="margin:20px 0 0 0;font-size:12px;color:#757575;background-color:#f9fafb;border-radius:8px;padding:12px 14px;line-height:1.5;">
@@ -120,7 +151,7 @@ export function buildPsychologyEmail({
               <hr style="border:0;border-top:1px solid #eee;margin:0 0 16px 0;" />
               <p style="margin:0;font-size:14px;color:#4b5563;">
                 For any help, reply to this email or contact
-                <a href="mailto:${supportEmail}" style="color:${navy};">${supportEmail}</a> / WhatsApp <strong>+91 91048 26422</strong>.
+                <a href="mailto:${supportEmail}" style="color:${navy};">${supportEmail}</a>.
               </p>
               <p style="margin:12px 0 0 0;font-size:14px;color:#4b5563;">Happy learning! 🙏<br /><strong>${brandName} Team</strong></p>
             </td>
