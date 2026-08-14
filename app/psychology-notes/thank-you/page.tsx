@@ -72,25 +72,10 @@ function Content() {
       }
     };
 
-    const fallbackDownloads = (includeMockAddon = false): PsyDownload[] => [
-      { label: "Psychology Notes", path: "/psychology-notes/go" },
-      ...(includeMockAddon &&
-      addons.split(",").map((a) => a.trim()).includes("therapeutic-interventions")
-        ? [
-            {
-              label: "800 Therapeutic Interventions",
-              path: "/psychology-notes/go?item=therapeutic-interventions",
-            },
-          ]
-        : []),
-    ];
-
     if (isMock) {
-      const dl = fallbackDownloads(true);
-      setDownloads(dl);
+      setDownloads([]);
       setLoading(false);
-      remember(dl);
-      track(Number(amountPaid), dl);
+      track(Number(amountPaid), []);
       return;
     }
     if (!paymentId || !signature) {
@@ -117,10 +102,11 @@ function Content() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Verification failed.");
-        const dl =
-          Array.isArray(data.downloads) && data.downloads.length
-            ? (data.downloads as PsyDownload[])
-            : fallbackDownloads();
+        // Only server-issued, signed links are shown. A token-less link would
+        // now be rejected by the download route.
+        const dl = Array.isArray(data.downloads)
+          ? (data.downloads as PsyDownload[])
+          : [];
         setDownloads(dl);
         setLoading(false);
         remember(dl);
@@ -182,22 +168,26 @@ function Content() {
                   : "Your Psychology Notes are ready to download."}
               </p>
 
-              <div className={styles.downloadList}>
-                {(downloads.length
-                  ? downloads
-                  : [{ label: "Psychology Notes", path: "/psychology-notes/go" }]
-                ).map((item) => (
-                  <a
-                    key={item.path}
-                    className={styles.downloadBtn}
-                    href={item.path}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    ⬇ Download {downloads.length > 1 ? item.label : "Now"}
-                  </a>
-                ))}
-              </div>
+              {downloads.length ? (
+                <div className={styles.downloadList}>
+                  {downloads.map((item) => (
+                    <a
+                      key={item.path}
+                      className={styles.downloadBtn}
+                      href={item.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      ⬇ Download {downloads.length > 1 ? item.label : "Now"}
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <p className={styles.emailNote}>
+                  Your download link has been emailed to you. If you don&apos;t
+                  see it, email us your Order ID and we&apos;ll send it again.
+                </p>
+              )}
 
               {email && (
                 <p className={styles.emailNote}>
