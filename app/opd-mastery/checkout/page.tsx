@@ -14,15 +14,10 @@ import {
   Mail,
   RefreshCw,
   ShieldCheck,
-  Smartphone,
-  Star,
-  Users,
 } from "lucide-react";
 
 import opdHero from "@/public/opd.jpg";
-import razorpayLogo from "@/public/checkoutrazorpay.png";
 import trustBadges from "@/public/trust.webp";
-import reviewerRohit from "@/public/scdr1.webp";
 import styles from "./checkout.module.css";
 
 const PRICE = 199;
@@ -211,28 +206,6 @@ export default function OpdCheckout() {
       </header>
 
       <main className={styles.wrap}>
-        <div className={styles.intro}>
-          <span className={styles.edition}>OPD Mastery · 2026 Edition</span>
-          <h1>
-            You&apos;re one step away from your <span>OPD Mastery</span> e-book
-          </h1>
-          <p className={styles.introSub}>
-            Enter your details, pay securely, and download instantly.
-          </p>
-          <div className={styles.socialProof}>
-            <span className={styles.stars}>
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={15} fill="#ffb020" stroke="none" />
-              ))}
-              <b>4.9/5</b>
-            </span>
-            <span className={styles.proofDot} />
-            <span className={styles.proofUsers}>
-              <Users size={14} /> Trusted by 800+ doctors &amp; students
-            </span>
-          </div>
-        </div>
-
         <div className={styles.grid}>
           {/* Left: product + trust */}
           <div className={styles.productColumn}>
@@ -268,30 +241,6 @@ export default function OpdCheckout() {
               ))}
             </ul>
 
-            <figure className={styles.quoteCard}>
-              <div className={styles.quoteStars} aria-label="Rated 5 out of 5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={14} fill="#ffb020" stroke="none" />
-                ))}
-              </div>
-              <blockquote>
-                Downloaded this e-book before starting my first emergency OPD
-                duty. The prescription examples, drug dosages, and red flags are
-                explained very clearly. A very useful reference for every RMO.
-              </blockquote>
-              <figcaption>
-                <Image
-                  src={reviewerRohit}
-                  alt="Dr. Rohit Sharma"
-                  className={styles.quoteAvatar}
-                  sizes="42px"
-                />
-                <span>
-                  <strong>Dr. Rohit Sharma, MBBS</strong>
-                  <small>Resident Medical Officer</small>
-                </span>
-              </figcaption>
-            </figure>
           </div>
 
           {/* Right: form */}
@@ -385,20 +334,6 @@ export default function OpdCheckout() {
                   <span>Price</span>
                 </div>
 
-                <div className={styles.pricingChoice}>
-                  <span className={styles.radioDot} aria-hidden="true" />
-                  <span className={styles.pricingChoiceCopy}>
-                    <strong>One Time Fee Pricing</strong>
-                    <small>One-time payment</small>
-                  </span>
-                  <span className={styles.pricingChoicePrice}>
-                    <strong>
-                      <i>INR</i> {total}
-                    </strong>
-                    <small>one-time</small>
-                  </span>
-                </div>
-
                 <div className={styles.priceBreakdown}>
                   <div className={styles.priceRow}>
                     <span>OPD Mastery E-book</span>
@@ -440,8 +375,8 @@ export default function OpdCheckout() {
                 </p>
 
                 <Image
-                  src={razorpayLogo}
-                  alt="Secured by Razorpay"
+                  src={trustBadges}
+                  alt="Secure checkout, privacy protected and satisfaction guaranteed"
                   className={styles.razorpayLogo}
                   sizes="(max-width: 640px) 90vw, 380px"
                 />
@@ -454,13 +389,6 @@ export default function OpdCheckout() {
                   </li>
                 ))}
               </ul>
-
-              <Image
-                src={trustBadges}
-                alt="Secure checkout, privacy protected and satisfaction guaranteed"
-                className={styles.trustBadges}
-                sizes="(max-width: 640px) 90vw, 380px"
-              />
 
               <div className={styles.guarantee}>
                 <BadgeCheck size={20} />
