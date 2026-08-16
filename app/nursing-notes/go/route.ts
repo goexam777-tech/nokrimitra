@@ -10,6 +10,7 @@ import { verifyDownloadToken } from "@/lib/downloadToken";
  */
 const COOKIE_NAME = "nm_nursing_dl";
 const GOOGLE_DRIVE_PDF_LINK =
+  process.env.NURSING_NOTES_DRIVE_URL ||
   process.env.NURSING_DRIVE_URL ||
   "https://drive.google.com/file/d/1DH3zflyLjRkZq5eEy_YhtH-LWWuLWs7D/view?usp=sharing";
 const SUPPORT_MAIL =
