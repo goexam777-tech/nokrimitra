@@ -14,6 +14,10 @@ import {
   buildEscooterEmailText,
 } from "@/lib/escooterEmailTemplate";
 import { buildOpdEmail, buildOpdEmailText } from "@/lib/opdEmailTemplate";
+import {
+  buildNursingEmail,
+  buildNursingEmailText,
+} from "@/lib/nursingEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
@@ -26,6 +30,9 @@ const PSY_BASE_PRICE = 149;
 const PSY_ADDON_ID = "therapeutic-interventions";
 const PSY_ADDON_PRICE = 99;
 const PSY_ADDON_NAME = "800 Therapeutic Interventions";
+
+const NURSING_PRICE = 199;
+const NURSING_PRODUCT_NAME = "Nursing Protocol Reference Notebook";
 
 export async function POST(req: Request) {
   try {
@@ -87,9 +94,11 @@ export async function POST(req: Request) {
           ? OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
           : product === "psychology"
             ? PSY_BASE_PRICE + (mockHasPsyAddon ? PSY_ADDON_PRICE : 0)
-            : product === ESCOOTER_CATALOG.product
-              ? ESCOOTER_CATALOG.price
-              : Number(amountPaid || 0);
+            : product === "nursing"
+              ? NURSING_PRICE
+              : product === ESCOOTER_CATALOG.product
+                ? ESCOOTER_CATALOG.price
+                : Number(amountPaid || 0);
       const mockDownloads = [
         ...(mockTokenProduct === "opd" && mockToken
           ? [{ label: "OPD Mastery E-book", path: `${mockBase}?t=${mockToken}` }]
@@ -104,6 +113,9 @@ export async function POST(req: Request) {
                 ? [{ label: PSY_ADDON_NAME, path: `/psychology-notes/go?item=${PSY_ADDON_ID}` }]
                 : []),
             ]
+          : []),
+        ...(product === "nursing"
+          ? [{ label: NURSING_PRODUCT_NAME, path: "/nursing-mastery/go" }]
           : []),
       ];
 
@@ -318,6 +330,65 @@ export async function POST(req: Request) {
       psyAlreadyFulfilled = Boolean(psyNotes.fulfilledAt);
     }
 
+    // Nursing e-book: single product, verified server-side against Razorpay.
+    let verifiedNursingAmount = NURSING_PRICE;
+    let verifiedNursingEmail = String(email || "").trim().toLowerCase();
+    let verifiedNursingName = String(name || "there").trim() || "there";
+    let nursingNotes: Record<string, string> = {};
+    let nursingAlreadyFulfilled = false;
+    if (product === "nursing") {
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        return NextResponse.json(
+          { error: "Razorpay key ID not configured on server" },
+          { status: 500 }
+        );
+      }
+
+      const orderResponse = await fetch(
+        `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+        {
+          headers: {
+            Authorization:
+              "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+          },
+          cache: "no-store",
+        }
+      );
+      const order = await orderResponse.json();
+      if (!orderResponse.ok || order.currency !== "INR") {
+        return NextResponse.json(
+          { error: "Could not verify Nursing order details" },
+          { status: 400 }
+        );
+      }
+
+      nursingNotes = (order.notes || {}) as Record<string, string>;
+      const paidAmount = Number(order.amount) / 100;
+      if (nursingNotes.product === "nursing" || paidAmount === NURSING_PRICE) {
+        verifiedNursingAmount = NURSING_PRICE;
+      } else {
+        return NextResponse.json(
+          { error: "Could not verify Nursing product details" },
+          { status: 400 }
+        );
+      }
+
+      if (Number(order.amount) !== verifiedNursingAmount * 100) {
+        return NextResponse.json(
+          { error: "Nursing order amount verification failed" },
+          { status: 400 }
+        );
+      }
+      verifiedNursingEmail = String(
+        nursingNotes.customerEmail || verifiedNursingEmail
+      ).trim().toLowerCase();
+      verifiedNursingName = String(
+        nursingNotes.customerName || verifiedNursingName
+      ).trim() || "there";
+      nursingAlreadyFulfilled = Boolean(nursingNotes.fulfilledAt);
+    }
+
     // Prefer an explicitly configured public origin for links included in email.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
     const host = req.headers.get("host") || "localhost:3000";
@@ -331,8 +402,17 @@ export async function POST(req: Request) {
     const isMcq = product === "mcq";
     const isEscooter = product === "escooter";
     const isOpd = product === "opd";
-    const deliveryEmail = isPsychology ? verifiedPsyEmail : email;
-    const deliveryName = isPsychology ? verifiedPsyName : name;
+    const isNursing = product === "nursing";
+    const deliveryEmail = isPsychology
+      ? verifiedPsyEmail
+      : isNursing
+      ? verifiedNursingEmail
+      : email;
+    const deliveryName = isPsychology
+      ? verifiedPsyName
+      : isNursing
+      ? verifiedNursingName
+      : name;
 
     // Only buyers get a signed download link (issued after signature check).
     const escooterToken = isEscooter
@@ -386,8 +466,17 @@ export async function POST(req: Request) {
         : []),
     ];
 
+    const nursingToken = isNursing
+      ? createDownloadToken("nursing", razorpay_order_id)
+      : null;
+    const nursingDownloadUrl = `${appUrl}/nursing-notes/go${
+      nursingToken ? `?t=${nursingToken}` : ""
+    }`;
+
     const downloadUrl = isPsychology
       ? psyDownloadUrl
+      : isNursing
+      ? nursingDownloadUrl
       : isVastu
       ? `${appUrl}/vastu-plan-checkout/go`
       : isMcq
@@ -425,7 +514,8 @@ export async function POST(req: Request) {
     let emailDelivered = false;
     const skipDuplicateDelivery =
       (isEscooter && escooterAlreadyFulfilled) ||
-      (isPsychology && psyAlreadyFulfilled);
+      (isPsychology && psyAlreadyFulfilled) ||
+      (isNursing && nursingAlreadyFulfilled);
 
     if (
       resendApiKey &&
@@ -460,6 +550,14 @@ export async function POST(req: Request) {
               amount: verifiedPsyAmount,
               downloadUrl,
               downloads: psyDownloads,
+            })
+          : isNursing
+          ? buildNursingEmail({
+              customerName: deliveryName || "there",
+              productName: NURSING_PRODUCT_NAME,
+              orderId: razorpay_order_id,
+              amount: verifiedNursingAmount,
+              downloadUrl,
             })
           : isEscooter
           ? buildEscooterEmail({
@@ -504,6 +602,14 @@ export async function POST(req: Request) {
               downloadUrl,
               downloads: psyDownloads,
             })
+          : isNursing
+          ? buildNursingEmailText({
+              customerName: deliveryName || "there",
+              productName: NURSING_PRODUCT_NAME,
+              orderId: razorpay_order_id,
+              amount: verifiedNursingAmount,
+              downloadUrl,
+            })
           : isEscooter
           ? buildEscooterEmailText({
               customerName: name || "there",
@@ -533,6 +639,8 @@ export async function POST(req: Request) {
           ? `Your download is ready — OPD Mastery E-book (2026)`
           : isPsychology
           ? `${psyProductName}: Your download link is ready! 🎉`
+          : isNursing
+          ? `${NURSING_PRODUCT_NAME}: Your download link is ready! 🩺`
           : isEscooter
           ? `Your EV Repair 3-Book Bundle is ready`
           : isVastu
@@ -643,6 +751,39 @@ export async function POST(req: Request) {
       }
     }
 
+    if (isNursing && !nursingAlreadyFulfilled && emailDelivered) {
+      try {
+        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+        const stampResponse = await fetch(
+          `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+            },
+            body: JSON.stringify({
+              notes: {
+                ...nursingNotes,
+                product: "nursing",
+                catalogVersion: nursingNotes.catalogVersion || "1",
+                fulfilledAt: new Date().toISOString(),
+              },
+            }),
+          }
+        );
+        if (!stampResponse.ok) {
+          console.error(
+            "Could not mark Nursing order as fulfilled:",
+            await stampResponse.text()
+          );
+        }
+      } catch (stampErr) {
+        console.error("Could not mark Nursing order as fulfilled:", stampErr);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       verified: true,
@@ -699,6 +840,23 @@ export async function POST(req: Request) {
                 : []),
             ],
             alreadyFulfilled: psyAlreadyFulfilled,
+          }
+        : {}),
+      ...(isNursing
+        ? {
+            amountPaid: verifiedNursingAmount,
+            downloadPath: `/nursing-mastery/go${
+              nursingToken ? `?t=${nursingToken}` : ""
+            }`,
+            downloads: [
+              {
+                label: NURSING_PRODUCT_NAME,
+                path: `/nursing-mastery/go${
+                  nursingToken ? `?t=${nursingToken}` : ""
+                }`,
+              },
+            ],
+            alreadyFulfilled: nursingAlreadyFulfilled,
           }
         : {}),
     });

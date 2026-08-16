@@ -9,6 +9,8 @@ const PSY_BASE_PRICE = 149;
 const PSY_ADDON_ID = "therapeutic-interventions";
 const PSY_ADDON_PRICE = 99;
 
+const NURSING_PRICE = 199;
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -16,6 +18,7 @@ export async function POST(req: Request) {
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     const isOpd = body.product === "opd";
     const isPsychology = body.product === "psychology";
+    const isNursing = body.product === "nursing";
     const isEscooter = body.product === ESCOOTER_CATALOG.product;
     const requestedAddons = Array.isArray(body.addons) ? body.addons.map(String) : [];
     const unknownAddons = isOpd
@@ -39,9 +42,11 @@ export async function POST(req: Request) {
       ? OPD_BASE_PRICE + (addons.length ? OPD_ADDON_PRICE : 0)
       : isPsychology
         ? PSY_BASE_PRICE + (addons.length ? PSY_ADDON_PRICE : 0)
-        : isEscooter
-          ? ESCOOTER_CATALOG.price
-          : Number(body.amount || 99);
+        : isNursing
+          ? NURSING_PRICE
+          : isEscooter
+            ? ESCOOTER_CATALOG.price
+            : Number(body.amount || 99);
 
     if (!Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json({ error: "Invalid order amount" }, { status: 400 });
@@ -59,6 +64,13 @@ export async function POST(req: Request) {
       ? {
           product: "psychology",
           addons: addons.join(","),
+          catalogVersion: "1",
+          customerEmail: String(body.email || "").trim().toLowerCase(),
+          customerName: String(body.name || "").trim().slice(0, 120),
+        }
+      : isNursing
+      ? {
+          product: "nursing",
           catalogVersion: "1",
           customerEmail: String(body.email || "").trim().toLowerCase(),
           customerName: String(body.name || "").trim().slice(0, 120),

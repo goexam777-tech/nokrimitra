@@ -1,0 +1,225 @@
+.thankYouContainer {
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: var(--font-nursing, sans-serif);
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.thankYouCard {
+  width: 100%;
+  max-width: 600px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1.5px solid #e2e8f0;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  padding: clamp(24px, 6vw, 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.iconCircle {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: #dcfce7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.successBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #fef9c3;
+  color: #854d0e;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.thankYouTitle {
+  color: #0f172a;
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.subTitle {
+  color: #475569;
+  font-size: clamp(0.9rem, 2.7vw, 1rem);
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.receiptBox {
+  width: 100%;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.receiptRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.92rem;
+}
+
+.receiptRow span {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.receiptRow strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.greenText {
+  color: #16a34a !important;
+  font-size: 1.05rem;
+}
+
+.receiptRow code {
+  font-family: monospace;
+  background: #e2e8f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.downloadWrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.downloadBtn {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: clamp(1.02rem, 3.4vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.downloadBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(34, 197, 94, 0.5);
+}
+
+.downloadHint {
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.noticeBox {
+  width: 100%;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.noticeHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1e40af;
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.noticeText {
+  color: #1e3a8a;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.supportBox {
+  font-size: 0.88rem;
+  color: #475569;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.supportEmail {
+  color: #16a34a;
+  font-weight: 700;
+  text-decoration: none;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.supportEmail:hover {
+  text-decoration: underline;
+}
+
+.homeLinkWrap {
+  border-top: 1px solid #f1f5f9;
+  width: 100%;
+  padding-top: 16px;
+}
+
+.homeLink {
+  color: #2563eb;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.homeLink:hover {
+  text-decoration: underline;
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
