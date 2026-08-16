@@ -21,7 +21,7 @@ import trustBadges from "@/public/trust.webp";
 import styles from "./checkout.module.css";
 
 const PRICE = 199;
-const OLD_PRICE = 1399;
+const OLD_PRICE = 999;
 const ADDON_ID = "emergency-handbook";
 const ADDON_PRICE = 49;
 const PRODUCT_NAME = "OPD Mastery E-book (2026 Edition)";
@@ -253,7 +253,7 @@ export default function OpdCheckout() {
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
                   <span className={styles.priceCurrent}>₹{PRICE}</span>
-                  <span className={styles.priceSave}>Save 85%</span>
+                  <span className={styles.priceSave}>Save 80%</span>
                 </div>
                 <h2 className={styles.formHeaderTitle}>Complete your order</h2>
                 <p className={styles.formHeaderSub}>

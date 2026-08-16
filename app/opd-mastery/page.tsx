@@ -5,6 +5,7 @@ import {
   ArrowRight,
   BookOpenText,
   Check,
+  CheckCircle2,
   ChevronRight,
   Download,
   FileText,
@@ -12,10 +13,11 @@ import {
   Lock,
   Mail,
   Smartphone,
+  Star,
   Stethoscope,
 } from "lucide-react";
 
-import opdHero from "@/public/opd1.webp";
+import opdHero from "@/public/opdmastery.webp";
 import buySteps from "@/public/buyy.webp";
 import trustBadges from "@/public/trust.webp";
 import reviewer1 from "@/public/scdr1.webp";
@@ -23,6 +25,7 @@ import reviewer2 from "@/public/scdr2.webp";
 import reviewer3 from "@/public/scdr3.webp";
 import OfferTimer from "./OfferTimer";
 import ReviewCarousel, { type Review } from "./ReviewCarousel";
+import FaqAccordion from "./FaqAccordion";
 import styles from "./opd.module.css";
 
 const montserrat = Montserrat({
@@ -33,7 +36,7 @@ const montserrat = Montserrat({
 });
 
 const PRICE = 199;
-const OLD_PRICE = 1399;
+const OLD_PRICE = 999;
 const SAVE_PERCENT = Math.round((1 - PRICE / OLD_PRICE) * 100);
 const CHECKOUT = "/opd-mastery/checkout";
 const CONTACT_URL = "mailto:goexam777@gmail.com?subject=OPD%20Mastery%20support";
@@ -77,6 +80,33 @@ const obsTopics = [
   "Gestational Diabetes",
 ];
 
+const medicineCases = [
+  "Dry & Productive Cough",
+  "Acidity & Dyspepsia",
+  "Headache & Neuropathic Pain",
+  "Hypertension",
+  "Diabetes",
+  "Dengue, Malaria & Typhoid",
+  "Urinary Tract Infection (UTI)",
+  "COPD",
+  "Arthritis & Sciatica",
+  "IBS & Constipation",
+  "Obesity",
+  "Hair Fall",
+  "Erectile Dysfunction",
+  "Premature Ejaculation",
+  "Low Sperm Count & Many More…",
+];
+
+const obsCases = [
+  "White Discharge (Vaginal)",
+  "PCOD",
+  "Irregular Menstrual Cycle",
+  "Painful Periods (Dysmenorrhoea)",
+  "Pregnancy OPD Care",
+  "Infertility & Many More…",
+];
+
 const caseFormat = [
   "Drug of Choice (DOC)",
   "Alternative Medicines",
@@ -94,6 +124,59 @@ const useCases = [
   ["📚", "Study & Quick Revision"],
   ["🎯", "Exam & Viva Preparation"],
   ["💪", "Improve Clinical Confidence"],
+];
+
+const perfectForList = [
+  ["👨‍⚕️", "MBBS Students"],
+  ["🩺", "Medical Interns"],
+  ["🏥", "Junior Doctors"],
+  ["👨‍⚕️", "General Practitioners"],
+  ["📋", "Medical Officers"],
+];
+
+const whyLoveItList = [
+  "Case-based approach for real OPD practice",
+  "Covers the most common OPD cases",
+  "Easy-to-understand & practical format",
+  "Perfect for quick revision before duty",
+  "Saves time during OPD practice",
+  "Instant PDF Download with Lifetime Access",
+];
+
+const readerReviews = [
+  {
+    avatar: reviewer1,
+    initial: "M",
+    role: "Medical Student",
+    quote: "The explanations are clear, practical, and perfect for quick OPD reference. Highly recommended.",
+  },
+  {
+    avatar: reviewer2,
+    initial: "I",
+    role: "Medical Intern",
+    quote: "This eBook helped me revise common OPD cases much faster before my clinical postings.",
+  },
+  {
+    avatar: reviewer3,
+    initial: "J",
+    role: "Junior Doctor",
+    quote: "The diagnosis and treatment approach is easy to understand and apply in daily practice.",
+  },
+  {
+    initial: "R",
+    role: "Medical Graduate",
+    quote: "Excellent resource for quick revision before OPD duty. Worth every penny.",
+  },
+  {
+    initial: "P",
+    role: "MBBS Student",
+    quote: "The prescription section is extremely useful and saves valuable time.",
+  },
+  {
+    initial: "D",
+    role: "Junior Resident",
+    quote: "Simple language with practical management plans. Highly recommended.",
+  },
 ];
 
 const reviews: Review[] = [
@@ -119,164 +202,254 @@ const reviews: Review[] = [
 
 const faqs = [
   {
-    q: "How will I receive the e-book?",
+    emoji: "📘",
+    q: "What is the Complete OPD Guide E-Book?",
+    a: "The Complete OPD Guide is a practical medical reference designed to help medical students, interns, and doctors understand the diagnosis and management of common OPD cases in an easy-to-follow format.",
+  },
+  {
+    emoji: "👨‍⚕️",
+    q: "Who is this eBook for?",
+    a: "This eBook is ideal for MBBS students, interns, junior doctors, medical graduates, and anyone looking to strengthen their clinical knowledge for OPD practice.",
+  },
+  {
+    emoji: "📫",
+    q: "How will I receive the eBook?",
     a: "Instantly. As soon as your payment succeeds, a download button appears on the thank-you page and the same link is emailed to you.",
   },
   {
-    q: "Is this a one-time payment?",
-    a: "Yes. ₹199 is a single one-time payment with lifetime access. There is no subscription or recurring charge.",
-  },
-  {
-    q: "Can I read it on my phone?",
+    emoji: "📱",
+    q: "Can I read it on my mobile or tablet?",
     a: "Yes. The PDF opens on any phone, tablet, laptop or desktop PDF reader.",
   },
   {
-    q: "What if I face an issue with payment or download?",
-    a: "Contact support with your Order ID and we will resend your download link.",
+    emoji: "♾️",
+    q: "Will I get lifetime access?",
+    a: "Yes. ₹199 is a single one-time payment with lifetime access. There is no subscription or recurring charge.",
   },
   {
-    q: "Do I need to sign up before buying?",
-    a: "No account is needed. Just enter your name and email at checkout and pay.",
+    emoji: "🔄",
+    q: "Can I get a refund?",
+    a: "Due to the digital nature of the e-book, all sales are final. If you face any issues with payment or download, contact our support team and we will resolve it immediately.",
   },
   {
-    q: "Will there be future updates?",
-    a: "This is the 2026 Edition. Contact support for the latest information about any future update policy.",
+    emoji: "📚",
+    q: "Does this replace standard medical textbooks?",
+    a: "No. This eBook is intended as a practical study and revision companion. It should be used alongside standard textbooks, institutional teaching, and clinical supervision—not as a replacement.",
+  },
+  {
+    emoji: "🔐",
+    q: "Can I share this PDF with others?",
+    a: "No. Your purchase is for personal use only. Unauthorized sharing, redistribution, or resale is prohibited.",
   },
 ];
 
 export default function OpdMasteryPage() {
   return (
     <main className={`${styles.page} ${montserrat.variable}`}>
-      <section className={styles.hero}>
-        <div className={styles.container}>
-          <div className={styles.heroContent}>
-            <p className={styles.edition}>2026 Edition · Clinical Reference Guide</p>
-            <h1>
-              Stop Guessing. <span>Start Prescribing Right.</span>
-            </h1>
-            <div className={styles.heroDetails}>
-              <p><span>🧠</span> 60+ real OPD cases <i /> <span>💊</span> Ready Prescriptions <i /></p>
-              <p><span>⏱️</span> Save Time Every Consultation</p>
-              <p className={styles.trusted}><span>✅</span> 100% Trusted Website</p>
-            </div>
-          </div>
+      <section className={styles.simpleHero}>
+        <div className={styles.simpleContainer}>
+          <h1 className={styles.simpleTitle}>
+            <span>Complete OPD</span>{" "}
+            <span className={styles.simpleTitleLine2}>Guide E-Book</span>
+          </h1>
 
-          <div className={styles.heroImageWrap}>
+          <div className={styles.simpleImageWrap}>
             <Image
               src={opdHero}
-              alt="OPD Mastery E-Book 2026 clinical reference guide"
-              className={styles.heroImage}
+              alt="Complete OPD Guide E-Book"
+              className={styles.simpleImage}
               priority
-              sizes="(max-width: 767px) 96vw, 960px"
+              sizes="(max-width: 599px) 92vw, 560px"
             />
           </div>
 
-          <div className={styles.accessGrid}>
-            <article>
-              <span><FileText size={21} /></span>
-              <div><strong>Instant PDF</strong><small>Digital format</small></div>
-            </article>
-            <article>
-              <span><InfinityIcon size={22} /></span>
-              <div><strong>Lifetime Access</strong><small>Keep your copy</small></div>
-            </article>
-            <article>
-              <span><Smartphone size={21} /></span>
-              <div><strong>Mobile Friendly</strong><small>Any device</small></div>
-            </article>
+          <a className={styles.simpleCta} href={CHECKOUT}>
+            <CheckCircle2 size={22} /> Click Here to Get Access
+          </a>
+
+          <h2 className={styles.simpleSubhead}>
+            <span>Become More Confident</span>{" "}
+            <span className={styles.simpleSubheadRed}>in Daily OPD Practice</span>
+          </h2>
+          <p className={styles.simpleLead}>
+            Stop wasting time searching treatment protocols. Get ready-to-use,
+            case-based management for the most common OPD cases in one practical
+            eBook.
+          </p>
+        </div>
+      </section>
+
+      <section className={styles.wiSection} id="inside">
+        <div className={styles.wiContainer}>
+          <div className={styles.wiHeader}>
+            <span className={styles.wiBadge}>
+              <BookOpenText size={15} /> Complete OPD Coverage
+            </span>
+            <h2 className={styles.wiTitle}>
+              <span aria-hidden="true">✅</span> What&apos;s Inside?
+            </h2>
+            <p className={styles.wiSubtitle}>
+              Step-by-step management protocols for the most common OPD cases
+            </p>
           </div>
 
-          <div className={styles.heroCtaWrap}>
-            <a className={styles.primaryCta} href={CHECKOUT}>
-              <BookOpenText size={20} /> GET YOUR E-BOOK — ₹{PRICE}
-              <ArrowRight size={19} />
-            </a>
-            <p>One-time listed price · No subscription</p>
+          <div className={styles.wiGrid}>
+            <div className={`${styles.wiCard} ${styles.wiCardBlue}`}>
+              <div className={styles.wiCardHeader}>
+                <div className={styles.wiLabelGroup}>
+                  <span className={styles.wiIcon} aria-hidden="true">🩺</span>
+                  <h3>Medicine Cases</h3>
+                </div>
+              </div>
+              <ul className={styles.wiList}>
+                {medicineCases.map((c) => (
+                  <li key={c} className={c.includes("Many More") ? styles.wiMoreItem : ""}>
+                    <span className={styles.wiCheck} aria-hidden="true">
+                      <Check size={13} strokeWidth={3.5} />
+                    </span>
+                    <span>{c}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={`${styles.wiCard} ${styles.wiCardPink}`}>
+              <div className={styles.wiCardHeader}>
+                <div className={styles.wiLabelGroup}>
+                  <span className={styles.wiIcon} aria-hidden="true">👩‍⚕️</span>
+                  <h3>OBS &amp; GYNAE Cases</h3>
+                </div>
+              </div>
+              <ul className={styles.wiList}>
+                {obsCases.map((c) => (
+                  <li key={c} className={c.includes("Many More") ? styles.wiMoreItem : ""}>
+                    <span className={styles.wiCheckPink} aria-hidden="true">
+                      <Check size={13} strokeWidth={3.5} />
+                    </span>
+                    <span>{c}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className={styles.topicSection} id="inside">
-        <div className={styles.container}>
-          <div className={styles.sectionHeading}>
-            <p className={styles.eyebrow}>WHAT&apos;S INSIDE</p>
-            <h2><span>60+</span> Common OPD Cases</h2>
-            <p>Frequently encountered cases, organised for fast reference and revision.</p>
+      <section className={styles.pfSection}>
+        <div className={styles.pfContainer}>
+          <div className={styles.pfCard}>
+            <h2 className={styles.pfTitle}>
+              <span aria-hidden="true">🎯</span> Perfect For
+            </h2>
+            <ul className={styles.pfList}>
+              {perfectForList.map(([emoji, text]) => (
+                <li key={text}>
+                  <span className={styles.pfEmoji} aria-hidden="true">{emoji}</span>
+                  <span>{text}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className={styles.topicCloud}>
-            {caseTopics.map(([emoji, topic]) => (
-              <span className={styles.topicTag} key={topic}>
-                <b aria-hidden="true">{emoji}</b>{topic}
-              </span>
-            ))}
-            <span className={`${styles.topicTag} ${styles.moreTag}`}>+40 More</span>
-          </div>
-
-          <div className={styles.obsPanel}>
-            <div className={styles.obsHeading}>
-              <span>👩‍⚕️</span>
-              <h3>Special Section: OBS &amp; GYNAE</h3>
-            </div>
-            <div className={styles.obsTags}>
-              {obsTopics.map((topic) => <span key={topic}>{topic}</span>)}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.formatSection}>
-        <div className={styles.container}>
-          <div className={styles.formatHeading}>
-            <p className={styles.eyebrow}>EVERY CASE, SAME FORMAT</p>
-            <h2>Simple. Fast. OPD-Ready. <span>⚡</span></h2>
-          </div>
-
-          <div className={styles.formatCard}>
-            <ul className={styles.formatList}>
-              {caseFormat.map((item) => (
-                <li key={item}><span><Check size={15} strokeWidth={3.5} /></span>{item}</li>
+          <div className={styles.pfCard}>
+            <h2 className={styles.pfTitle}>
+              <span aria-hidden="true">💡</span> Why You&apos;ll Love It
+            </h2>
+            <ul className={styles.pfList}>
+              {whyLoveItList.map((text) => (
+                <li key={text}>
+                  <span className={styles.pfCheckEmoji} aria-hidden="true">✅</span>
+                  <span>{text}</span>
+                </li>
               ))}
             </ul>
           </div>
         </div>
       </section>
 
-      <section className={styles.useSection}>
-        <div className={styles.container}>
-          <div className={styles.topBanner}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://d1yei2z3i6k35z.cloudfront.net/5670878/6a7ee781d58857.69029360_85586.jpg"
-              alt="OPD Mastery e-book preview"
-              className={styles.topBannerImage}
-              loading="lazy"
-            />
+      <section className={styles.todayOfferSection}>
+        <div className={styles.simpleContainer}>
+          <div className={styles.todayOfferBox}>
+            <p className={styles.actualPriceRow}>
+              Actual Price = <span className={styles.strikePrice}>Rs.999/-</span>
+            </p>
+            <h2 className={styles.todayOfferTitle}>
+              Today Offer =
+            </h2>
+            <p className={styles.offerPriceRow}>
+              Rs.199/-
+            </p>
+
+            <a className={styles.simpleCta} href={CHECKOUT}>
+              <CheckCircle2 size={22} /> Click Here to Get Access
+            </a>
+
+            <OfferTimer variant="boxes" durationMinutes={30} className={styles.boxesTimerWrap} />
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.readersSection}>
+        <div className={styles.readersContainer}>
+          <div className={styles.readersHeader}>
+            <h2 className={styles.readersTitle}>What Our Readers Say</h2>
+            <p className={styles.readersSubtitle}>
+              Trusted by Medical Students, Interns &amp; Doctors
+            </p>
           </div>
 
-          <div className={styles.stepsBanner}>
-            <Image
-              src={buySteps}
-              alt="Purchase, download and read the OPD Mastery e-book"
-              className={styles.stepsImage}
-              sizes="(max-width: 599px) 88vw, 420px"
-            />
-          </div>
+          <div className={styles.readersGrid}>
+            {readerReviews.map((rev) => (
+              <div key={rev.role + rev.initial} className={styles.readerCard}>
+                <div>
+                  <div className={styles.readerStars}>
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={15} fill="#f59e0b" color="#f59e0b" />
+                    ))}
+                  </div>
 
-          <div className={styles.useHeading}>
-            <h2>Built For Doctors Like You <span>🩺</span></h2>
-          </div>
+                  <p className={styles.readerQuote}>&ldquo;{rev.quote}&rdquo;</p>
+                </div>
 
-          <div className={styles.useGrid}>
-            {useCases.map(([emoji, label]) => (
-              <article key={label}>
-                <span className={styles.useIcon} aria-hidden="true">{emoji}</span>
-                <h3>{label}</h3>
-              </article>
+                <div className={styles.readerMeta}>
+                  {rev.avatar ? (
+                    <Image
+                      src={rev.avatar}
+                      alt={rev.role}
+                      className={styles.readerAvatarImage}
+                      width={44}
+                      height={44}
+                    />
+                  ) : (
+                    <div className={styles.readerAvatar}>{rev.initial}</div>
+                  )}
+                  <div className={styles.readerInfo}>
+                    <strong className={styles.readerRole}>{rev.role}</strong>
+                    <span className={styles.readerVerified}>
+                      <Check size={13} strokeWidth={3} /> Verified Reader
+                    </span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
+
+      <section className={styles.faqSectionNew} id="faq">
+        <div className={styles.faqContainerNew}>
+          <div className={styles.faqHeaderNew}>
+            <h2 className={styles.faqTitleNew}>Frequently Asked Questions</h2>
+            <p className={styles.faqSubtitleNew}>
+              Everything you need to know before purchasing the Complete OPD Guide E-Book.
+            </p>
+          </div>
+
+          <FaqAccordion faqs={faqs} />
+        </div>
+      </section>
+
+
 
       <section className={styles.pricingSection} id="pricing">
         <div className={styles.container}>
@@ -309,7 +482,6 @@ export default function OpdMasteryPage() {
           </div>
 
           <div className={styles.trustBlock}>
-            <p><Lock size={15} /> Guaranteed <b>safe &amp; secure</b> checkout</p>
             <Image
               src={trustBadges}
               alt="Accepted payment methods including Visa, Mastercard, Paytm, Google Pay, PhonePe and Amazon Pay"
@@ -320,33 +492,14 @@ export default function OpdMasteryPage() {
         </div>
       </section>
 
-      <section className={styles.reviewSection}>
-        <div className={styles.container}>
-          <ReviewCarousel reviews={reviews} />
-        </div>
-      </section>
 
-      <section className={styles.faqSection}>
-        <div className={styles.container}>
-          <div className={styles.faqList}>
-            {faqs.map((faq) => (
-              <details className={styles.faq} key={faq.q}>
-                <summary>
-                  <span className={styles.faqPlus} aria-hidden="true" />
-                  <span className={styles.faqQ}>{faq.q}</span>
-                  <ChevronRight className={styles.faqChevron} size={16} aria-hidden="true" />
-                </summary>
-                <p>{faq.a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+
+
 
       <footer className={styles.footer}>
         <div className={styles.narrowContainer}>
           <span className={styles.footerBrand}>
-            <Stethoscope size={17} /> NokriMitra
+            <Stethoscope size={17} /> OPD Mastery
           </span>
           <p className={styles.footerTagline}>OPD Mastery E-book · 2026 Edition</p>
 
@@ -370,7 +523,7 @@ export default function OpdMasteryPage() {
           </div>
 
           <p className={styles.footerCopy}>
-            © {new Date().getFullYear()} NokriMitra. All rights reserved.
+            © {new Date().getFullYear()} OPD Mastery. All rights reserved.
           </p>
         </div>
       </footer>
