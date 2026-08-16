@@ -129,12 +129,22 @@ export default function OpdThankYou() {
           currency: "INR",
         });
         w.gtag?.("event", "purchase", {
-          transaction_id: orderId,
+          transaction_id: orderId || paymentId || `ord_${Date.now()}`,
           value: Number(paidAmount),
           currency: "INR",
           items: verifiedDownloads.length
-            ? verifiedDownloads.map((item) => ({ item_name: item.label }))
-            : [{ item_name: PRODUCT_NAME, price: Number(paidAmount) }],
+            ? verifiedDownloads.map((item) => ({
+                item_name: item.label,
+                price: Number(paidAmount),
+                quantity: 1,
+              }))
+            : [
+                {
+                  item_name: PRODUCT_NAME,
+                  price: Number(paidAmount),
+                  quantity: 1,
+                },
+              ],
         });
       } catch {
         setStatus("failed");
