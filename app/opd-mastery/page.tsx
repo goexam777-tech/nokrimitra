@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Montserrat } from "next/font/google";
 import {
   ArrowRight,
-  BadgeCheck,
   BookOpenText,
   Check,
   ChevronRight,
@@ -18,7 +17,6 @@ import {
 
 import opdHero from "@/public/opd1.webp";
 import buySteps from "@/public/buyy.webp";
-import creatorImg from "@/public/aaravmehta.jpg";
 import trustBadges from "@/public/trust.webp";
 import reviewer1 from "@/public/scdr1.webp";
 import reviewer2 from "@/public/scdr2.webp";
@@ -325,37 +323,6 @@ export default function OpdMasteryPage() {
       <section className={styles.reviewSection}>
         <div className={styles.container}>
           <ReviewCarousel reviews={reviews} />
-        </div>
-      </section>
-
-      <section className={styles.creatorSection}>
-        <div className={styles.container}>
-          <div className={styles.sectionHeading}>
-            <p className={styles.eyebrow}>TRUSTED SELLER</p>
-            <h2>Meet The Creator <span>👋</span></h2>
-          </div>
-
-          <div className={styles.creatorCard}>
-            <Image
-              src={creatorImg}
-              alt="Aarav Mehta"
-              className={styles.creatorAvatar}
-              sizes="96px"
-            />
-            <p className={styles.creatorName}>
-              Aarav Mehta <BadgeCheck size={18} />
-            </p>
-            <p className={styles.creatorBio}>
-              We create practical, exam-ready and clinical quick-reference PDFs
-              designed to save you time, trusted by doctors and students across
-              India.
-            </p>
-            <div className={styles.creatorBadges}>
-              <span>✅ Verified Seller</span>
-              <span>📚 Multiple E-books Published</span>
-              <span>🩺 Trusted by Doctors &amp; Students</span>
-            </div>
-          </div>
         </div>
       </section>
 
