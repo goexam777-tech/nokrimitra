@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import {
   ArrowLeft,
+  BadgeCheck,
   CheckCircle2,
-  Download,
   Lock,
   Mail,
-  RefreshCw,
+  MessageSquare,
   ShieldCheck,
+  Zap,
 } from "lucide-react";
 
 import nursingNotesHero from "@/public/Nursing-notes.webp";
@@ -27,7 +28,6 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 const PRICE = 199;
 const OLD_PRICE = 999;
-const SAVE_PERCENT = 85;
 const PRODUCT_NAME = "ALL-In-One Nursing Notes (600+ Pages PDF)";
 const PAYMENT_LABEL = "ALL-In-One Nursing Notes PDF";
 
@@ -41,10 +41,10 @@ const included = [
 ];
 
 const trustPoints = [
-  { icon: Lock, text: "Secured by Razorpay" },
-  { icon: Download, text: "Instant access after payment" },
-  { icon: Mail, text: "Link emailed to you" },
-  { icon: RefreshCw, text: "Support if any issue" },
+  { icon: Lock, text: "100% Secure Payment" },
+  { icon: Zap, text: "Instant Delivery After Payment" },
+  { icon: Mail, text: "PDF Delivered to Your Email" },
+  { icon: MessageSquare, text: "Support Available" },
 ];
 
 function loadRazorpay(): Promise<boolean> {
@@ -70,6 +70,30 @@ export default function NursingNotesCheckout() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const formStartedRef = useRef(false);
+
+  const handleFormStart = () => {
+    if (formStartedRef.current) return;
+    formStartedRef.current = true;
+    if (typeof window !== "undefined") {
+      const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+      w.gtag?.("event", "form_start", {
+        form_name: "nursing_checkout_form",
+      });
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (typeof window !== "undefined") {
+      const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+      w.gtag?.("event", "purchase_button_click", {
+        product_name: PRODUCT_NAME,
+        price: PRICE,
+        currency: "INR",
+      });
+    }
+  };
 
   useEffect(() => {
     const w = window as unknown as {
@@ -108,6 +132,15 @@ export default function NursingNotesCheckout() {
       return;
     }
 
+    if (typeof window !== "undefined") {
+      const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+      w.gtag?.("event", "checkout_form_submit", {
+        product_name: PRODUCT_NAME,
+        value: PRICE,
+        currency: "INR",
+      });
+    }
+
     setLoading(true);
     setError("");
 
@@ -115,7 +148,11 @@ export default function NursingNotesCheckout() {
       const res = await fetch("/api/checkout/razorpay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ product: "nursing", name, email }),
+        body: JSON.stringify({
+          product: "nursing",
+          name,
+          email,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Order creation failed");
@@ -133,13 +170,33 @@ export default function NursingNotesCheckout() {
       };
 
       if (data.mock) {
-        setTimeout(() => goThankYou({ orderId: data.orderId, mock: "true" }), 1000);
+        if (typeof window !== "undefined") {
+          const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+          w.gtag?.("event", "payment_redirect", {
+            order_id: data.orderId,
+            value: PRICE,
+            currency: "INR",
+          });
+        }
+        setTimeout(
+          () => goThankYou({ orderId: data.orderId, mock: "true" }),
+          1000
+        );
         return;
       }
 
       const ok = await loadRazorpay();
       if (!ok)
         throw new Error("Could not load the secure payment window. Please retry.");
+
+      if (typeof window !== "undefined") {
+        const w = window as unknown as { gtag?: (...a: unknown[]) => void };
+        w.gtag?.("event", "payment_redirect", {
+          order_id: data.orderId,
+          value: PRICE,
+          currency: "INR",
+        });
+      }
 
       const rzp = new (
         window as unknown as {
@@ -163,7 +220,7 @@ export default function NursingNotesCheckout() {
             razorpay_signature: r.razorpay_signature,
           }),
         prefill: { name, email },
-        theme: { color: "#16a34a" },
+        theme: { color: "#1689ef" },
         modal: { ondismiss: () => setLoading(false) },
       });
       rzp.open();
@@ -192,60 +249,73 @@ export default function NursingNotesCheckout() {
 
       <main className={styles.wrap}>
         <div className={styles.grid}>
-          {/* Left Column: Product Info & Included Points */}
+          {/* Left: product + trust */}
           <div className={styles.productColumn}>
             <div className={styles.productCard}>
-              <div className={styles.coverContainer}>
-                <Image
-                  src={nursingNotesHero}
-                  alt="Nursing Notes E-book cover"
-                  fill
-                  priority
-                  className={styles.coverImg}
-                />
-              </div>
-              <div className={styles.productInfo}>
-                <strong className={styles.productName}>
-                  ALL-In-One Nursing Notes
-                </strong>
-                <span className={styles.productMeta}>
-                  Digital PDF · 600+ Pages
-                </span>
-                <div className={styles.miniPrice}>
-                  <s>₹{OLD_PRICE}</s>
-                  <b>₹{PRICE}</b>
+              <div className={styles.productCardTop}>
+                <div className={styles.coverContainer}>
+                  <Image
+                    src={nursingNotesHero}
+                    alt="Nursing Notes E-book cover"
+                    fill
+                    priority
+                    className={styles.coverImg}
+                  />
+                </div>
+                <div className={styles.productInfo}>
+                  <strong className={styles.productName}>
+                    ALL-In-One Nursing Notes
+                  </strong>
+                  <span className={styles.productMeta}>
+                    600+ Pages • Digital PDF • 2026 Edition
+                  </span>
+                  <div className={styles.miniPrice}>
+                    <s>₹{OLD_PRICE}</s>
+                    <b>₹{PRICE}</b>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <ul className={styles.includedGrid}>
-              {included.map((item) => (
-                <li key={item}>
-                  <CheckCircle2 size={17} /> {item}
-                </li>
-              ))}
-            </ul>
+              <ul className={styles.includedGrid}>
+                {included.map((item) => (
+                  <li key={item}>
+                    <CheckCircle2 size={17} /> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Right Column: Checkout Form */}
+          {/* Right: form */}
           <div className={styles.formColumn}>
             <div className={styles.formCard}>
               <div className={styles.formHeader}>
                 <span className={styles.discountBadge}>
-                  🔥 Limited-time launch offer
+                  🔥 Launch Price — ₹{PRICE} Only
                 </span>
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
                   <span className={styles.priceCurrent}>₹{PRICE}</span>
-                  <span className={styles.priceSave}>Save {SAVE_PERCENT}%</span>
+                  <span className={styles.priceSave}>Save 80%</span>
+                </div>
+                <div className={styles.oneTimeAccessNote}>
+                  <span>One-time payment</span>
+                  <span className={styles.dotSeparator}>•</span>
+                  <span>Lifetime access</span>
                 </div>
                 <h2 className={styles.formHeaderTitle}>Complete your order</h2>
                 <p className={styles.formHeaderSub}>
-                  Instant PDF download immediately after payment
+                  Instant access in seconds after payment
                 </p>
               </div>
 
-              <form className={styles.form} onSubmit={handlePay} noValidate>
+              <form
+                className={styles.form}
+                onSubmit={handlePay}
+                onFocus={handleFormStart}
+                onChange={handleFormStart}
+                noValidate
+              >
                 {error && (
                   <div className={styles.errorBanner} role="alert">
                     {error}
@@ -253,12 +323,12 @@ export default function NursingNotesCheckout() {
                 )}
 
                 <div className={styles.field}>
-                  <label htmlFor="nursing-name">Full name</label>
+                  <label htmlFor="nursing-name">Full Name</label>
                   <input
                     id="nursing-name"
                     type="text"
                     autoComplete="name"
-                    placeholder="e.g. Anjali Sharma"
+                    placeholder="Enter your full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     disabled={loading}
@@ -267,13 +337,13 @@ export default function NursingNotesCheckout() {
                 </div>
 
                 <div className={styles.field}>
-                  <label htmlFor="nursing-email">Email address</label>
+                  <label htmlFor="nursing-email">Email Address</label>
                   <input
                     id="nursing-email"
                     type="email"
                     inputMode="email"
                     autoComplete="email"
-                    placeholder="you@example.com"
+                    placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={loading}
@@ -284,60 +354,83 @@ export default function NursingNotesCheckout() {
                   </span>
                 </div>
 
+                <div className={styles.summaryHead}>
+                  <span>Item</span>
+                  <span>Price</span>
+                </div>
+
+                <div className={styles.priceBreakdown}>
+                  <div className={styles.priceRow}>
+                    <span>ALL-In-One Nursing Notes PDF</span>
+                    <span>INR {PRICE}</span>
+                  </div>
+                </div>
+
                 <div className={styles.orderTotal}>
-                  <span>TOTAL AMOUNT</span>
-                  <strong>₹{PRICE}</strong>
+                  <span>TOTAL</span>
+                  <strong>
+                    <i>INR</i> {PRICE}.00
+                  </strong>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={loading}
                   className={styles.payBtn}
+                  disabled={loading}
+                  onClick={handleButtonClick}
                 >
                   {loading ? (
-                    "Processing..."
+                    "Initiating payment…"
                   ) : (
                     <>
-                      <span>Pay ₹{PRICE} &amp; Download PDF</span>
-                      <Lock size={18} />
+                      <span>🔒 Pay ₹{PRICE} &amp; Get Instant Access</span>
                     </>
                   )}
                 </button>
 
-                <Image
-                  src={trustBadges}
-                  alt="Guaranteed Safe Checkout Trust Badges"
-                  className={styles.trustBadgesImg}
-                />
+                <ul className={styles.trustStrip}>
+                  {trustPoints.map(({ icon: Icon, text }) => (
+                    <li key={text}>
+                      <Icon size={16} /> <span>{text}</span>
+                    </li>
+                  ))}
+                </ul>
 
                 <p className={styles.payNote}>
-                  <ShieldCheck size={16} /> 256-Bit Encrypted Payment • Instant Access On Email
+                  <ShieldCheck size={14} /> Card, UPI &amp; net-banking details
+                  are handled securely by Razorpay — never stored by us.
                 </p>
+
+                <Image
+                  src={trustBadges}
+                  alt="Secure checkout, privacy protected and satisfaction guaranteed"
+                  className={styles.razorpayLogo}
+                  sizes="(max-width: 640px) 90vw, 380px"
+                />
               </form>
 
-              <ul className={styles.trustStrip}>
-                {trustPoints.map((tp, i) => {
-                  const Icon = tp.icon;
-                  return (
-                    <li key={i}>
-                      <Icon size={15} />
-                      <span>{tp.text}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-
               <div className={styles.guarantee}>
-                <ShieldCheck size={20} />
-                <p>
-                  <strong>Instant Download Guarantee:</strong> You will get immediate access to download your Nursing Notes PDF on screen &amp; backup link on your email after successful payment.
-                </p>
+                <BadgeCheck size={20} />
+                <div>
+                  <strong>✓ Instant Delivery</strong>
+                  <p>
+                    Your PDF is delivered immediately after payment and emailed to you.
+                  </p>
+                  <p className={styles.guaranteeHelp}>
+                    Need help? Contact{" "}
+                    <a href="mailto:support@nokrimitra.in">
+                      support@nokrimitra.in
+                    </a>
+                  </p>
+                </div>
               </div>
 
-              <div className={styles.legalNav}>
-                <a href="/nursing-notes/privacy-policy">Privacy Policy</a>
-                <a href="/nursing-notes/refund-policy">Refund Policy</a>
-              </div>
+              <nav className={styles.legalNav} aria-label="Legal links">
+                <a href="/nursing-notes/privacy-policy">Privacy</a>
+                <a href="/nursing-notes/refund-policy">Refund</a>
+                <a href="/nursing-notes/terms">Terms</a>
+                <a href="/nursing-notes/disclaimer">Disclaimer</a>
+              </nav>
             </div>
           </div>
         </div>
