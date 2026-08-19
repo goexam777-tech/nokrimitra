@@ -42,19 +42,21 @@ const waReviews = [
   { src: waReview3, alt: "ખરીદનાર ઉમેદવારનો WhatsApp પ્રતિભાવ 3" },
 ];
 
-function loadRazorpay(): Promise<boolean> {
+function loadCashfree(): Promise<unknown> {
   return new Promise((resolve) => {
     if (
       typeof window !== "undefined" &&
-      (window as unknown as { Razorpay?: unknown }).Razorpay
+      (window as unknown as { Cashfree?: unknown }).Cashfree
     ) {
-      resolve(true);
+      resolve((window as unknown as { Cashfree: (o: { mode: string }) => unknown }).Cashfree);
       return;
     }
     const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.onload = () => resolve(true);
-    s.onerror = () => resolve(false);
+    s.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
+    s.onload = () => {
+      resolve((window as unknown as { Cashfree: (o: { mode: string }) => unknown }).Cashfree);
+    };
+    s.onerror = () => resolve(null);
     document.body.appendChild(s);
   });
 }
@@ -100,10 +102,10 @@ export default function McqCheckout() {
     setError("");
 
     try {
-      const res = await fetch("/api/checkout/razorpay", {
+      const res = await fetch("/api/checkout/cashfree", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: PRICE, name, email, phone }),
+        body: JSON.stringify({ amount: PRICE, name, email, phone, productName: PRODUCT_NAME }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Order creation failed");
@@ -122,42 +124,24 @@ export default function McqCheckout() {
 
       if (data.mock) {
         setTimeout(
-          () => goThankYou({ orderId: data.orderId, mock: "true" }),
+          () => goThankYou({ order_id: data.orderId, mock: "true" }),
           1200
         );
         return;
       }
 
-      const ok = await loadRazorpay();
-      if (!ok) throw new Error("Razorpay લોડ થઈ શક્યું નહીં.");
+      const CashfreeSDK = await loadCashfree();
+      if (!CashfreeSDK) throw new Error("Cashfree લોડ થઈ શક્યું નહીં.");
 
-      const rzp = new (
-        window as unknown as {
-          Razorpay: new (o: unknown) => { open: () => void };
-        }
-      ).Razorpay({
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || data.keyId,
-        amount: data.amount,
-        currency: data.currency || "INR",
-        name: "NokriMitra",
-        description: PRODUCT_NAME,
-        image: "/166b7903-e5fb-4b19-8ac7-a530a7215d05.webp",
-        order_id: data.orderId,
-        handler: (r: {
-          razorpay_payment_id: string;
-          razorpay_order_id: string;
-          razorpay_signature: string;
-        }) =>
-          goThankYou({
-            razorpay_payment_id: r.razorpay_payment_id,
-            razorpay_order_id: r.razorpay_order_id,
-            razorpay_signature: r.razorpay_signature,
-          }),
-        prefill: { name, email, contact: phone },
-        theme: { color: "#0b6b3a" },
-        modal: { ondismiss: () => setLoading(false) },
+      const envMode = process.env.NEXT_PUBLIC_CASHFREE_ENV === "SANDBOX" ? "sandbox" : "production";
+      const cashfree = (CashfreeSDK as (opts: { mode: string }) => {
+        checkout: (opts: { paymentSessionId: string; redirectTarget?: string }) => Promise<unknown>;
+      })({ mode: envMode });
+
+      await cashfree.checkout({
+        paymentSessionId: data.paymentSessionId,
+        redirectTarget: "_self",
       });
-      rzp.open();
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "કંઈક ભૂલ આવી. ફરી પ્રયાસ કરો."
@@ -186,7 +170,7 @@ export default function McqCheckout() {
           <ul className={styles.trustStrip}>
             <li>⭐ {BUYER_COUNT} ઉમેદવારોએ ખરીદી કરી</li>
             <li>⚡ તરત PDF ડિલિવરી</li>
-            <li>🔒 સુરક્ષિત Razorpay પેમેન્ટ</li>
+            <li>🔒 100% સુરક્ષિત પેમેન્ટ</li>
           </ul>
 
           <div className={styles.headPrice}>
@@ -285,16 +269,7 @@ export default function McqCheckout() {
               </button>
 
               <div className={styles.rzpRow}>
-                <span className={styles.rzpLabel}>Secured by</span>
-                <span className={styles.rzpBadge}>
-                  <Image
-                    src={razorpayBadge}
-                    alt="Razorpay સુરક્ષિત પેમેન્ટ"
-                    className={styles.rzpImg}
-                    height={30}
-                    sizes="180px"
-                  />
-                </span>
+                <span className={styles.rzpLabel}>🔒 100% Secure Payment</span>
               </div>
 
               <ul className={styles.payMethods} aria-label="પેમેન્ટ વિકલ્પો">

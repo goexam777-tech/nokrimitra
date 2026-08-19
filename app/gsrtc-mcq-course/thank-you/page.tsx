@@ -10,8 +10,8 @@ function Content() {
   const [error, setError] = useState("");
   const done = useRef(false);
 
-  const orderId = sp.get("orderId") || sp.get("razorpay_order_id") || "N/A";
-  const paymentId = sp.get("razorpay_payment_id") || "";
+  const orderId = sp.get("order_id") || sp.get("orderId") || sp.get("razorpay_order_id") || "N/A";
+  const paymentId = sp.get("razorpay_payment_id") || sp.get("cf_payment_id") || "";
   const productName = sp.get("productName") || "GSRTC કંડક્ટર MCQ પેકેજ";
   const amountPaid = sp.get("amountPaid") || "99";
   const email = sp.get("email") || "";
@@ -23,7 +23,6 @@ function Content() {
 
     const isMock =
       sp.get("mock") === "true" || orderId.startsWith("order_mock_");
-    const signature = sp.get("razorpay_signature") || "";
 
     // One order must be counted (and emailed) only once, even if the buyer
     // refreshes or reopens this page later.
@@ -86,24 +85,21 @@ function Content() {
       track();
       return;
     }
-    if (!paymentId || !signature) {
+    if (orderId === "N/A") {
       setLoading(false);
       return;
     }
 
     (async () => {
       try {
-        const res = await fetch("/api/checkout/razorpay/verify", {
+        const res = await fetch("/api/checkout/cashfree/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            razorpay_payment_id: paymentId,
-            razorpay_order_id: orderId,
-            razorpay_signature: signature,
+            order_id: orderId,
             name,
             email,
             amountPaid,
-            product: "mcq",
             productName,
           }),
         });
