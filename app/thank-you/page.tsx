@@ -92,9 +92,8 @@ function ThankYouContent() {
     const parsed = cached ? JSON.parse(cached) : null;
 
     return {
-      orderId: searchParams.get("orderId") || searchParams.get("razorpay_order_id") || parsed?.orderId || "N/A",
-      paymentId: searchParams.get("razorpay_payment_id") || parsed?.paymentId || "",
-      signature: searchParams.get("razorpay_signature") || parsed?.signature || "",
+      orderId: searchParams.get("order_id") || searchParams.get("orderId") || searchParams.get("razorpay_order_id") || parsed?.orderId || "N/A",
+      paymentId: searchParams.get("cf_payment_id") || searchParams.get("razorpay_payment_id") || parsed?.paymentId || "",
       productName: searchParams.get("productName") || parsed?.productName || "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
       amountPaid: searchParams.get("amountPaid") || parsed?.amountPaid || "99",
       email: searchParams.get("email") || parsed?.email || "",
@@ -153,24 +152,23 @@ function ThankYouContent() {
         return;
       }
 
-      // 2. If no payment details are in url, but we came here directly (and nothing in cache)
-      if (!params.paymentId || !params.signature) {
+      // 2. If orderId is invalid
+      if (params.orderId === "N/A") {
         setLoading(false);
         return;
       }
 
-      // 3. Make the API verification call
+      // 3. Make the Cashfree API verification call
       try {
-        const res = await fetch("/api/checkout/razorpay/verify", {
+        const res = await fetch("/api/checkout/cashfree/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            razorpay_payment_id: params.paymentId,
-            razorpay_order_id: params.orderId,
-            razorpay_signature: params.signature,
+            order_id: params.orderId,
             name: searchParams.get("name") || "",
             email: params.email,
             amountPaid: params.amountPaid,
+            productName: params.productName,
           }),
         });
 

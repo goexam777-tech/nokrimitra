@@ -70,16 +70,16 @@ function WhatsAppIcon() {
   );
 }
 
-const loadRazorpayScript = () => {
+const loadCashfreeScript = () => {
   return new Promise((resolve) => {
-    if (typeof window !== "undefined" && (window as any).Razorpay) {
-      resolve(true);
+    if (typeof window !== "undefined" && (window as any).Cashfree) {
+      resolve((window as any).Cashfree);
       return;
     }
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
+    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
+    script.onload = () => resolve((window as any).Cashfree);
+    script.onerror = () => resolve(null);
     document.body.appendChild(script);
   });
 };
@@ -124,8 +124,8 @@ export default function CheckoutPage() {
     setError("");
 
     try {
-      // 1. Call our API to create the order
-      const res = await fetch("/api/checkout/razorpay", {
+      // 1. Call our Cashfree API to create the order
+      const res = await fetch("/api/checkout/cashfree", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -133,6 +133,7 @@ export default function CheckoutPage() {
           name,
           email,
           phone,
+          productName: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
         }),
       });
 
@@ -145,7 +146,7 @@ export default function CheckoutPage() {
       if (data.mock) {
         setTimeout(() => {
           const queryParams = new URLSearchParams({
-            orderId: data.mock ? data.orderId : data.orderId,
+            order_id: data.orderId,
             name: name,
             email: email,
             phone: phone,
@@ -158,50 +159,20 @@ export default function CheckoutPage() {
         return;
       }
 
-      // 3. Load Razorpay Script dynamically on client
-      const scriptLoaded = await loadRazorpayScript();
-      if (!scriptLoaded) {
-        throw new Error("Razorpay SDK fail to load");
+      // 3. Load Cashfree Script dynamically on client
+      const CashfreeSDK = await loadCashfreeScript();
+      if (!CashfreeSDK) {
+        throw new Error("Cashfree SDK fail to load");
       }
 
-      // 4. Configure Razorpay checkout
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || data.keyId,
-        amount: data.amount,
-        currency: data.currency || "INR",
-        name: "NokriMitra",
-        description: "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ",
-        image: "/gsrtc.avif",
-        order_id: data.orderId,
-        handler: function (response: any) {
-          const queryParams = new URLSearchParams({
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-            name: name,
-            email: email,
-            phone: phone,
-            amountPaid: "99",
-          });
-          router.push(`/thank-you?${queryParams.toString()}`);
-        },
-        prefill: {
-          name: name,
-          email: email,
-          contact: phone,
-        },
-        theme: {
-          color: "#0b6b3a",
-        },
-        modal: {
-          ondismiss: function () {
-            setLoading(false);
-          },
-        },
-      };
+      // 4. Configure Cashfree checkout
+      const envMode = process.env.NEXT_PUBLIC_CASHFREE_ENV === "SANDBOX" ? "sandbox" : "production";
+      const cashfree = (CashfreeSDK as any)({ mode: envMode });
 
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
+      await cashfree.checkout({
+        paymentSessionId: data.paymentSessionId,
+        redirectTarget: "_self",
+      });
     } catch (err: any) {
       console.error(err);
       setError(err.message || "પેમેન્ટ ચાલુ કરવામાં કંઈક ભૂલ આવી. કૃપા કરીને ફરી પ્રયાસ કરો.");
