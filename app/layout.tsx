@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans_Gujarati } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import FbPixel from "./FbPixel";
 
 const notoGujarati = Noto_Sans_Gujarati({
   subsets: ["gujarati", "latin"],
@@ -57,7 +58,9 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Facebook Pixel */}
+        {/* Facebook Pixel loader only. Per-product pixel init + PageView is
+            handled by <FbPixel /> so the GSRTC funnel can use a separate
+            pixel from the other products. */}
         <Script id="fb-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s)
@@ -68,12 +71,11 @@ export default function RootLayout({
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${pixelId}');
-            fbq('track', 'PageView');
           `}
         </Script>
       </head>
       <body className={notoGujarati.className} suppressHydrationWarning>
+        <FbPixel />
         <noscript>
           <img
             height="1"
