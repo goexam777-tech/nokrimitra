@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import xrayHero from "@/public/xray.webp";
+import xrayCtaImg from "@/public/xrayimg.webp";
 import XraySamples from "./XraySamples";
 import XrayFaq from "./XrayFaq";
 import styles from "./xray-diagnosis.module.css";
@@ -101,22 +102,6 @@ const reviews = [
   {
     name: "Arjun Kumar",
     text: "Simple language, useful concepts and easy revision. This guide saved me a lot of time while preparing for my studies.",
-  },
-  {
-    name: "Neha Singh",
-    text: "One of the most convenient X-ray references I have used for quick study. The topics are focused and not unnecessarily complicated.",
-  },
-  {
-    name: "Pooja Yadav",
-    text: "Very helpful for last-minute revision. I can quickly find the important information without going through a large textbook.",
-  },
-  {
-    name: "Aditya Raj",
-    text: "I liked the practical focus of this guide. It gives a clear starting point for understanding and interpreting common X-rays.",
-  },
-  {
-    name: "Simran Kapoor",
-    text: "Very concise and useful. The structure makes it easy to revise important radiographic concepts whenever needed.",
   },
 ];
 
@@ -265,13 +250,22 @@ export default function XrayDiagnosisPage() {
 
       <section className={styles.careerSection}>
         <div className={styles.careerContainer}>
-          <h2 className={styles.careerHeading}>How is it helpful in my career?</h2>
+          <p className={styles.careerEyebrow}>Your Career Advantage</p>
+          <h2 className={styles.careerHeading}>
+            How is it helpful in my career?
+          </h2>
+          <p className={styles.careerSubtitle}>
+            Build real, job-ready X-ray skills that set you apart.
+          </p>
 
           <div className={styles.careerGrid}>
-            {careerPoints.map(({ Icon, title, detail }) => (
+            {careerPoints.map(({ Icon, title, detail }, i) => (
               <div key={title} className={styles.careerCard}>
+                <span className={styles.careerNum}>
+                  {String(i + 1).padStart(2, "0")}
+                </span>
                 <span className={styles.careerIcon} aria-hidden="true">
-                  <Icon size={26} strokeWidth={2} />
+                  <Icon size={24} strokeWidth={2.2} />
                 </span>
                 <h3 className={styles.careerTitle}>{title}</h3>
                 <p className={styles.careerText}>{detail}</p>
@@ -285,25 +279,37 @@ export default function XrayDiagnosisPage() {
 
       <section className={styles.finalCtaSection}>
         <div className={styles.finalCtaCard}>
-          <h2 className={styles.finalCtaTitle}>
-            Ready to Simplify X-Ray Diagnosis?
-          </h2>
-          <p className={styles.finalCtaText}>
-            Get the complete X-Ray Diagnosis Guide and start reading common
-            X-rays with clarity and confidence.
-          </p>
+          <div className={styles.finalCtaImageWrap}>
+            <Image
+              src={xrayCtaImg}
+              alt="X-Ray Diagnosis Guide preview"
+              className={styles.finalCtaImage}
+              sizes="(max-width: 860px) 80vw, 340px"
+            />
+          </div>
 
-          <a href="/xray-diagnosis/checkout" className={styles.greenBuyBtn}>
-            <span className={styles.greenBuyMain}>BUY NOW</span>
-            <span className={styles.greenBuySub}>
-              (Get Complete X-Ray Diagnosis Notes)
-            </span>
-          </a>
+          <div className={styles.finalCtaBody}>
+            <span className={styles.finalCtaBadge}>Limited-Time Offer</span>
+            <h2 className={styles.finalCtaTitle}>
+              Ready to Simplify X-Ray Diagnosis?
+            </h2>
+            <p className={styles.finalCtaText}>
+              Get the complete X-Ray Diagnosis Guide and start reading common
+              X-rays with clarity and confidence.
+            </p>
 
-          <p className={styles.finalCtaTrust}>
-            Instant Access on Email &nbsp;•&nbsp; PDF Format &nbsp;•&nbsp;
-            Lifetime Validity
-          </p>
+            <a href="/xray-diagnosis/checkout" className={styles.greenBuyBtn}>
+              <span className={styles.greenBuyMain}>BUY NOW</span>
+              <span className={styles.greenBuySub}>
+                (Get Complete X-Ray Diagnosis Notes)
+              </span>
+            </a>
+
+            <p className={styles.finalCtaTrust}>
+              Instant Access on Email &nbsp;•&nbsp; PDF Format &nbsp;•&nbsp;
+              Lifetime Validity
+            </p>
+          </div>
         </div>
       </section>
 

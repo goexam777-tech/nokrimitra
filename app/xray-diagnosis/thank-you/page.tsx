@@ -35,10 +35,8 @@ function ThankYouContent() {
 
   const name = params.get("name") || "";
   const email = params.get("email") || "";
-  const orderId =
-    params.get("razorpay_order_id") || params.get("orderId") || "";
-  const paymentId = params.get("razorpay_payment_id") || "";
-  const signature = params.get("razorpay_signature") || "";
+  const orderId = params.get("order_id") || params.get("orderId") || "";
+  const addons = params.get("addons") || "";
   const amountPaid = params.get("amountPaid") || "199";
 
   useEffect(() => {
@@ -67,18 +65,17 @@ function ThankYouContent() {
 
     const runVerify = async () => {
       try {
-        const res = await fetch("/api/checkout/razorpay/verify", {
+        const res = await fetch("/api/checkout/cashfree/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            razorpay_payment_id: paymentId || `pay_mock_${orderId || Date.now()}`,
-            razorpay_order_id: orderId || `order_mock_${Date.now()}`,
-            razorpay_signature: signature || "mock_signature",
+            order_id: orderId || `order_mock_${Date.now()}`,
             name,
             email,
             amountPaid,
             product: "xray",
             productName: PRODUCT_NAME,
+            addons,
           }),
         });
         const data = await res.json();
@@ -132,7 +129,7 @@ function ThankYouContent() {
     };
 
     runVerify();
-  }, [amountPaid, email, name, orderId, paymentId, signature]);
+  }, [amountPaid, email, name, orderId, addons]);
 
   return (
     <div className={`${styles.thankYouContainer} ${plusJakarta.variable}`}>

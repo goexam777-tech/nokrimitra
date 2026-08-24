@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import { buildOrderEmail, buildOrderEmailText } from "@/lib/emailTemplate";
+import { buildXrayEmail, buildXrayEmailText } from "@/lib/xrayEmailTemplate";
+import { createDownloadToken } from "@/lib/downloadToken";
+
+const XRAY_PRICE = 199;
+const XRAY_PRODUCT_NAME = "X-Ray Diagnosis Guide (PDF)";
+const XRAY_ADDON_ID = "lab-test-master-guide";
+const XRAY_ADDON_PRICE = 79;
+const XRAY_ADDON_NAME = "Clinical Lab Test Master Guide";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { order_id, name, email, amountPaid, productName } = body;
+    const { order_id, name, email, amountPaid, productName, product, addons } =
+      body;
 
     if (!order_id) {
       return NextResponse.json(
@@ -24,7 +33,41 @@ export async function POST(req: Request) {
       !secretKey ||
       secretKey.includes("your_cashfree_secret");
 
+    const isXray = product === "xray";
+
+    // Public origin for links included in email + downloads.
+    const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
+    const host = req.headers.get("host") || "localhost:3000";
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const appUrl = (
+      configuredAppUrl ||
+      (process.env.NODE_ENV === "production"
+        ? "https://nokrimitra.in"
+        : `${protocol}://${host}`)
+    ).replace(/\/$/, "");
+
     if (isMock) {
+      if (isXray) {
+        const hasAddon = String(addons || "").includes(XRAY_ADDON_ID);
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          mock: true,
+          amountPaid: XRAY_PRICE + (hasAddon ? XRAY_ADDON_PRICE : 0),
+          downloadPath: "/xray-diagnosis/go",
+          downloads: [
+            { label: "X-Ray Diagnosis Guide", path: "/xray-diagnosis/go" },
+            ...(hasAddon
+              ? [
+                  {
+                    label: XRAY_ADDON_NAME,
+                    path: `/xray-diagnosis/go?item=${XRAY_ADDON_ID}`,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
       return NextResponse.json({
         success: true,
         verified: true,
@@ -65,24 +108,128 @@ export async function POST(req: Request) {
       );
     }
 
-    // Determine public origin for email links
-    const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
-    const host = req.headers.get("host") || "localhost:3000";
-    const protocol = req.headers.get("x-forwarded-proto") || "http";
-    const appUrl = (
-      configuredAppUrl ||
-      (process.env.NODE_ENV === "production"
-        ? "https://nokrimitra.in"
-        : `${protocol}://${host}`)
-    ).replace(/\/$/, "");
-
-    const downloadUrl = `${appUrl}/gsrtc-mcq-course/go`;
-    const customerEmail = String(email || data.customer_details?.customer_email || "").trim();
-    const customerName = String(name || data.customer_details?.customer_name || "વિદ્યાર્થી").trim();
-
-    // Trigger email via Resend
     const resendApiKey = process.env.RESEND_API_KEY;
-    const emailFrom = process.env.EMAIL_FROM || "NokriMitra <download@pdf.nokrimitra.in>";
+    const emailFrom =
+      process.env.EMAIL_FROM || "NokriMitra <download@pdf.nokrimitra.in>";
+
+    // The product + add-on are read back from Cashfree order tags, so the
+    // browser can never inflate what was purchased.
+    const tags = (data.order_tags || {}) as Record<string, string>;
+    const verifiedProduct = tags.product || (isXray ? "xray" : "mcq");
+
+    if (verifiedProduct === "xray") {
+      const verifiedAddon = String(tags.addons || "")
+        .split(",")
+        .map((id) => id.trim())
+        .includes(XRAY_ADDON_ID);
+      const expectedAmount = XRAY_PRICE + (verifiedAddon ? XRAY_ADDON_PRICE : 0);
+
+      if (Number(data.order_amount) !== expectedAmount) {
+        return NextResponse.json(
+          { error: "X-Ray order amount verification failed" },
+          { status: 400 }
+        );
+      }
+
+      const customerEmail = String(
+        email || data.customer_details?.customer_email || ""
+      ).trim();
+      const customerName =
+        String(name || data.customer_details?.customer_name || "there").trim() ||
+        "there";
+
+      const token = createDownloadToken("xray", order_id);
+      const addonToken = verifiedAddon
+        ? createDownloadToken("xray-lab-test-master-guide", order_id)
+        : null;
+      const downloadUrl = `${appUrl}/xray-diagnosis/go?t=${token}`;
+      const addonUrl = `${appUrl}/xray-diagnosis/go?item=${XRAY_ADDON_ID}${
+        addonToken ? `&t=${addonToken}` : ""
+      }`;
+      const downloads = [
+        { label: "DOWNLOAD X-RAY DIAGNOSIS GUIDE", url: downloadUrl },
+        ...(addonToken
+          ? [{ label: XRAY_ADDON_NAME, url: addonUrl }]
+          : []),
+      ];
+
+      if (resendApiKey && resendApiKey !== "your_resend_key_here" && customerEmail) {
+        try {
+          const emailResponse = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${resendApiKey}`,
+            },
+            body: JSON.stringify({
+              from: emailFrom,
+              to: [customerEmail],
+              reply_to: "support@nokrimitra.in",
+              subject: `${XRAY_PRODUCT_NAME}: Your download link is ready! 🩻`,
+              html: buildXrayEmail({
+                customerName,
+                productName: verifiedAddon
+                  ? `${XRAY_PRODUCT_NAME} + ${XRAY_ADDON_NAME}`
+                  : XRAY_PRODUCT_NAME,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl,
+                downloads,
+              }),
+              text: buildXrayEmailText({
+                customerName,
+                productName: verifiedAddon
+                  ? `${XRAY_PRODUCT_NAME} + ${XRAY_ADDON_NAME}`
+                  : XRAY_PRODUCT_NAME,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl,
+                downloads,
+              }),
+            }),
+          });
+          if (!emailResponse.ok) {
+            console.error(
+              "Resend API failed for X-Ray Cashfree verification:",
+              await emailResponse.text()
+            );
+          }
+        } catch (emailErr) {
+          console.error("Failed to send X-Ray Cashfree email:", emailErr);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        verified: true,
+        mock: false,
+        amountPaid: expectedAmount,
+        downloadPath: `/xray-diagnosis/go?t=${token}`,
+        downloads: [
+          {
+            label: "X-Ray Diagnosis Guide",
+            path: `/xray-diagnosis/go?t=${token}`,
+          },
+          ...(addonToken
+            ? [
+                {
+                  label: XRAY_ADDON_NAME,
+                  path: `/xray-diagnosis/go?item=${XRAY_ADDON_ID}&t=${addonToken}`,
+                },
+              ]
+            : []),
+        ],
+      });
+    }
+
+    // Default: GSRTC MCQ course fulfilment
+    const downloadUrl = `${appUrl}/gsrtc-mcq-course/go`;
+    const customerEmail = String(
+      email || data.customer_details?.customer_email || ""
+    ).trim();
+    const customerName = String(
+      name || data.customer_details?.customer_name || "વિદ્યાર્થી"
+    ).trim();
     const itemProductName = productName || "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ";
 
     if (resendApiKey && resendApiKey !== "your_resend_key_here" && customerEmail) {

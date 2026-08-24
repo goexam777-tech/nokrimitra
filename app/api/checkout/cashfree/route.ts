@@ -1,9 +1,21 @@
 import { NextResponse } from "next/server";
 
+const XRAY_PRICE = 199;
+const XRAY_ADDON_ID = "lab-test-master-guide";
+const XRAY_ADDON_PRICE = 79;
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { name, email, phone, amount: reqAmount, productName } = body;
+    const {
+      name,
+      email,
+      phone,
+      amount: reqAmount,
+      productName,
+      product,
+      addons,
+    } = body;
 
     const appId = process.env.CASHFREE_APP_ID;
     const secretKey = process.env.CASHFREE_SECRET_KEY;
@@ -15,7 +27,18 @@ export async function POST(req: Request) {
       !secretKey ||
       secretKey.includes("your_cashfree_secret");
 
-    const amount = Number(reqAmount || 99);
+    const isXray = product === "xray";
+
+    // X-Ray amount is computed server-side from the verified add-on selection,
+    // never trusted from the browser.
+    const xrayHasAddon =
+      isXray &&
+      (Array.isArray(addons)
+        ? addons.includes(XRAY_ADDON_ID)
+        : String(addons || "").includes(XRAY_ADDON_ID));
+    const amount = isXray
+      ? XRAY_PRICE + (xrayHasAddon ? XRAY_ADDON_PRICE : 0)
+      : Number(reqAmount || 99);
 
     if (!Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json({ error: "Invalid order amount" }, { status: 400 });
@@ -53,11 +76,29 @@ export async function POST(req: Request) {
     const cleanEmail = String(email || "").trim() || "customer@example.com";
     const cleanName = String(name || "").trim() || "Candidate";
 
-    const returnUrl = `${appUrl}/gsrtc-mcq-course/thank-you?order_id={order_id}&name=${encodeURIComponent(
-      cleanName
-    )}&email=${encodeURIComponent(cleanEmail)}&amountPaid=${amount}&productName=${encodeURIComponent(
-      productName || "GSRTC કંડક્ટર MCQ પેકેજ"
-    )}&product=mcq`;
+    // Build the correct post-payment return URL + order tags per product.
+    let returnUrl: string;
+    let orderTags: Record<string, string> | undefined;
+
+    if (isXray) {
+      const addonParam = xrayHasAddon ? XRAY_ADDON_ID : "";
+      returnUrl =
+        `${appUrl}/xray-diagnosis/thank-you?order_id={order_id}` +
+        `&name=${encodeURIComponent(cleanName)}` +
+        `&email=${encodeURIComponent(cleanEmail)}` +
+        `&amountPaid=${amount}` +
+        `&productName=${encodeURIComponent(productName || "X-Ray Diagnosis Guide (PDF)")}` +
+        `&product=xray&addons=${encodeURIComponent(addonParam)}`;
+      orderTags = { product: "xray", addons: addonParam };
+    } else {
+      returnUrl =
+        `${appUrl}/gsrtc-mcq-course/thank-you?order_id={order_id}` +
+        `&name=${encodeURIComponent(cleanName)}` +
+        `&email=${encodeURIComponent(cleanEmail)}` +
+        `&amountPaid=${amount}` +
+        `&productName=${encodeURIComponent(productName || "GSRTC કંડક્ટર MCQ પેકેજ")}` +
+        `&product=mcq`;
+    }
 
     const response = await fetch(baseUrl, {
       method: "POST",
@@ -80,6 +121,7 @@ export async function POST(req: Request) {
         order_meta: {
           return_url: returnUrl,
         },
+        ...(orderTags ? { order_tags: orderTags } : {}),
       }),
     });
 

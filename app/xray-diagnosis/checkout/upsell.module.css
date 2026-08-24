@@ -78,3 +78,68 @@
   font-style: italic;
   font-weight: 600;
 }
+
+/* Left intro block (dark checkout background) */
+.orderIntro {
+  padding: clamp(8px, 2vw, 20px) 4px;
+}
+
+.orderTitle {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-xray-title), system-ui, sans-serif;
+  font-size: clamp(1.9rem, 5.5vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.orderTitle .gold,
+.gold {
+  color: #f5b301;
+}
+
+.orderNote {
+  margin: clamp(14px, 2.5vw, 20px) 0 0;
+  max-width: 440px;
+  color: #cbd5e1;
+  font-size: clamp(0.98rem, 2.8vw, 1.12rem);
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.noteLabel {
+  color: #ef4444;
+  font-weight: 800;
+}
+
+.hlGold {
+  color: #f5b301;
+  font-weight: 800;
+}
+
+.hlRed {
+  color: #ef4444;
+  font-weight: 800;
+}
+
+/* Cashfree payment badge above the pay button */
+.cashfreeBadge {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  margin: 6px auto 12px;
+}
+
+/* X-Ray pay button override (flat green, shorter, 5px corners) */
+.payBtn {
+  min-height: 46px !important;
+  border-radius: 5px !important;
+  background: #28a745 !important;
+  box-shadow: 0 6px 16px rgba(40, 167, 69, 0.28) !important;
+}
+
+.payBtn:hover:not(:disabled) {
+  background: #22913c !important;
+}

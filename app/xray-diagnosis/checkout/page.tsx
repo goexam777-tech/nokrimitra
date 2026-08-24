@@ -2,21 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Montserrat } from "next/font/google";
 import Image from "next/image";
 import {
   ArrowLeft,
-  BadgeCheck,
-  CheckCircle2,
+  ArrowRight,
   Lock,
   Mail,
   MessageSquare,
-  ShieldCheck,
   Zap,
 } from "lucide-react";
 
-import xrayHero from "@/public/xray.webp";
 import trustBadges from "@/public/trust.webp";
+import cashfreeBadge from "@/public/checkoutcashfree.png";
 import styles from "../../nursing-notes/checkout/checkout.module.css";
 import up from "./upsell.module.css";
 
@@ -27,22 +25,19 @@ const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-nursing",
 });
 
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+  display: "swap",
+  variable: "--font-xray-title",
+});
+
 const PRICE = 199;
 const OLD_PRICE = 999;
 const PRODUCT_NAME = "X-Ray Diagnosis Guide (PDF)";
-const PAYMENT_LABEL = "X-Ray Diagnosis Guide PDF";
 const ADDON_ID = "lab-test-master-guide";
-const ADDON_PRICE = 99;
+const ADDON_PRICE = 79;
 const ADDON_NAME = "Clinical Lab Test Master Guide";
-
-const included = [
-  "C-spine, Chest, Hip & Pelvis X-rays",
-  "Knee X-rays + Bonus Content",
-  "Practical Reading & Interpretation",
-  "Beginner-Friendly, Simple Format",
-  "Instant PDF + Email Delivery",
-  "Lifetime Access on All Devices",
-];
 
 const trustPoints = [
   { icon: Lock, text: "100% Secure Payment" },
@@ -51,19 +46,37 @@ const trustPoints = [
   { icon: MessageSquare, text: "Support Available" },
 ];
 
-function loadRazorpay(): Promise<boolean> {
+type CashfreeInstance = {
+  checkout: (opts: {
+    paymentSessionId: string;
+    redirectTarget?: string;
+  }) => void;
+};
+
+function loadCashfree(): Promise<
+  ((opts: { mode: string }) => CashfreeInstance) | null
+> {
   return new Promise((resolve) => {
-    if (
-      typeof window !== "undefined" &&
-      (window as unknown as { Razorpay?: unknown }).Razorpay
-    ) {
-      resolve(true);
+    const existing = (
+      window as unknown as {
+        Cashfree?: (opts: { mode: string }) => CashfreeInstance;
+      }
+    ).Cashfree;
+    if (existing) {
+      resolve(existing);
       return;
     }
     const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.onload = () => resolve(true);
-    s.onerror = () => resolve(false);
+    s.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
+    s.onload = () =>
+      resolve(
+        (
+          window as unknown as {
+            Cashfree?: (opts: { mode: string }) => CashfreeInstance;
+          }
+        ).Cashfree || null
+      );
+    s.onerror = () => resolve(null);
     document.body.appendChild(s);
   });
 }
@@ -150,53 +163,20 @@ export default function XrayCheckout() {
     setError("");
 
     try {
-      const res = await fetch("/api/checkout/razorpay", {
+      const res = await fetch("/api/checkout/cashfree", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           product: "xray",
           name,
           email,
+          amount: total,
+          productName: PRODUCT_NAME,
           addons: addon ? [ADDON_ID] : [],
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Order creation failed");
-
-      const goThankYou = (extra: Record<string, string>) => {
-        const q = new URLSearchParams({
-          name,
-          email,
-          amountPaid: String(total),
-          productName: PRODUCT_NAME,
-          product: "xray",
-          addons: addon ? ADDON_ID : "",
-          ...extra,
-        });
-        router.push(`/xray-diagnosis/thank-you?${q.toString()}`);
-      };
-
-      if (data.mock) {
-        if (typeof window !== "undefined") {
-          const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-          w.gtag?.("event", "payment_redirect", {
-            order_id: data.orderId,
-            value: total,
-            currency: "INR",
-          });
-        }
-        setTimeout(
-          () => goThankYou({ orderId: data.orderId, mock: "true" }),
-          1000
-        );
-        return;
-      }
-
-      const ok = await loadRazorpay();
-      if (!ok)
-        throw new Error(
-          "Could not load the secure payment window. Please retry."
-        );
 
       if (typeof window !== "undefined") {
         const w = window as unknown as { gtag?: (...a: unknown[]) => void };
@@ -207,34 +187,44 @@ export default function XrayCheckout() {
         });
       }
 
-      const rzp = new (
-        window as unknown as {
-          Razorpay: new (o: unknown) => { open: () => void };
-        }
-      ).Razorpay({
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || data.keyId,
-        amount: data.amount,
-        currency: data.currency || "INR",
-        name: "NokriMitra",
-        description: addon
-          ? `${PAYMENT_LABEL} + ${ADDON_NAME}`
-          : PAYMENT_LABEL,
-        order_id: data.orderId,
-        handler: (r: {
-          razorpay_payment_id: string;
-          razorpay_order_id: string;
-          razorpay_signature: string;
-        }) =>
-          goThankYou({
-            razorpay_payment_id: r.razorpay_payment_id,
-            razorpay_order_id: r.razorpay_order_id,
-            razorpay_signature: r.razorpay_signature,
-          }),
-        prefill: { name, email },
-        theme: { color: "#1689ef" },
-        modal: { ondismiss: () => setLoading(false) },
+      // Mock mode (local dev without Cashfree keys) → straight to thank-you.
+      if (data.mock) {
+        const q = new URLSearchParams({
+          order_id: data.orderId,
+          name,
+          email,
+          amountPaid: String(total),
+          productName: PRODUCT_NAME,
+          product: "xray",
+          addons: addon ? ADDON_ID : "",
+          mock: "true",
+        });
+        setTimeout(
+          () => router.push(`/xray-diagnosis/thank-you?${q.toString()}`),
+          1000
+        );
+        return;
+      }
+
+      const Cashfree = await loadCashfree();
+      if (!Cashfree)
+        throw new Error(
+          "Could not load the secure payment window. Please retry."
+        );
+
+      const mode =
+        (process.env.NEXT_PUBLIC_CASHFREE_ENV || "production").toLowerCase() ===
+        "sandbox"
+          ? "sandbox"
+          : "production";
+
+      const cashfree = Cashfree({ mode });
+      // Cashfree redirects to its hosted page and back to the return_url
+      // (which already carries order_id, name, email, amount & add-on).
+      cashfree.checkout({
+        paymentSessionId: data.paymentSessionId,
+        redirectTarget: "_self",
       });
-      rzp.open();
     } catch (err) {
       setError(
         err instanceof Error
@@ -246,7 +236,13 @@ export default function XrayCheckout() {
   };
 
   return (
-    <div className={`${styles.page} ${plusJakarta.variable}`}>
+    <div
+      className={`${styles.page} ${plusJakarta.variable} ${montserrat.variable}`}
+      style={{
+        background:
+          "linear-gradient(150deg,#111827 0%,#1A1A2E 35%,#0F3460 100%)",
+      }}
+    >
       <header className={styles.topBar}>
         <div className={styles.topBarInner}>
           <button type="button" className={styles.backBtn} onClick={handleBack}>
@@ -260,45 +256,27 @@ export default function XrayCheckout() {
 
       <main className={styles.wrap}>
         <div className={styles.grid}>
-          {/* Left: product + trust */}
+          {/* Left: intro + note */}
           <div className={styles.productColumn}>
-            <div className={styles.productCard}>
-              <div className={styles.productCardTop}>
-                <div className={styles.coverContainer}>
-                  <Image
-                    src={xrayHero}
-                    alt="X-Ray Diagnosis Guide cover"
-                    fill
-                    priority
-                    className={styles.coverImg}
-                  />
-                </div>
-                <div className={styles.productInfo}>
-                  <strong className={styles.productName}>
-                    X-Ray Diagnosis Guide
-                  </strong>
-                  <span className={styles.productMeta}>
-                    Practical Guide • Digital PDF • 2026 Edition
-                  </span>
-                </div>
-              </div>
-
-              <ul className={styles.includedGrid}>
-                {included.map((item) => (
-                  <li key={item}>
-                    <CheckCircle2 size={17} /> {item}
-                  </li>
-                ))}
-              </ul>
+            <div className={up.orderIntro}>
+              <h2 className={up.orderTitle}>
+                <span className={up.gold}>Complete</span> Your Order
+              </h2>
+              <p className={up.orderNote}>
+                <span className={up.noteLabel}>NOTE :</span> This product is in{" "}
+                <span className={up.hlGold}>PDF Format</span>. After payment you
+                will get <span className={up.hlRed}>download link</span> on your
+                registered email.
+              </p>
             </div>
           </div>
 
-          {/* Right: form */}
+          {/* Form */}
           <div className={styles.formColumn}>
             <div className={styles.formCard}>
               <div className={styles.formHeader}>
                 <span className={styles.discountBadge}>
-                  🔥 Launch Price — ₹{PRICE} Only
+                  🔥 Limited-Time Launch Price
                 </span>
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
@@ -310,7 +288,9 @@ export default function XrayCheckout() {
                   <span className={styles.dotSeparator}>•</span>
                   <span>Lifetime access</span>
                 </div>
-                <h2 className={styles.formHeaderTitle}>Complete your order</h2>
+                <h2 className={styles.formHeaderTitle}>
+                  Complete Your Secure Order
+                </h2>
                 <p className={styles.formHeaderSub}>
                   Instant access in seconds after payment
                 </p>
@@ -374,7 +354,7 @@ export default function XrayCheckout() {
                   </div>
 
                   <p className={up.title}>
-                    ⚡ Add Clinical Lab Test Master Guide – Just ₹99!
+                    ⚡ Add Clinical Lab Test Master Guide – Just ₹79!
                   </p>
                   <p className={up.intro}>
                     Quick-reference guide for essential lab tests, normal ranges
@@ -390,7 +370,7 @@ export default function XrayCheckout() {
                       revision anywhere.
                     </li>
                     <li className={up.priceLine}>
-                      🏷️ 90% OFF: <s>₹999</s> → Just <strong>₹99</strong>
+                      🏷️ 92% OFF: <s>₹999</s> → Just <strong>₹79</strong>
                     </li>
                   </ul>
                   <p className={up.oneTime}>
@@ -424,18 +404,31 @@ export default function XrayCheckout() {
                   </strong>
                 </div>
 
+                <Image
+                  src={cashfreeBadge}
+                  alt="Completing payment with Cashfree Payments"
+                  className={up.cashfreeBadge}
+                  sizes="(max-width: 640px) 92vw, 440px"
+                />
+
                 <button
                   type="submit"
-                  className={styles.payBtn}
+                  className={`${styles.payBtn} ${up.payBtn}`}
                   disabled={loading}
                   onClick={handleButtonClick}
                 >
                   {loading ? (
                     "Initiating payment…"
                   ) : (
-                    <>
-                      <span>🔒 Pay ₹{total} &amp; Get Instant Access</span>
-                    </>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      Complete Order <ArrowRight size={20} strokeWidth={2.6} />
+                    </span>
                   )}
                 </button>
 
@@ -447,11 +440,6 @@ export default function XrayCheckout() {
                   ))}
                 </ul>
 
-                <p className={styles.payNote}>
-                  <ShieldCheck size={14} /> Card, UPI &amp; net-banking details
-                  are handled securely by Razorpay — never stored by us.
-                </p>
-
                 <Image
                   src={trustBadges}
                   alt="Secure checkout, privacy protected and satisfaction guaranteed"
@@ -459,23 +447,6 @@ export default function XrayCheckout() {
                   sizes="(max-width: 640px) 90vw, 380px"
                 />
               </form>
-
-              <div className={styles.guarantee}>
-                <BadgeCheck size={20} />
-                <div>
-                  <strong>✓ Instant Delivery</strong>
-                  <p>
-                    Your PDF is delivered immediately after payment and emailed
-                    to you.
-                  </p>
-                  <p className={styles.guaranteeHelp}>
-                    Need help? Contact{" "}
-                    <a href="mailto:support@nokrimitra.in">
-                      support@nokrimitra.in
-                    </a>
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

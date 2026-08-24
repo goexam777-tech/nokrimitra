@@ -41,7 +41,7 @@ const NURSING_PRODUCT_NAME = "Nursing Protocol Reference Notebook";
 const XRAY_PRICE = 199;
 const XRAY_PRODUCT_NAME = "X-Ray Diagnosis Guide (PDF)";
 const XRAY_ADDON_ID = "lab-test-master-guide";
-const XRAY_ADDON_PRICE = 99;
+const XRAY_ADDON_PRICE = 79;
 const XRAY_ADDON_NAME = "Clinical Lab Test Master Guide";
 
 export async function POST(req: Request) {
