@@ -18,6 +18,10 @@ import {
   buildNursingEmail,
   buildNursingEmailText,
 } from "@/lib/nursingEmailTemplate";
+import {
+  buildXrayEmail,
+  buildXrayEmailText,
+} from "@/lib/xrayEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
@@ -33,6 +37,12 @@ const PSY_ADDON_NAME = "800 Therapeutic Interventions";
 
 const NURSING_PRICE = 199;
 const NURSING_PRODUCT_NAME = "Nursing Protocol Reference Notebook";
+
+const XRAY_PRICE = 199;
+const XRAY_PRODUCT_NAME = "X-Ray Diagnosis Guide (PDF)";
+const XRAY_ADDON_ID = "lab-test-master-guide";
+const XRAY_ADDON_PRICE = 99;
+const XRAY_ADDON_NAME = "Clinical Lab Test Master Guide";
 
 export async function POST(req: Request) {
   try {
@@ -389,6 +399,80 @@ export async function POST(req: Request) {
       nursingAlreadyFulfilled = Boolean(nursingNotes.fulfilledAt);
     }
 
+    // X-Ray Diagnosis guide: main product + optional ₹99 upsell, verified
+    // server-side against Razorpay order notes.
+    let verifiedXrayAmount = XRAY_PRICE;
+    let verifiedXrayAddon = false;
+    let verifiedXrayEmail = String(email || "").trim().toLowerCase();
+    let verifiedXrayName = String(name || "there").trim() || "there";
+    let xrayNotes: Record<string, string> = {};
+    let xrayAlreadyFulfilled = false;
+    if (product === "xray") {
+      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        return NextResponse.json(
+          { error: "Razorpay key ID not configured on server" },
+          { status: 500 }
+        );
+      }
+
+      const orderResponse = await fetch(
+        `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+        {
+          headers: {
+            Authorization:
+              "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+          },
+          cache: "no-store",
+        }
+      );
+      const order = await orderResponse.json();
+      if (!orderResponse.ok || order.currency !== "INR") {
+        return NextResponse.json(
+          { error: "Could not verify X-Ray order details" },
+          { status: 400 }
+        );
+      }
+
+      xrayNotes = (order.notes || {}) as Record<string, string>;
+      const paidAmount = Number(order.amount) / 100;
+      if (xrayNotes.product === "xray") {
+        verifiedXrayAddon = String(xrayNotes.addons || "")
+          .split(",")
+          .map((id: string) => id.trim())
+          .includes(XRAY_ADDON_ID);
+        verifiedXrayAmount =
+          XRAY_PRICE + (verifiedXrayAddon ? XRAY_ADDON_PRICE : 0);
+      } else if (
+        !xrayNotes.product &&
+        (paidAmount === XRAY_PRICE ||
+          paidAmount === XRAY_PRICE + XRAY_ADDON_PRICE)
+      ) {
+        // Compatibility for any order created before xray notes existed.
+        verifiedXrayAddon = paidAmount === XRAY_PRICE + XRAY_ADDON_PRICE;
+        verifiedXrayAmount = paidAmount;
+      } else {
+        return NextResponse.json(
+          { error: "Could not verify X-Ray product details" },
+          { status: 400 }
+        );
+      }
+
+      if (Number(order.amount) !== verifiedXrayAmount * 100) {
+        return NextResponse.json(
+          { error: "X-Ray order amount verification failed" },
+          { status: 400 }
+        );
+      }
+      verifiedXrayEmail = String(
+        xrayNotes.customerEmail || verifiedXrayEmail
+      ).trim().toLowerCase();
+      verifiedXrayName = String(
+        xrayNotes.customerName || verifiedXrayName
+      ).trim() || "there";
+      xrayAlreadyFulfilled = Boolean(xrayNotes.fulfilledAt);
+    }
+
     // Prefer an explicitly configured public origin for links included in email.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
     const host = req.headers.get("host") || "localhost:3000";
@@ -403,15 +487,20 @@ export async function POST(req: Request) {
     const isEscooter = product === "escooter";
     const isOpd = product === "opd";
     const isNursing = product === "nursing";
+    const isXray = product === "xray";
     const deliveryEmail = isPsychology
       ? verifiedPsyEmail
       : isNursing
       ? verifiedNursingEmail
+      : isXray
+      ? verifiedXrayEmail
       : email;
     const deliveryName = isPsychology
       ? verifiedPsyName
       : isNursing
       ? verifiedNursingName
+      : isXray
+      ? verifiedXrayName
       : name;
 
     // Only buyers get a signed download link (issued after signature check).
@@ -473,10 +562,32 @@ export async function POST(req: Request) {
       nursingToken ? `?t=${nursingToken}` : ""
     }`;
 
+    const xrayToken = isXray
+      ? createDownloadToken("xray", razorpay_order_id)
+      : null;
+    const xrayAddonToken =
+      isXray && verifiedXrayAddon
+        ? createDownloadToken("xray-lab-test-master-guide", razorpay_order_id)
+        : null;
+    const xrayDownloadUrl = `${appUrl}/xray-diagnosis/go${
+      xrayToken ? `?t=${xrayToken}` : ""
+    }`;
+    const xrayAddonDownloadUrl = `${appUrl}/xray-diagnosis/go?item=${XRAY_ADDON_ID}${
+      xrayAddonToken ? `&t=${xrayAddonToken}` : ""
+    }`;
+    const xrayDownloads = [
+      { label: "DOWNLOAD X-RAY DIAGNOSIS GUIDE", url: xrayDownloadUrl },
+      ...(xrayAddonToken
+        ? [{ label: XRAY_ADDON_NAME, url: xrayAddonDownloadUrl }]
+        : []),
+    ];
+
     const downloadUrl = isPsychology
       ? psyDownloadUrl
       : isNursing
       ? nursingDownloadUrl
+      : isXray
+      ? xrayDownloadUrl
       : isVastu
       ? `${appUrl}/vastu-plan-checkout/go`
       : isMcq
@@ -515,7 +626,8 @@ export async function POST(req: Request) {
     const skipDuplicateDelivery =
       (isEscooter && escooterAlreadyFulfilled) ||
       (isPsychology && psyAlreadyFulfilled) ||
-      (isNursing && nursingAlreadyFulfilled);
+      (isNursing && nursingAlreadyFulfilled) ||
+      (isXray && xrayAlreadyFulfilled);
 
     if (
       resendApiKey &&
@@ -558,6 +670,17 @@ export async function POST(req: Request) {
               orderId: razorpay_order_id,
               amount: verifiedNursingAmount,
               downloadUrl,
+            })
+          : isXray
+          ? buildXrayEmail({
+              customerName: deliveryName || "there",
+              productName: verifiedXrayAddon
+                ? `${XRAY_PRODUCT_NAME} + ${XRAY_ADDON_NAME}`
+                : XRAY_PRODUCT_NAME,
+              orderId: razorpay_order_id,
+              amount: verifiedXrayAmount,
+              downloadUrl,
+              downloads: xrayDownloads,
             })
           : isEscooter
           ? buildEscooterEmail({
@@ -610,6 +733,17 @@ export async function POST(req: Request) {
               amount: verifiedNursingAmount,
               downloadUrl,
             })
+          : isXray
+          ? buildXrayEmailText({
+              customerName: deliveryName || "there",
+              productName: verifiedXrayAddon
+                ? `${XRAY_PRODUCT_NAME} + ${XRAY_ADDON_NAME}`
+                : XRAY_PRODUCT_NAME,
+              orderId: razorpay_order_id,
+              amount: verifiedXrayAmount,
+              downloadUrl,
+              downloads: xrayDownloads,
+            })
           : isEscooter
           ? buildEscooterEmailText({
               customerName: name || "there",
@@ -641,6 +775,8 @@ export async function POST(req: Request) {
           ? `${psyProductName}: Your download link is ready! 🎉`
           : isNursing
           ? `${NURSING_PRODUCT_NAME}: Your download link is ready! 🩺`
+          : isXray
+          ? `${XRAY_PRODUCT_NAME}: Your download link is ready! 🩻`
           : isEscooter
           ? `Your EV Repair 3-Book Bundle is ready`
           : isVastu
@@ -784,6 +920,40 @@ export async function POST(req: Request) {
       }
     }
 
+    if (isXray && !xrayAlreadyFulfilled && emailDelivered) {
+      try {
+        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+        const stampResponse = await fetch(
+          `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+            },
+            body: JSON.stringify({
+              notes: {
+                ...xrayNotes,
+                product: "xray",
+                addons: verifiedXrayAddon ? XRAY_ADDON_ID : "",
+                catalogVersion: xrayNotes.catalogVersion || "1",
+                fulfilledAt: new Date().toISOString(),
+              },
+            }),
+          }
+        );
+        if (!stampResponse.ok) {
+          console.error(
+            "Could not mark X-Ray order as fulfilled:",
+            await stampResponse.text()
+          );
+        }
+      } catch (stampErr) {
+        console.error("Could not mark X-Ray order as fulfilled:", stampErr);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       verified: true,
@@ -857,6 +1027,31 @@ export async function POST(req: Request) {
               },
             ],
             alreadyFulfilled: nursingAlreadyFulfilled,
+          }
+        : {}),
+      ...(isXray
+        ? {
+            amountPaid: verifiedXrayAmount,
+            downloadPath: `/xray-diagnosis/go${
+              xrayToken ? `?t=${xrayToken}` : ""
+            }`,
+            downloads: [
+              {
+                label: "X-Ray Diagnosis Guide",
+                path: `/xray-diagnosis/go${
+                  xrayToken ? `?t=${xrayToken}` : ""
+                }`,
+              },
+              ...(xrayAddonToken
+                ? [
+                    {
+                      label: XRAY_ADDON_NAME,
+                      path: `/xray-diagnosis/go?item=${XRAY_ADDON_ID}&t=${xrayAddonToken}`,
+                    },
+                  ]
+                : []),
+            ],
+            alreadyFulfilled: xrayAlreadyFulfilled,
           }
         : {}),
     });
