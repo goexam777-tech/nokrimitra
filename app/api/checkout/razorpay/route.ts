@@ -15,6 +15,8 @@ const XRAY_PRICE = 199;
 const XRAY_ADDON_ID = "lab-test-master-guide";
 const XRAY_ADDON_PRICE = 79;
 
+const REELS_PRICE = 148;
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -24,6 +26,7 @@ export async function POST(req: Request) {
     const isPsychology = body.product === "psychology";
     const isNursing = body.product === "nursing";
     const isXray = body.product === "xray";
+    const isReels = body.product === "reels";
     const isEscooter = body.product === ESCOOTER_CATALOG.product;
     const requestedAddons = Array.isArray(body.addons) ? body.addons.map(String) : [];
     const unknownAddons = isOpd
@@ -55,6 +58,8 @@ export async function POST(req: Request) {
           ? NURSING_PRICE
           : isXray
             ? XRAY_PRICE + (addons.length ? XRAY_ADDON_PRICE : 0)
+          : isReels
+            ? REELS_PRICE
           : isEscooter
             ? ESCOOTER_CATALOG.price
             : Number(body.amount || 99);
@@ -90,6 +95,13 @@ export async function POST(req: Request) {
       ? {
           product: "xray",
           addons: addons.join(","),
+          catalogVersion: "1",
+          customerEmail: String(body.email || "").trim().toLowerCase(),
+          customerName: String(body.name || "").trim().slice(0, 120),
+        }
+      : isReels
+      ? {
+          product: "reels",
           catalogVersion: "1",
           customerEmail: String(body.email || "").trim().toLowerCase(),
           customerName: String(body.name || "").trim().slice(0, 120),
