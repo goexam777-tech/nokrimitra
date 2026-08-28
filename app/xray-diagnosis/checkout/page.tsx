@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 
 import trustBadges from "@/public/trust.webp";
-import cashfreeBadge from "@/public/checkoutcashfree.png";
 import styles from "../../nursing-notes/checkout/checkout.module.css";
 import up from "./upsell.module.css";
 
@@ -46,37 +45,19 @@ const trustPoints = [
   { icon: MessageSquare, text: "Support Available" },
 ];
 
-type CashfreeInstance = {
-  checkout: (opts: {
-    paymentSessionId: string;
-    redirectTarget?: string;
-  }) => void;
-};
-
-function loadCashfree(): Promise<
-  ((opts: { mode: string }) => CashfreeInstance) | null
-> {
+function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
-    const existing = (
-      window as unknown as {
-        Cashfree?: (opts: { mode: string }) => CashfreeInstance;
-      }
-    ).Cashfree;
-    if (existing) {
-      resolve(existing);
+    if (
+      typeof window !== "undefined" &&
+      (window as unknown as { Razorpay?: unknown }).Razorpay
+    ) {
+      resolve(true);
       return;
     }
     const s = document.createElement("script");
-    s.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
-    s.onload = () =>
-      resolve(
-        (
-          window as unknown as {
-            Cashfree?: (opts: { mode: string }) => CashfreeInstance;
-          }
-        ).Cashfree || null
-      );
-    s.onerror = () => resolve(null);
+    s.src = "https://checkout.razorpay.com/v1/checkout.js";
+    s.onload = () => resolve(true);
+    s.onerror = () => resolve(false);
     document.body.appendChild(s);
   });
 }
@@ -163,20 +144,31 @@ export default function XrayCheckout() {
     setError("");
 
     try {
-      const res = await fetch("/api/checkout/cashfree", {
+      const res = await fetch("/api/checkout/razorpay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           product: "xray",
           name,
           email,
-          amount: total,
-          productName: PRODUCT_NAME,
           addons: addon ? [ADDON_ID] : [],
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Order creation failed");
+
+      const goThankYou = (extra: Record<string, string>) => {
+        const q = new URLSearchParams({
+          name,
+          email,
+          amountPaid: String(total),
+          productName: PRODUCT_NAME,
+          product: "xray",
+          addons: addon ? ADDON_ID : "",
+          ...extra,
+        });
+        router.push(`/xray-diagnosis/thank-you?${q.toString()}`);
+      };
 
       if (typeof window !== "undefined") {
         const w = window as unknown as { gtag?: (...a: unknown[]) => void };
@@ -187,44 +179,49 @@ export default function XrayCheckout() {
         });
       }
 
-      // Mock mode (local dev without Cashfree keys) → straight to thank-you.
+      // Mock mode (local dev without Razorpay keys) → straight to thank-you.
       if (data.mock) {
-        const q = new URLSearchParams({
-          order_id: data.orderId,
-          name,
-          email,
-          amountPaid: String(total),
-          productName: PRODUCT_NAME,
-          product: "xray",
-          addons: addon ? ADDON_ID : "",
-          mock: "true",
-        });
         setTimeout(
-          () => router.push(`/xray-diagnosis/thank-you?${q.toString()}`),
-          1000
+          () => goThankYou({ orderId: data.orderId, mock: "true" }),
+          900
         );
         return;
       }
 
-      const Cashfree = await loadCashfree();
-      if (!Cashfree)
+      const ok = await loadRazorpay();
+      if (!ok)
         throw new Error(
           "Could not load the secure payment window. Please retry."
         );
 
-      const mode =
-        (process.env.NEXT_PUBLIC_CASHFREE_ENV || "production").toLowerCase() ===
-        "sandbox"
-          ? "sandbox"
-          : "production";
-
-      const cashfree = Cashfree({ mode });
-      // Cashfree redirects to its hosted page and back to the return_url
-      // (which already carries order_id, name, email, amount & add-on).
-      cashfree.checkout({
-        paymentSessionId: data.paymentSessionId,
-        redirectTarget: "_self",
+      const rzp = new (
+        window as unknown as {
+          Razorpay: new (o: unknown) => { open: () => void };
+        }
+      ).Razorpay({
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || data.keyId,
+        amount: data.amount,
+        currency: data.currency || "INR",
+        name: "NokriMitra",
+        description: addon
+          ? `${PRODUCT_NAME} + ${ADDON_NAME}`
+          : PRODUCT_NAME,
+        order_id: data.orderId,
+        handler: (r: {
+          razorpay_payment_id: string;
+          razorpay_order_id: string;
+          razorpay_signature: string;
+        }) =>
+          goThankYou({
+            razorpay_payment_id: r.razorpay_payment_id,
+            razorpay_order_id: r.razorpay_order_id,
+            razorpay_signature: r.razorpay_signature,
+          }),
+        prefill: { name, email },
+        theme: { color: "#ef4444" },
+        modal: { ondismiss: () => setLoading(false) },
       });
+      rzp.open();
     } catch (err) {
       setError(
         err instanceof Error
@@ -403,13 +400,6 @@ export default function XrayCheckout() {
                     <i>INR</i> {total}.00
                   </strong>
                 </div>
-
-                <Image
-                  src={cashfreeBadge}
-                  alt="Completing payment with Cashfree Payments"
-                  className={up.cashfreeBadge}
-                  sizes="(max-width: 640px) 92vw, 440px"
-                />
 
                 <button
                   type="submit"
