@@ -28,9 +28,9 @@ export async function POST(req: Request) {
       secretKey.includes("your_cashfree_secret");
 
     const isXray = product === "xray";
+    const isNorcet = product === "norcet";
 
-    // X-Ray amount is computed server-side from the verified add-on selection,
-    // never trusted from the browser.
+    // Amount is computed server-side for security
     const xrayHasAddon =
       isXray &&
       (Array.isArray(addons)
@@ -38,6 +38,8 @@ export async function POST(req: Request) {
         : String(addons || "").includes(XRAY_ADDON_ID));
     const amount = isXray
       ? XRAY_PRICE + (xrayHasAddon ? XRAY_ADDON_PRICE : 0)
+      : isNorcet
+      ? 149
       : Number(reqAmount || 99);
 
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -90,6 +92,15 @@ export async function POST(req: Request) {
         `&productName=${encodeURIComponent(productName || "X-Ray Diagnosis Guide (PDF)")}` +
         `&product=xray&addons=${encodeURIComponent(addonParam)}`;
       orderTags = { product: "xray", addons: addonParam };
+    } else if (isNorcet) {
+      returnUrl =
+        `${appUrl}/norcet-notes/thank-you?order_id={order_id}` +
+        `&name=${encodeURIComponent(cleanName)}` +
+        `&email=${encodeURIComponent(cleanEmail)}` +
+        `&amountPaid=${amount}` +
+        `&productName=${encodeURIComponent(productName || "NORCET 11 Notes (700+ Pages PDF)")}` +
+        `&product=norcet`;
+      orderTags = { product: "norcet" };
     } else {
       returnUrl =
         `${appUrl}/gsrtc-mcq-course/thank-you?order_id={order_id}` +
