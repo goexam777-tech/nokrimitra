@@ -14,7 +14,9 @@ const TOKEN_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
 function getSecret(): string | null {
   const secret =
-    process.env.DOWNLOAD_TOKEN_SECRET || process.env.RAZORPAY_KEY_SECRET;
+    process.env.DOWNLOAD_TOKEN_SECRET ||
+    process.env.CASHFREE_SECRET_KEY ||
+    process.env.RAZORPAY_KEY_SECRET;
   if (!secret || secret.includes("your_key_secret") || secret.trim() === "") {
     return null;
   }
