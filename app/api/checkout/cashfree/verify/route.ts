@@ -55,7 +55,7 @@ export async function POST(req: Request) {
           verified: true,
           mock: true,
           amountPaid: 149,
-          downloadPath: "/norcet-notes/go?mock=1",
+          downloadPath: "/norcet-notes/go",
         });
       }
       if (isXray) {
@@ -145,13 +145,7 @@ export async function POST(req: Request) {
         String(name || data.customer_details?.customer_name || "Candidate").trim() ||
         "Candidate";
 
-      const token = createDownloadToken("norcet", order_id);
-      const downloadUrl = token
-        ? `${appUrl}/norcet-notes/go?t=${token}`
-        : `${appUrl}/norcet-notes/go`;
-      const downloadPath = token
-        ? `/norcet-notes/go?t=${token}`
-        : `/norcet-notes/go`;
+      const downloadUrl = `${appUrl}/norcet-notes/go`;
       const itemProductName = "NORCET 11 Notes (700+ Pages PDF)";
 
       if (resendApiKey && resendApiKey !== "your_resend_key_here" && customerEmail) {
@@ -201,7 +195,7 @@ export async function POST(req: Request) {
         verified: true,
         mock: false,
         amountPaid: expectedAmount,
-        downloadPath,
+        downloadPath: "/norcet-notes/go",
       });
     }
 
