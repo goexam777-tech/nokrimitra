@@ -30,6 +30,7 @@ import { createDownloadToken } from "@/lib/downloadToken";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
 const OPD_BASE_PRICE = 199;
+const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 const OPD_ADDON_NAME = "Emergency Medicine Handbook";
@@ -96,9 +97,12 @@ export async function POST(req: Request) {
         mockTokenProduct === "opd"
           ? "/opd-mastery/go"
           : "/electric-scooter-repairing/go";
+      const isExitOfferMock =
+        product === "opd" &&
+        (String(amountPaid) === "149" || String(addons || "").includes("exit149") || (body as { offer?: string }).offer === "exit149");
       const mockHasOpdAddon =
         product === "opd" &&
-        String(addons || "").split(",").includes(OPD_ADDON_ID);
+        (String(addons || "").split(",").includes(OPD_ADDON_ID) || isExitOfferMock);
       const mockHasPsyAddon =
         product === "psychology" &&
         String(addons || "").split(",").includes(PSY_ADDON_ID);
@@ -108,7 +112,9 @@ export async function POST(req: Request) {
           : null;
       const mockAmount =
         product === "opd"
-          ? OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
+          ? isExitOfferMock
+            ? OPD_EXIT_PRICE
+            : OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
           : product === "psychology"
             ? PSY_BASE_PRICE + (mockHasPsyAddon ? PSY_ADDON_PRICE : 0)
             : product === "nursing"
@@ -198,13 +204,23 @@ export async function POST(req: Request) {
         );
       }
 
-      verifiedOpdAddons = String(order.notes?.addons || "")
-        .split(",")
-        .map((id: string) => id.trim())
-        .filter((id: string) => id === OPD_ADDON_ID);
-      verifiedOpdAmount =
-        OPD_BASE_PRICE +
-        (verifiedOpdAddons.includes(OPD_ADDON_ID) ? OPD_ADDON_PRICE : 0);
+      const isExitOffer =
+        order.notes?.offer === "exit149" ||
+        Number(order.amount) === OPD_EXIT_PRICE * 100;
+
+      if (isExitOffer) {
+        verifiedOpdAddons = [OPD_ADDON_ID];
+        verifiedOpdAmount = OPD_EXIT_PRICE;
+      } else {
+        verifiedOpdAddons = String(order.notes?.addons || "")
+          .split(",")
+          .map((id: string) => id.trim())
+          .filter((id: string) => id === OPD_ADDON_ID);
+        verifiedOpdAmount =
+          OPD_BASE_PRICE +
+          (verifiedOpdAddons.includes(OPD_ADDON_ID) ? OPD_ADDON_PRICE : 0);
+      }
+
       if (
         order.currency !== "INR" ||
         Number(order.amount) !== verifiedOpdAmount * 100

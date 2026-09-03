@@ -13,7 +13,7 @@
   min-height: 100vh;
   margin-bottom: -76px;
   overflow-x: hidden;
-  background: #ffffff;
+  background: #191D33;
   color: var(--ink);
   font-family: var(--font-opd), Arial, sans-serif;
   font-size: 16px;
@@ -30,9 +30,9 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  border-bottom: 1px solid var(--line);
-  background: #ffffff;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: #191D33;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 .topBarInner {
   display: flex;
@@ -49,19 +49,19 @@
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 999px;
-  background: #f8fafc;
-  color: var(--muted);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
   font-size: 14px;
   font-weight: 650;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 .backBtn:hover {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  color: var(--navy);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
 }
 .brand { color: var(--navy); font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
 .brand span { color: var(--blue); }
@@ -263,18 +263,18 @@
   gap: 10px;
   border: 0;
   border-radius: 14px;
-  background: linear-gradient(135deg, #22a745 0%, #1b8a39 100%);
+  background: #28A745;
   color: #ffffff !important;
   font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.025em;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  box-shadow: 0 10px 24px rgba(27, 138, 57, 0.32);
+  box-shadow: 0 10px 24px rgba(40, 167, 69, 0.32);
   cursor: pointer;
   transition: background .16s ease, transform .12s ease;
 }
 .payBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #1c8d3a 0%, #16702e 100%);
+  background: #218838;
   transform: translateY(-1px);
 }
 .payBtn:active:not(:disabled) {
@@ -372,4 +372,345 @@
 
 @media (prefers-reduced-motion: reduce) {
   .page * { transition: none !important; }
+}
+
+/* Exit-Intent Offer Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(10, 14, 26, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalCard {
+  position: relative;
+  width: min(100%, 480px);
+  max-height: 92vh;
+  overflow-y: auto;
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  animation: modalScaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalScaleUp {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modalCloseBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modalCloseBtn:hover {
+  background: #f1f5f9;
+  color: #0f1720;
+  border-color: #cbd5e1;
+}
+
+.modalBody {
+  padding: 24px 22px 20px;
+}
+
+.modalHeader {
+  text-align: center;
+  padding-bottom: 12px;
+}
+
+.exitBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #dc2626;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.exitHeading {
+  color: #0f1720;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.exitSub {
+  margin-top: 6px;
+  color: #475569;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.exitSub strong {
+  color: #0f1720;
+}
+
+.exitTimerBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 0 14px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #92400e;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.exitTimerBar strong {
+  color: #b45309;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+/* Bundle Box */
+.exitBundleCard {
+  border: 1.5px solid #dbeafe;
+  border-radius: 14px;
+  background: #f8fafc;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.exitBundleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 0;
+}
+
+.exitBundleItem + .exitBundleItem {
+  border-top: 1px dashed #cbd5e1;
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.exitItemTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0f1720;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.exitItemTitle svg {
+  flex: none;
+  color: #16a34a;
+}
+
+.exitItemPrice {
+  flex: none;
+  color: #64748b;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.freePill {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 800;
+  border: 1px solid #bbf7d0;
+}
+
+/* Price deal bar */
+.exitDealBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #191d33;
+  color: #ffffff;
+}
+
+.exitOldPriceGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.exitOldLabel {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.exitOldValue {
+  font-size: 14.5px;
+  color: #94a3b8;
+  text-decoration: line-through;
+  font-weight: 600;
+}
+
+.exitNewPriceGroup {
+  text-align: right;
+}
+
+.exitNewLabel {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #4ade80;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.exitNewValue {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+/* Quick inputs inside modal */
+.exitFields {
+  display: grid;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.exitInput {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 13px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  outline: none;
+  background: #f8fafc;
+  color: #0f1720;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.exitInput:focus {
+  border-color: #28a745;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}
+
+.exitPayBtn {
+  display: flex;
+  width: 100%;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: #28a745;
+  color: #ffffff !important;
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 20px rgba(40, 167, 69, 0.35);
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+
+.exitPayBtn svg {
+  flex: none;
+  color: #ffffff !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+}
+
+.exitPayBtn:hover:not(:disabled) {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.exitPayBtn:disabled {
+  opacity: 0.75;
+  cursor: wait;
+}
+
+.exitTrustRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.exitTrustRow span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.exitTrustRow svg {
+  color: #16a34a;
+}
+
+.exitDeclineWrap {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.exitDeclineBtn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s ease;
+}
+
+.exitDeclineBtn:hover {
+  color: #475569;
 }

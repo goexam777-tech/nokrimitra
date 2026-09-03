@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
 const OPD_BASE_PRICE = 199;
+const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     const isOpd = body.product === "opd";
+    const isOpdExitOffer = isOpd && (body.offer === "exit149" || body.isExitOffer === true);
     const isPsychology = body.product === "psychology";
     const isNursing = body.product === "nursing";
     const isXray = body.product === "xray";
@@ -44,14 +46,18 @@ export async function POST(req: Request) {
     }
 
     const addons = isOpd
-      ? requestedAddons.filter((id: string) => id === OPD_ADDON_ID).slice(0, 1)
+      ? isOpdExitOffer
+        ? [OPD_ADDON_ID]
+        : requestedAddons.filter((id: string) => id === OPD_ADDON_ID).slice(0, 1)
       : isPsychology
         ? requestedAddons.filter((id: string) => id === PSY_ADDON_ID).slice(0, 1)
         : isXray
           ? requestedAddons.filter((id: string) => id === XRAY_ADDON_ID).slice(0, 1)
         : [];
     const amount = isOpd
-      ? OPD_BASE_PRICE + (addons.length ? OPD_ADDON_PRICE : 0)
+      ? isOpdExitOffer
+        ? OPD_EXIT_PRICE
+        : OPD_BASE_PRICE + (addons.length ? OPD_ADDON_PRICE : 0)
       : isPsychology
         ? PSY_BASE_PRICE + (addons.length ? PSY_ADDON_PRICE : 0)
         : isNursing
@@ -75,7 +81,14 @@ export async function POST(req: Request) {
     }
 
     const notes = isOpd
-      ? { product: "opd", addons: addons.join(","), catalogVersion: "1" }
+      ? {
+          product: "opd",
+          offer: isOpdExitOffer ? "exit149" : "standard",
+          addons: addons.join(","),
+          catalogVersion: "1",
+          customerEmail: String(body.email || "").trim().toLowerCase(),
+          customerName: String(body.name || "").trim().slice(0, 120),
+        }
       : isPsychology
       ? {
           product: "psychology",
