@@ -29,6 +29,7 @@ export async function POST(req: Request) {
 
     const isXray = product === "xray";
     const isNorcet = product === "norcet";
+    const isMedical = product === "medical" || product === "medical-master-pdfs";
 
     // Amount is computed server-side for security
     const xrayHasAddon =
@@ -39,6 +40,8 @@ export async function POST(req: Request) {
     const amount = isXray
       ? XRAY_PRICE + (xrayHasAddon ? XRAY_ADDON_PRICE : 0)
       : isNorcet
+      ? 149
+      : isMedical
       ? 149
       : Number(reqAmount || 99);
 
@@ -101,6 +104,15 @@ export async function POST(req: Request) {
         `&productName=${encodeURIComponent(productName || "NORCET 11 Notes (700+ Pages PDF)")}` +
         `&product=norcet`;
       orderTags = { product: "norcet" };
+    } else if (isMedical) {
+      returnUrl =
+        `${appUrl}/medical-master-pdfs/thank-you?order_id={order_id}` +
+        `&name=${encodeURIComponent(cleanName)}` +
+        `&email=${encodeURIComponent(cleanEmail)}` +
+        `&amountPaid=${amount}` +
+        `&productName=${encodeURIComponent(productName || "31 Medical Master PDFs Bundle")}` +
+        `&product=medical`;
+      orderTags = { product: "medical" };
     } else {
       returnUrl =
         `${appUrl}/gsrtc-mcq-course/thank-you?order_id={order_id}` +

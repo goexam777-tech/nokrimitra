@@ -1,0 +1,1614 @@
+.page {
+  --ink: #111827;
+  --muted: #4b5563;
+  --primary-blue: #2563eb;
+  --primary-green: #16a34a;
+  --accent-gold: #f59e0b;
+  min-height: 100vh;
+  margin-bottom: -76px;
+  overflow-x: clip;
+  background: #ffffff;
+  color: var(--ink);
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+.page a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page a:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   Top Bars (Similar to AI Baby Reels)
+   ========================================================================== */
+
+/* Top blue notification strip */
+.offerBar {
+  padding: 9px 16px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* Dark high-contrast sub-bar */
+.subBar {
+  padding: 11px 16px;
+  background: #090d16;
+  color: #ffffff;
+  font-size: clamp(0.92rem, 3.2vw, 1.25rem);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0.015em;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.subBarHighlight {
+  color: #facc15;
+}
+
+/* ==========================================================================
+   Hero Section
+   ========================================================================== */
+
+.hero {
+  padding: clamp(24px, 4.5vw, 48px) 0 clamp(20px, 3vw, 36px);
+  background: #ffffff;
+}
+
+.heroInner {
+  display: grid;
+  width: min(100%, 1140px);
+  margin-inline: auto;
+  padding-inline: 20px;
+  gap: 32px;
+  align-items: start;
+}
+
+/* Left Column: Visual Mockup / Placeholder */
+.visual {
+  position: sticky;
+  top: 20px;
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+@media (max-width: 899px) {
+  .visual {
+    position: static;
+    max-width: 460px;
+  }
+}
+
+/* Placeholder Container when user hasn't provided the final image yet */
+.placeholderCard {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.08;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  border: 2px solid rgba(59, 130, 246, 0.35);
+  box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.35),
+              0 0 28px rgba(37, 99, 235, 0.18);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  color: #ffffff;
+}
+
+.placeholderCard::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.placeholderBadge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.25);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #93c5fd;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.placeholderCenter {
+  text-align: center;
+  margin-block: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  z-index: 1;
+}
+
+.placeholderIconWrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.45);
+}
+
+.placeholderTitle {
+  font-size: clamp(1.4rem, 3.5vw, 1.8rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.placeholderTagline {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.4;
+  max-width: 320px;
+}
+
+.placeholderStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  margin-top: 12px;
+  z-index: 1;
+}
+
+.placeholderStatItem {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.placeholderStatItem strong {
+  display: block;
+  color: #60a5fa;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.placeholderStatItem span {
+  color: #94a3b8;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.productImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Right Column: Hero Content */
+.content {
+  max-width: 650px;
+}
+
+/* Rating Pill */
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 7px 15px;
+  border: 1px solid #fde68a;
+  border-radius: 999px;
+  background: #fffbeb;
+  color: #1e293b;
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.stars {
+  color: #f59e0b;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.rating b {
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Hero H1 Headline - Strictly 2 Lines */
+.content h1 {
+  margin: 0;
+  color: #0f172a;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.28rem, 2.55vw, 1.82rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.titleLine1 {
+  display: block;
+  color: #0f172a;
+}
+
+.titleLine2 {
+  display: block;
+  color: #2563eb;
+  margin-top: 4px;
+}
+
+/* Subhead */
+.subhead {
+  margin: 16px 0 0;
+  color: #334155;
+  font-size: clamp(1rem, 2.3vw, 1.12rem);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Value & Price Banner Card */
+.valueBanner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1.5px solid #86efac;
+}
+
+.valueText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.originalValue {
+  font-size: 0.88rem;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.originalValue s {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.dealValue {
+  font-size: 1.25rem;
+  color: #15803d;
+  font-weight: 800;
+}
+
+.saveBadge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Feature Bullets (Like AI Baby Reels) */
+.features {
+  display: grid;
+  margin: 22px 0 0;
+  padding: 0;
+  gap: 13px;
+  list-style: none;
+}
+
+.features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #374151;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.features li b {
+  color: #111827;
+  font-weight: 700;
+}
+
+.check {
+  flex: 0 0 auto;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  margin-top: 2px;
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.check svg {
+  display: block;
+}
+
+/* ==========================================================================
+   Centered Offer & Buy Section (Below Hero, matching AI Baby Reels style)
+   ========================================================================== */
+
+.offerSection {
+  padding: 0 20px clamp(40px, 6vw, 68px);
+  background: #ffffff;
+  text-align: center;
+}
+
+.offerInner {
+  max-width: 860px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.offerHeadline {
+  max-width: 820px;
+  margin: 0;
+  color: #0f172a;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.15rem, 2.6vw, 1.85rem);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+/* Fresh, High-Converting Buy Button */
+.buyBtn {
+  position: relative;
+  display: inline-flex;
+  min-height: 68px;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: clamp(20px, 3vw, 32px) auto 0;
+  padding: 16px clamp(24px, 4vw, 44px);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 45%, #15803d 100%);
+  color: #ffffff !important;
+  font-size: clamp(1.02rem, 2.6vw, 1.28rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  box-shadow: 0 14px 32px rgba(22, 163, 74, 0.38),
+              0 2px 6px rgba(22, 163, 74, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.45),
+              inset 0 -2px 6px rgba(4, 120, 87, 0.35);
+  transition: transform 150ms ease, box-shadow 200ms ease, filter 200ms ease;
+  animation: buyPulse 2.4s ease-in-out infinite;
+  cursor: pointer;
+}
+
+/* Sweeping light beam effect */
+.buyBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -85%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: skewX(-24deg);
+  pointer-events: none;
+  animation: buyShine 3.2s ease-in-out infinite;
+}
+
+.buyBtn:hover {
+  filter: brightness(1.06) saturate(1.06);
+  box-shadow: 0 20px 42px rgba(22, 163, 74, 0.48),
+              0 3px 8px rgba(22, 163, 74, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5),
+              inset 0 -2px 6px rgba(4, 120, 87, 0.35);
+  transform: translateY(-3px) scale(1.015);
+}
+
+.buyBtn:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+.buyIcon {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.buyIcon svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.buyText {
+  position: relative;
+  z-index: 1;
+}
+
+.buyText b {
+  font-weight: 900;
+  color: #fef08a;
+  margin-left: 6px;
+}
+
+.buyText s {
+  margin-left: 6px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 700;
+  font-size: 0.9em;
+}
+
+.buyNote {
+  margin: 14px 0 0;
+  font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+  font-weight: 800;
+  color: #dc2626;
+  letter-spacing: 0.02em;
+}
+
+/* Trust Badges */
+.trustWrap {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.trustImage {
+  display: block;
+  max-width: 480px;
+  width: 100%;
+  height: auto;
+  margin-inline: auto;
+  opacity: 0.95;
+}
+
+.guaranteeText {
+  margin-top: 10px;
+  font-size: 0.84rem;
+  color: #4b5563;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+@keyframes buyPulse {
+  0%, 100% {
+    box-shadow: 0 14px 32px rgba(22, 163, 74, 0.38),
+                0 2px 6px rgba(22, 163, 74, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.45),
+                inset 0 -2px 6px rgba(4, 120, 87, 0.35);
+  }
+  50% {
+    box-shadow: 0 18px 38px rgba(22, 163, 74, 0.5),
+                0 4px 10px rgba(22, 163, 74, 0.32),
+                inset 0 1px 0 rgba(255, 255, 255, 0.55),
+                inset 0 -2px 6px rgba(4, 120, 87, 0.35);
+  }
+}
+
+@keyframes buyShine {
+  0% {
+    left: -85%;
+  }
+  30%, 100% {
+    left: 140%;
+  }
+}
+
+/* ==========================================================================
+   Combo Pack Simple Checklist Section ("Combo Pack Mein Kya Milega?")
+   ========================================================================== */
+
+.comboSection {
+  padding: clamp(32px, 5vw, 56px) 20px clamp(40px, 6vw, 68px);
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+}
+
+.comboCardContainer {
+  max-width: 680px;
+  width: 100%;
+  margin-inline: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.comboHeading {
+  margin: 0 0 24px;
+  color: #db2777;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-align: center;
+}
+
+.simpleList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.simpleList li {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: clamp(0.98rem, 2.2vw, 1.1rem);
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.45;
+}
+
+.simpleCheck {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  background: #16a34a;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
+}
+
+.simpleCheck svg {
+  display: block;
+}
+
+/* ==========================================================================
+   Audience Section ("यह Combo किनके लिए है?")
+   ========================================================================== */
+
+.audienceSection {
+  padding: 0 20px clamp(40px, 6vw, 68px);
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+}
+
+.audienceCardContainer {
+  max-width: 680px;
+  width: 100%;
+  margin-inline: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.audienceHeading {
+  margin: 0 0 24px;
+  color: #db2777;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-align: center;
+}
+
+.audienceList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 13px;
+}
+
+.audienceList li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: clamp(1rem, 2.3vw, 1.12rem);
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.45;
+}
+
+.audienceBullet {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #0f172a;
+}
+
+/* ==========================================================================
+   Sample Previews Section ("Sample PDFs")
+   ========================================================================== */
+
+.samplesSection {
+  padding: 0 20px clamp(40px, 6vw, 68px);
+  background: #ffffff;
+}
+
+.samplesInner {
+  max-width: 900px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.samplesHeader {
+  text-align: center;
+  margin-bottom: clamp(16px, 3vw, 24px);
+  max-width: 680px;
+}
+
+.samplesHeading {
+  margin: 0 0 24px;
+  color: #db2777;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-align: center;
+}
+
+/* Carousel Layout */
+.carouselWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.carouselArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.15);
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.carouselArrow:hover {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.carouselArrowLeft {
+  left: -20px;
+}
+
+.carouselArrowRight {
+  right: -20px;
+}
+
+@media (max-width: 640px) {
+  .carouselArrowLeft {
+    left: 8px;
+  }
+  .carouselArrowRight {
+    right: 8px;
+  }
+}
+
+.carouselMainCard {
+  width: 100%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.carouselCounter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.carouselImageContainer {
+  width: 100%;
+  max-width: 520px;
+  position: relative;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+}
+
+.carouselImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.16);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Thumbnail Navigation Strip */
+.thumbnailStrip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  max-width: 100%;
+  padding: 16px 6px 8px;
+  margin-top: 14px;
+  scrollbar-width: thin;
+}
+
+.thumbnailBtn {
+  flex: 0 0 auto;
+  width: 54px;
+  height: 72px;
+  border-radius: 8px;
+  border: 2px solid #cbd5e1;
+  overflow: hidden;
+  padding: 0;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 150ms ease, transform 150ms ease;
+  opacity: 0.65;
+}
+
+.thumbnailBtn:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.thumbnailActive {
+  border-color: #2563eb !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+  transform: scale(1.05);
+}
+
+.thumbnailImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Samples CTA Wrap */
+.samplesCtaWrap {
+  margin-top: 28px;
+  text-align: center;
+}
+
+.samplesCtaBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 15px 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  color: #ffffff !important;
+  font-size: clamp(0.98rem, 2.3vw, 1.15rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 10px 26px rgba(22, 163, 74, 0.35);
+  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+
+.samplesCtaBtn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(22, 163, 74, 0.45);
+}
+
+.samplesCtaNote {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Customer Reviews Section
+   ========================================================================== */
+
+.reviewsSection {
+  padding: 0 20px clamp(40px, 6vw, 68px);
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+}
+
+.reviewsCardContainer {
+  max-width: 680px;
+  width: 100%;
+  margin-inline: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.reviewsHeading {
+  margin: 0 0 20px;
+  color: #db2777;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-align: center;
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.reviewItem {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  border-radius: 0;
+  padding: 18px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reviewItem:last-child {
+  border-bottom: none;
+}
+
+.reviewAuthor {
+  font-size: 1.02rem;
+  color: #0f172a;
+  font-weight: 700;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.reviewAuthor span {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.reviewStarsWrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reviewStars {
+  color: #f59e0b;
+  font-size: 0.96rem;
+  letter-spacing: 2px;
+}
+
+.reviewRatingText {
+  font-size: 0.84rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.reviewComment {
+  margin: 6px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  color: #2563eb;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+/* ==========================================================================
+   What You Get & Why Buy Section
+   ========================================================================== */
+
+.benefitsSection {
+  padding: 0 20px clamp(40px, 6vw, 68px);
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+}
+
+.benefitsContainer {
+  max-width: 680px;
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(36px, 5vw, 52px);
+}
+
+.benefitBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+.benefitHeading {
+  margin: 0 0 22px;
+  color: #db2777;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.45rem, 3.2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-align: center;
+}
+
+.whatYouGetList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.whatYouGetList li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(1rem, 2.3vw, 1.12rem);
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.45;
+}
+
+.whatYouGetIcon {
+  font-size: 1.25rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.whyBuyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.whyBuyList li {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: clamp(1rem, 2.3vw, 1.12rem);
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.45;
+}
+
+.whyBuyCheck {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #16a34a;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+.whyBuyCheck svg {
+  display: block;
+}
+
+/* ==========================================================================
+   Final High-Converting Bottom CTA Section
+   ========================================================================== */
+
+.finalCtaSection {
+  padding: clamp(40px, 6vw, 76px) 20px clamp(48px, 6vw, 72px);
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  text-align: center;
+}
+
+.finalCtaContainer {
+  max-width: 680px;
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.finalVisual {
+  margin: 0 auto 20px;
+  max-width: 280px;
+  width: 100%;
+}
+
+.finalProductImage {
+  width: 100%;
+  height: auto;
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  display: block;
+}
+
+.finalCtaHeader {
+  margin-bottom: 8px;
+}
+
+.finalCtaTag {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 999px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.finalCtaTitle {
+  margin: 0;
+  color: #0f172a;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.45rem, 3.2vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.finalCtaSubtitle {
+  margin: 8px auto 0;
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Feature Pills */
+.finalPills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  margin: 16px 0 14px;
+}
+
+.finalPillItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+/* Price Box */
+.finalPriceBox {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.finalOldPrice {
+  font-size: 0.95rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.finalOldPrice s {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.finalCurrentPrice {
+  font-size: 1.25rem;
+  color: #16a34a;
+  font-weight: 900;
+}
+
+.finalSaveBadge {
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: #16a34a;
+  color: #ffffff;
+  padding: 3px 9px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* CTA Button */
+.finalCtaBtn {
+  position: relative;
+  display: inline-flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 520px;
+  margin: 24px auto 0;
+  padding: 16px clamp(20px, 4vw, 36px);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+  color: #ffffff !important;
+  font-size: clamp(1.02rem, 2.6vw, 1.25rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  box-shadow: 0 14px 32px rgba(22, 163, 74, 0.4),
+              0 2px 6px rgba(22, 163, 74, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.45),
+              inset 0 -2px 6px rgba(4, 120, 87, 0.35);
+  transition: transform 160ms ease, box-shadow 200ms ease, filter 200ms ease;
+  animation: buyPulse 2.4s ease-in-out infinite;
+  cursor: pointer;
+}
+
+.finalCtaBtn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -85%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: skewX(-24deg);
+  pointer-events: none;
+  animation: buyShine 3.2s ease-in-out infinite;
+}
+
+.finalCtaBtn:hover {
+  filter: brightness(1.06) saturate(1.06);
+  box-shadow: 0 20px 42px rgba(22, 163, 74, 0.5),
+              0 3px 8px rgba(22, 163, 74, 0.35);
+  transform: translateY(-3px) scale(1.015);
+}
+
+.finalCtaBtn:active {
+  transform: translateY(-1px) scale(0.99);
+}
+
+.finalUrgencyText {
+  margin: 14px 0 0;
+  font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+  font-weight: 800;
+  color: #dc2626;
+  letter-spacing: 0.02em;
+}
+
+.finalTrustWrap {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.finalTrustImage {
+  display: block;
+  max-width: 440px;
+  width: 100%;
+  height: auto;
+  margin-inline: auto;
+  opacity: 0.95;
+}
+
+/* ==========================================================================
+   FAQ Section & Contact Support
+   ========================================================================== */
+
+.faqSection {
+  padding: clamp(36px, 5vw, 64px) 20px clamp(40px, 6vw, 64px);
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+}
+
+.faqContainer {
+  max-width: 680px;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.faqHeading {
+  margin: 0 0 24px;
+  color: #0f172a;
+  font-family: var(--font-title), "Segoe UI", system-ui, sans-serif !important;
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-align: left;
+}
+
+.faqList {
+  display: grid;
+  gap: 14px;
+}
+
+.faqCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.faqCard:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.faqQuestionBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.faqQuestionText {
+  font-size: clamp(0.98rem, 2.2vw, 1.06rem);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+.faqChevron {
+  color: #475569;
+  flex-shrink: 0;
+  transition: transform 200ms ease;
+}
+
+.faqChevronOpen {
+  transform: rotate(180deg);
+}
+
+.faqAnswer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.faqAnswer p {
+  margin: 0;
+  font-size: clamp(0.92rem, 2vw, 0.98rem);
+  font-weight: 500;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.faqEmailLink {
+  color: #db2777;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 150ms ease;
+}
+
+.faqEmailLink:hover {
+  color: #be185d;
+}
+
+/* Contact Support Card */
+.contactCard {
+  margin-top: 28px;
+  padding: 18px 22px;
+  border-radius: 14px;
+  background: #fdf2f8;
+  border: 1px solid #fbcfe8;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.contactIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(219, 39, 119, 0.12);
+}
+
+.contactDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contactTitle {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.contactText {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.contactEmail {
+  color: #db2777;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.contactEmail:hover {
+  color: #be185d;
+}
+
+/* Footer */
+.siteFooter {
+  padding: 30px 20px clamp(80px, 12vw, 40px);
+  background: #0f172a;
+  color: #94a3b8;
+  text-align: center;
+  font-size: 0.88rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footerInner {
+  max-width: 680px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footerBrand {
+  margin: 0;
+  color: #f1f5f9;
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.footerContact {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #cbd5e1;
+}
+
+.footerEmail {
+  color: #38bdf8;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footerEmail:hover {
+  color: #7dd3fc;
+}
+
+.footerCopy {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+/* Mobile Sticky Bottom Bar */
+.mobileBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.mobileBarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mobileBarSave {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #16a34a;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mobileBarPriceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.mobileBarPriceRow b {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.mobileBarPriceRow s {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.mobileBarBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #ffffff !important;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+  white-space: nowrap;
+}
+
+@media (min-width: 900px) {
+  .mobileBar {
+    display: none;
+  }
+}
+
+/* Responsive Styles */
+@media (min-width: 900px) {
+  .heroInner {
+    grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+    gap: clamp(32px, 4vw, 56px);
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 899px) {
+  .content {
+    max-width: none;
+  }
+
+  .comboBonusCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .comboBottomBanner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .comboBottomBtn {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .buyBtn {
+    width: 100%;
+    min-height: 54px;
+    padding: 12px 16px;
+    gap: 10px;
+    font-size: 0.94rem;
+  }
+}

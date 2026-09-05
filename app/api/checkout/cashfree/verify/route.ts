@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { buildOrderEmail, buildOrderEmailText } from "@/lib/emailTemplate";
 import { buildXrayEmail, buildXrayEmailText } from "@/lib/xrayEmailTemplate";
 import { buildNorcetEmail, buildNorcetEmailText } from "@/lib/norcetEmailTemplate";
+import { buildMedicalEmail, buildMedicalEmailText } from "@/lib/medicalEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
 
 const XRAY_PRICE = 199;
@@ -36,6 +37,7 @@ export async function POST(req: Request) {
 
     const isXray = product === "xray";
     const isNorcet = product === "norcet";
+    const isMedical = product === "medical" || product === "medical-master-pdfs";
 
     // Public origin for links included in email + downloads.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
@@ -49,6 +51,15 @@ export async function POST(req: Request) {
     ).replace(/\/$/, "");
 
     if (isMock) {
+      if (isMedical) {
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          mock: true,
+          amountPaid: 149,
+          downloadPath: "/medical-master-pdfs/go",
+        });
+      }
       if (isNorcet) {
         return NextResponse.json({
           success: true,
@@ -126,7 +137,81 @@ export async function POST(req: Request) {
     // The product + add-on are read back from Cashfree order tags, so the
     // browser can never inflate what was purchased.
     const tags = (data.order_tags || {}) as Record<string, string>;
-    const verifiedProduct = tags.product || (isXray ? "xray" : isNorcet ? "norcet" : "mcq");
+    const verifiedProduct = tags.product || (isXray ? "xray" : isNorcet ? "norcet" : isMedical ? "medical" : "mcq");
+
+    if (verifiedProduct === "medical") {
+      const expectedAmount = 149;
+
+      if (Number(data.order_amount) !== expectedAmount) {
+        return NextResponse.json(
+          { error: "Medical PDFs order amount verification failed" },
+          { status: 400 }
+        );
+      }
+
+      const customerEmail = String(
+        email || data.customer_details?.customer_email || ""
+      ).trim();
+      const customerName =
+        String(name || data.customer_details?.customer_name || "Doctor/Student").trim() ||
+        "Doctor/Student";
+
+      const downloadUrl = `${appUrl}/medical-master-pdfs/go`;
+      const itemProductName = "31 Medical Master PDFs Bundle";
+
+      if (resendApiKey && resendApiKey !== "your_resend_key_here" && customerEmail) {
+        try {
+          const emailResponse = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${resendApiKey}`,
+            },
+            body: JSON.stringify({
+              from: emailFrom,
+              to: [customerEmail],
+              reply_to: "support@nokrimitra.in",
+              subject: `${itemProductName}: Your download link is ready! 🩺📚`,
+              html: buildMedicalEmail({
+                customerName,
+                productName: itemProductName,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl,
+                supportEmail: "support@nokrimitra.in",
+              }),
+              text: buildMedicalEmailText({
+                customerName,
+                productName: itemProductName,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl,
+                supportEmail: "support@nokrimitra.in",
+              }),
+            }),
+          });
+
+          if (!emailResponse.ok) {
+            console.error(
+              "Resend API failed for Medical PDFs Cashfree verification:",
+              await emailResponse.text()
+            );
+          } else {
+            console.log(`Medical PDFs order email sent to ${customerEmail}`);
+          }
+        } catch (emailErr) {
+          console.error("Failed to send Medical PDFs Cashfree email:", emailErr);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        verified: true,
+        mock: false,
+        amountPaid: expectedAmount,
+        downloadPath: "/medical-master-pdfs/go",
+      });
+    }
 
     if (verifiedProduct === "norcet") {
       const expectedAmount = 149;
