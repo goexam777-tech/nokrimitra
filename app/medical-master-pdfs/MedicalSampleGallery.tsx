@@ -6,27 +6,28 @@ import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import styles from "./medical-master-pdfs.module.css";
 
 const samples = [
-  { src: "/medical-samples/sample-1.jpg", alt: "Medical PDF Sample 1" },
-  { src: "/medical-samples/sample-2.png", alt: "Medical PDF Sample 2" },
-  { src: "/medical-samples/sample-3.png", alt: "Medical PDF Sample 3" },
-  { src: "/medical-samples/sample-4.png", alt: "Medical PDF Sample 4" },
-  { src: "/medical-samples/sample-5.png", alt: "Medical PDF Sample 5" },
-  { src: "/medical-samples/sample-6.png", alt: "Medical PDF Sample 6" },
-  { src: "/medical-samples/sample-7.png", alt: "Medical PDF Sample 7" },
-  { src: "/medical-samples/sample-8.png", alt: "Medical PDF Sample 8" },
-  { src: "/medical-samples/sample-9.png", alt: "Medical PDF Sample 9" },
-  { src: "/medical-samples/sample-10.png", alt: "Medical PDF Sample 10" },
-  { src: "/medical-samples/sample-11.png", alt: "Medical PDF Sample 11" },
+  { src: "/medical-samples/sample-1.jpg", width: 2500, height: 1400, alt: "Medical PDF Sample 1" },
+  { src: "/medical-samples/sample-2.png", width: 1536, height: 1024, alt: "Medical PDF Sample 2" },
+  { src: "/medical-samples/sample-3.png", width: 1254, height: 1254, alt: "Medical PDF Sample 3" },
+  { src: "/medical-samples/sample-4.png", width: 1536, height: 1024, alt: "Medical PDF Sample 4" },
+  { src: "/medical-samples/sample-5.png", width: 1212, height: 1297, alt: "Medical PDF Sample 5" },
+  { src: "/medical-samples/sample-6.png", width: 1536, height: 1024, alt: "Medical PDF Sample 6" },
+  { src: "/medical-samples/sample-7.png", width: 1536, height: 1024, alt: "Medical PDF Sample 7" },
+  { src: "/medical-samples/sample-8.png", width: 1369, height: 1149, alt: "Medical PDF Sample 8" },
+  { src: "/medical-samples/sample-9.png", width: 1254, height: 1254, alt: "Medical PDF Sample 9" },
+  { src: "/medical-samples/sample-10.png", width: 1254, height: 1254, alt: "Medical PDF Sample 10" },
+  { src: "/medical-samples/sample-11.png", width: 1254, height: 1254, alt: "Medical PDF Sample 11" },
 ];
 
 export default function MedicalSampleGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const trackRef = useRef<HTMLDivElement>(null);
   const thumbStripRef = useRef<HTMLDivElement>(null);
   const isProgrammaticScroll = useRef(false);
+  const userHasInteracted = useRef(false);
 
   const scrollToSlide = (index: number) => {
+    userHasInteracted.current = true;
     const track = trackRef.current;
     if (!track) return;
     const target = Math.max(0, Math.min(samples.length - 1, index));
@@ -38,7 +39,7 @@ export default function MedicalSampleGallery() {
     setCurrentIndex(target);
     setTimeout(() => {
       isProgrammaticScroll.current = false;
-    }, 450);
+    }, 400);
   };
 
   const prevSlide = () => {
@@ -51,21 +52,21 @@ export default function MedicalSampleGallery() {
     scrollToSlide(target);
   };
 
-  // Keep active thumbnail scrolled into view
+  // Only scroll the thumbnail strip container itself horizontally.
+  // NEVER use scrollIntoView() as it causes the whole page/window to scroll down!
   useEffect(() => {
+    if (!userHasInteracted.current) return;
     const strip = thumbStripRef.current;
     if (!strip) return;
     const activeBtn = strip.children[currentIndex] as HTMLElement | undefined;
     if (activeBtn) {
-      activeBtn.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
+      const targetLeft =
+        activeBtn.offsetLeft - strip.clientWidth / 2 + activeBtn.clientWidth / 2;
+      strip.scrollTo({ left: targetLeft, behavior: "smooth" });
     }
   }, [currentIndex]);
 
-  // Handle native scroll / swipe on the track
+  // Handle native swipe/scroll on the track
   const handleScroll = () => {
     if (isProgrammaticScroll.current) return;
     const track = trackRef.current;
@@ -74,60 +75,37 @@ export default function MedicalSampleGallery() {
     if (width <= 0) return;
     const newIndex = Math.round(track.scrollLeft / width);
     if (newIndex >= 0 && newIndex < samples.length && newIndex !== currentIndex) {
+      userHasInteracted.current = true;
       setCurrentIndex(newIndex);
     }
   };
-
-  // Auto slide when not interacting
-  useEffect(() => {
-    if (isPaused) return;
-
-    const timer = setInterval(() => {
-      const target = currentIndex === samples.length - 1 ? 0 : currentIndex + 1;
-      scrollToSlide(target);
-    }, 4000);
-
-    return () => clearInterval(timer);
-  }, [currentIndex, isPaused]);
 
   return (
     <section
       className={styles.samplesSection}
       aria-labelledby="sample-preview-title"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused(true)}
-      onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}
     >
       <div className={styles.samplesInner}>
         <div className={styles.samplesHeader}>
           <h2 id="sample-preview-title" className={styles.samplesHeading}>
             📑 Sample PDFs
           </h2>
-          <p className={styles.samplesSubtitle}>
-            Swipe left/right to inspect actual sample pages from the 31 bundle
-          </p>
+          <div className={styles.samplePillRow}>
+            <span className={styles.samplePill}>Sample {currentIndex + 1} of {samples.length}</span>
+            <span className={styles.sampleHint}>👈 Swipe left / right 👉</span>
+          </div>
         </div>
 
-        {/* Main Carousel Wrapper */}
+        {/* Main Carousel Wrapper (Clean, No Box) */}
         <div className={styles.carouselWrapper}>
-          {/* Floating Counter Badge */}
-          <div className={styles.carouselCounter}>
-            Sample {currentIndex + 1} of {samples.length}
-          </div>
-
           {/* Left Arrow Button */}
           <button
             type="button"
-            onClick={() => {
-              prevSlide();
-              setIsPaused(true);
-              setTimeout(() => setIsPaused(false), 4000);
-            }}
+            onClick={prevSlide}
             className={`${styles.carouselArrow} ${styles.carouselArrowLeft}`}
             aria-label="Previous sample"
           >
-            <ChevronLeft size={28} />
+            <ChevronLeft size={26} />
           </button>
 
           {/* Native Smooth Horizontal Swipe Track */}
@@ -142,11 +120,11 @@ export default function MedicalSampleGallery() {
                   <Image
                     src={item.src}
                     alt={item.alt}
-                    width={650}
-                    height={920}
+                    width={item.width}
+                    height={item.height}
                     className={styles.carouselImage}
-                    priority={index < 2}
-                    sizes="(max-width: 768px) 94vw, 560px"
+                    priority={index === 0}
+                    sizes="(max-width: 768px) 92vw, 500px"
                     draggable={false}
                   />
                 </div>
@@ -157,15 +135,11 @@ export default function MedicalSampleGallery() {
           {/* Right Arrow Button */}
           <button
             type="button"
-            onClick={() => {
-              nextSlide();
-              setIsPaused(true);
-              setTimeout(() => setIsPaused(false), 4000);
-            }}
+            onClick={nextSlide}
             className={`${styles.carouselArrow} ${styles.carouselArrowRight}`}
             aria-label="Next sample"
           >
-            <ChevronRight size={28} />
+            <ChevronRight size={26} />
           </button>
         </div>
 
@@ -175,11 +149,7 @@ export default function MedicalSampleGallery() {
             <button
               key={index}
               type="button"
-              onClick={() => {
-                scrollToSlide(index);
-                setIsPaused(true);
-                setTimeout(() => setIsPaused(false), 4000);
-              }}
+              onClick={() => scrollToSlide(index)}
               className={`${styles.thumbnailBtn} ${
                 currentIndex === index ? styles.thumbnailActive : ""
               }`}
@@ -188,8 +158,8 @@ export default function MedicalSampleGallery() {
               <Image
                 src={item.src}
                 alt={`Thumb ${index + 1}`}
-                width={54}
-                height={72}
+                width={58}
+                height={58}
                 className={styles.thumbnailImg}
                 draggable={false}
               />
