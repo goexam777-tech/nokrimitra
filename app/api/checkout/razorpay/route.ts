@@ -12,9 +12,9 @@ const PSY_ADDON_PRICE = 99;
 
 const NURSING_PRICE = 199;
 
-const XRAY_PRICE = 199;
+const XRAY_PRICE = 99;
 const XRAY_ADDON_ID = "lab-test-master-guide";
-const XRAY_ADDON_PRICE = 79;
+const XRAY_ADDON_PRICE = 49;
 
 const REELS_PRICE = 148;
 

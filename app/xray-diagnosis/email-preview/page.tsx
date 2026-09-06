@@ -5,7 +5,7 @@ export default function XrayEmailPreviewPage() {
     customerName: "Rahul Mehta",
     productName: "X-Ray Diagnosis Guide (PDF)",
     orderId: "order_XR_874921",
-    amount: 199,
+    amount: 99,
     downloadUrl: "https://drive.google.com/",
     brandName: "X-Ray Diagnosis",
     supportEmail: "support@nokrimitra.in",

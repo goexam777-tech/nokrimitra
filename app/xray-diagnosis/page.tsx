@@ -14,10 +14,11 @@ import {
   Globe,
 } from "lucide-react";
 
-import xrayHero from "@/public/xray.webp";
+import xrayHero from "@/public/xray99.webp";
 import xrayCtaImg from "@/public/xrayimg.webp";
 import XraySamples from "./XraySamples";
 import XrayFaq from "./XrayFaq";
+import XrayAnalytics from "./XrayAnalytics";
 import styles from "./xray-diagnosis.module.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -110,6 +111,11 @@ export default function XrayDiagnosisPage() {
     <main
       className={`${styles.page} ${plusJakarta.variable} ${montserrat.variable}`}
     >
+      <XrayAnalytics />
+      <div className={styles.offerBanner}>
+        🔥 LIMITED TIME OFFER: GET COMPLETE X-RAY GUIDE FOR JUST ₹99 <s>₹999</s> (90% OFF TODAY) ⚡
+      </div>
+
       <section className={styles.heroSection}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>
@@ -135,14 +141,18 @@ export default function XrayDiagnosisPage() {
 
           <div className={styles.ctaSection}>
             <a href="/xray-diagnosis/checkout" className={styles.greenBuyBtn}>
-              <span className={styles.greenBuyMain}>BUY NOW</span>
-              <span className={styles.greenBuySub}>
-                (Get Complete X-Ray Diagnosis Notes)
+              <span className={styles.btnPricePill}>
+                <span>SPECIAL PRICE</span>
+                <span className={styles.btnStrike}>₹999</span>
+                <span className={styles.btnSave}>90% OFF</span>
+              </span>
+              <span className={styles.greenBuyMain}>
+                BUY NOW &nbsp;•&nbsp; JUST ₹99/-
               </span>
             </a>
 
             <p className={styles.ctaSubtext}>
-              Buy with confidence, <strong>Instant Access On Email</strong>
+              🔒 100% Safe &amp; Secure Payment &nbsp;|&nbsp; <strong>Instant Access On Email</strong>
             </p>
           </div>
 
@@ -196,9 +206,13 @@ export default function XrayDiagnosisPage() {
 
           <div className={styles.ctaSection}>
             <a href="/xray-diagnosis/checkout" className={styles.greenBuyBtn}>
-              <span className={styles.greenBuyMain}>BUY NOW</span>
-              <span className={styles.greenBuySub}>
-                (Get Complete X-Ray Diagnosis Notes)
+              <span className={styles.btnPricePill}>
+                <span>SPECIAL PRICE</span>
+                <span className={styles.btnStrike}>₹999</span>
+                <span className={styles.btnSave}>90% OFF</span>
+              </span>
+              <span className={styles.greenBuyMain}>
+                BUY NOW &nbsp;•&nbsp; JUST ₹99/-
               </span>
             </a>
           </div>
@@ -289,19 +303,23 @@ export default function XrayDiagnosisPage() {
           </div>
 
           <div className={styles.finalCtaBody}>
-            <span className={styles.finalCtaBadge}>Limited-Time Offer</span>
+            <span className={styles.finalCtaBadge}>🔥 Limited-Time Launch Offer &nbsp;•&nbsp; Flat 90% OFF</span>
             <h2 className={styles.finalCtaTitle}>
               Ready to Simplify X-Ray Diagnosis?
             </h2>
             <p className={styles.finalCtaText}>
-              Get the complete X-Ray Diagnosis Guide and start reading common
+              Get the complete X-Ray Diagnosis Guide today for <strong>just ₹99</strong> (<s>₹999</s>) and start reading common
               X-rays with clarity and confidence.
             </p>
 
             <a href="/xray-diagnosis/checkout" className={styles.greenBuyBtn}>
-              <span className={styles.greenBuyMain}>BUY NOW</span>
-              <span className={styles.greenBuySub}>
-                (Get Complete X-Ray Diagnosis Notes)
+              <span className={styles.btnPricePill}>
+                <span>LIMITED TIME OFFER</span>
+                <span className={styles.btnStrike}>₹999</span>
+                <span className={styles.btnSave}>90% OFF</span>
+              </span>
+              <span className={styles.greenBuyMain}>
+                BUY NOW &nbsp;•&nbsp; JUST ₹99/-
               </span>
             </a>
 
@@ -314,9 +332,19 @@ export default function XrayDiagnosisPage() {
       </section>
 
       <div className={styles.mobileBar}>
-        <a href="/xray-diagnosis/checkout" className={styles.mobileBarBtn}>
-          BUY NOW &nbsp;—&nbsp; Get Complete X-Ray Notes
-        </a>
+        <div className={styles.mobileBarInner}>
+          <div className={styles.mobileBarPriceWrap}>
+            <span className={styles.mobileBarSaveBadge}>SAVE 90%</span>
+            <div className={styles.mobileBarPriceRow}>
+              <span className={styles.mobileBarCurPrice}>₹99</span>
+              <span className={styles.mobileBarOldPrice}>₹999</span>
+            </div>
+          </div>
+          <a href="/xray-diagnosis/checkout" className={styles.mobileBarBtn}>
+            <span>BUY NOW</span>
+            <span aria-hidden="true">➔</span>
+          </a>
+        </div>
       </div>
     </main>
   );

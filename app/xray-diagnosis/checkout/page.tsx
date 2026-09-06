@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Plus_Jakarta_Sans, Montserrat } from "next/font/google";
 import Image from "next/image";
 import {
@@ -11,6 +11,7 @@ import {
   Mail,
   MessageSquare,
   Zap,
+  AlertTriangle,
 } from "lucide-react";
 
 import trustBadges from "@/public/trust.webp";
@@ -31,11 +32,11 @@ const montserrat = Montserrat({
   variable: "--font-xray-title",
 });
 
-const PRICE = 199;
+const PRICE = 99;
 const OLD_PRICE = 999;
 const PRODUCT_NAME = "X-Ray Diagnosis Guide (PDF)";
 const ADDON_ID = "lab-test-master-guide";
-const ADDON_PRICE = 79;
+const ADDON_PRICE = 49;
 const ADDON_NAME = "Clinical Lab Test Master Guide";
 
 const trustPoints = [
@@ -45,25 +46,31 @@ const trustPoints = [
   { icon: MessageSquare, text: "Support Available" },
 ];
 
-function loadRazorpay(): Promise<boolean> {
+function loadCashfree(): Promise<unknown> {
   return new Promise((resolve) => {
     if (
       typeof window !== "undefined" &&
-      (window as unknown as { Razorpay?: unknown }).Razorpay
+      (window as unknown as { Cashfree?: unknown }).Cashfree
     ) {
-      resolve(true);
+      resolve((window as unknown as { Cashfree: unknown }).Cashfree);
       return;
     }
     const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.onload = () => resolve(true);
-    s.onerror = () => resolve(false);
+    s.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
+    s.onload = () => {
+      const cf = (window as unknown as { Cashfree?: unknown }).Cashfree;
+      resolve(cf || null);
+    };
+    s.onerror = () => resolve(null);
     document.body.appendChild(s);
   });
 }
 
-export default function XrayCheckout() {
+function XrayCheckoutContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const paymentStatus = searchParams.get("payment_status");
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [addon, setAddon] = useState(false);
@@ -73,6 +80,18 @@ export default function XrayCheckout() {
   const total = PRICE + (addon ? ADDON_PRICE : 0);
 
   const formStartedRef = useRef(false);
+
+  // Restore name and email if user previously entered them
+  useEffect(() => {
+    try {
+      const sName = sessionStorage.getItem("xray_name");
+      const sEmail = sessionStorage.getItem("xray_email");
+      if (sName) setName(sName);
+      if (sEmail) setEmail(sEmail);
+    } catch {
+      // Storage unavailable
+    }
+  }, []);
 
   const handleFormStart = () => {
     if (formStartedRef.current) return;
@@ -95,20 +114,44 @@ export default function XrayCheckout() {
   };
 
   useEffect(() => {
-    const w = window as unknown as {
-      fbq?: (...a: unknown[]) => void;
-      gtag?: (...a: unknown[]) => void;
+    let cancelled = false;
+    let attempts = 0;
+
+    const fire = () => {
+      if (cancelled) return;
+      const w = window as unknown as {
+        fbq?: (...a: unknown[]) => void;
+        gtag?: (...a: unknown[]) => void;
+      };
+
+      if (!w.fbq && !w.gtag && attempts < 15) {
+        attempts++;
+        window.setTimeout(fire, 200);
+        return;
+      }
+
+      if (w.fbq) {
+        w.fbq("track", "InitiateCheckout", {
+          value: PRICE,
+          currency: "INR",
+          content_name: PRODUCT_NAME,
+        });
+      }
+
+      if (w.gtag) {
+        w.gtag("event", "begin_checkout", {
+          value: PRICE,
+          currency: "INR",
+          items: [{ item_name: PRODUCT_NAME, price: PRICE }],
+        });
+      }
     };
-    w.fbq?.("track", "InitiateCheckout", {
-      value: PRICE,
-      currency: "INR",
-      content_name: PRODUCT_NAME,
-    });
-    w.gtag?.("event", "begin_checkout", {
-      value: PRICE,
-      currency: "INR",
-      items: [{ item_name: PRODUCT_NAME, price: PRICE }],
-    });
+
+    fire();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleBack = () => {
@@ -140,11 +183,19 @@ export default function XrayCheckout() {
       });
     }
 
+    // Preserve name/email across redirects
+    try {
+      sessionStorage.setItem("xray_name", name);
+      sessionStorage.setItem("xray_email", email);
+    } catch {
+      // Storage unavailable
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      const res = await fetch("/api/checkout/razorpay", {
+      const res = await fetch("/api/checkout/cashfree", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -157,19 +208,6 @@ export default function XrayCheckout() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Order creation failed");
 
-      const goThankYou = (extra: Record<string, string>) => {
-        const q = new URLSearchParams({
-          name,
-          email,
-          amountPaid: String(total),
-          productName: PRODUCT_NAME,
-          product: "xray",
-          addons: addon ? ADDON_ID : "",
-          ...extra,
-        });
-        router.push(`/xray-diagnosis/thank-you?${q.toString()}`);
-      };
-
       if (typeof window !== "undefined") {
         const w = window as unknown as { gtag?: (...a: unknown[]) => void };
         w.gtag?.("event", "payment_redirect", {
@@ -179,49 +217,49 @@ export default function XrayCheckout() {
         });
       }
 
-      // Mock mode (local dev without Razorpay keys) → straight to thank-you.
+      // Mock mode (local dev without Cashfree keys)
       if (data.mock) {
-        setTimeout(
-          () => goThankYou({ orderId: data.orderId, mock: "true" }),
-          900
-        );
+        const q = new URLSearchParams({
+          order_id: data.orderId,
+          name,
+          email,
+          amountPaid: String(total),
+          productName: PRODUCT_NAME,
+          product: "xray",
+          addons: addon ? ADDON_ID : "",
+          mock: "true",
+        });
+        setTimeout(() => {
+          router.push(`/xray-diagnosis/thank-you?${q.toString()}`);
+        }, 900);
         return;
       }
 
-      const ok = await loadRazorpay();
-      if (!ok)
+      const CashfreeSDK = await loadCashfree();
+      if (!CashfreeSDK) {
         throw new Error(
-          "Could not load the secure payment window. Please retry."
+          "Could not load the secure payment gateway. Please refresh and try again."
         );
+      }
 
-      const rzp = new (
-        window as unknown as {
-          Razorpay: new (o: unknown) => { open: () => void };
+      const envMode =
+        process.env.NEXT_PUBLIC_CASHFREE_ENV === "SANDBOX"
+          ? "sandbox"
+          : "production";
+
+      const cashfree = (
+        CashfreeSDK as (opts: { mode: string }) => {
+          checkout: (opts: {
+            paymentSessionId: string;
+            redirectTarget: string;
+          }) => Promise<unknown>;
         }
-      ).Razorpay({
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || data.keyId,
-        amount: data.amount,
-        currency: data.currency || "INR",
-        name: "NokriMitra",
-        description: addon
-          ? `${PRODUCT_NAME} + ${ADDON_NAME}`
-          : PRODUCT_NAME,
-        order_id: data.orderId,
-        handler: (r: {
-          razorpay_payment_id: string;
-          razorpay_order_id: string;
-          razorpay_signature: string;
-        }) =>
-          goThankYou({
-            razorpay_payment_id: r.razorpay_payment_id,
-            razorpay_order_id: r.razorpay_order_id,
-            razorpay_signature: r.razorpay_signature,
-          }),
-        prefill: { name, email },
-        theme: { color: "#ef4444" },
-        modal: { ondismiss: () => setLoading(false) },
+      )({ mode: envMode });
+
+      await cashfree.checkout({
+        paymentSessionId: data.paymentSessionId,
+        redirectTarget: "_self",
       });
-      rzp.open();
     } catch (err) {
       setError(
         err instanceof Error
@@ -278,7 +316,7 @@ export default function XrayCheckout() {
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
                   <span className={styles.priceCurrent}>₹{PRICE}</span>
-                  <span className={styles.priceSave}>Save 80%</span>
+                  <span className={styles.priceSave}>Save 90%</span>
                 </div>
                 <div className={styles.oneTimeAccessNote}>
                   <span>One-time payment</span>
@@ -300,6 +338,35 @@ export default function XrayCheckout() {
                 onChange={handleFormStart}
                 noValidate
               >
+                {paymentStatus === "cancelled" && !error && (
+                  <div
+                    style={{
+                      padding: "12px 14px",
+                      background: "rgba(239, 68, 68, 0.12)",
+                      border: "1px solid rgba(239, 68, 68, 0.35)",
+                      borderRadius: "10px",
+                      color: "#fca5a5",
+                      fontSize: "0.88rem",
+                      lineHeight: 1.45,
+                      marginBottom: "16px",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "10px",
+                    }}
+                  >
+                    <AlertTriangle
+                      size={20}
+                      color="#ef4444"
+                      style={{ flexShrink: 0, marginTop: "2px" }}
+                    />
+                    <div>
+                      <strong>Payment Not Completed:</strong> Payment was
+                      cancelled or interrupted. No money was deducted. You can
+                      complete your order below.
+                    </div>
+                  </div>
+                )}
+
                 {error && (
                   <div className={styles.errorBanner} role="alert">
                     {error}
@@ -351,7 +418,7 @@ export default function XrayCheckout() {
                   </div>
 
                   <p className={up.title}>
-                    ⚡ Add Clinical Lab Test Master Guide – Just ₹79!
+                    ⚡ Add Clinical Lab Test Master Guide – Just ₹49!
                   </p>
                   <p className={up.intro}>
                     Quick-reference guide for essential lab tests, normal ranges
@@ -367,7 +434,7 @@ export default function XrayCheckout() {
                       revision anywhere.
                     </li>
                     <li className={up.priceLine}>
-                      🏷️ 92% OFF: <s>₹999</s> → Just <strong>₹79</strong>
+                      🏷️ 95% OFF: <s>₹999</s> → Just <strong>₹49</strong>
                     </li>
                   </ul>
                   <p className={up.oneTime}>
@@ -442,5 +509,28 @@ export default function XrayCheckout() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function XrayCheckout() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            minHeight: "100vh",
+            background: "#111827",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#9ca3af",
+          }}
+        >
+          Loading checkout...
+        </div>
+      }
+    >
+      <XrayCheckoutContent />
+    </Suspense>
   );
 }

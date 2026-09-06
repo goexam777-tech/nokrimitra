@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import {
   CheckCircle2,
@@ -22,6 +22,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 const PRODUCT_NAME = "X-Ray Diagnosis Guide (PDF)";
 
 function ThankYouContent() {
+  const router = useRouter();
   const params = useSearchParams();
   const verified = useRef(false);
 
@@ -36,11 +37,21 @@ function ThankYouContent() {
   const name = params.get("name") || "";
   const email = params.get("email") || "";
   const orderId =
-    params.get("razorpay_order_id") || params.get("orderId") || "";
+    params.get("order_id") ||
+    params.get("orderId") ||
+    params.get("cf_order_id") ||
+    params.get("razorpay_order_id") ||
+    "";
   const addons = params.get("addons") || "";
-  const amountPaid = params.get("amountPaid") || "199";
+  const amountPaid = params.get("amountPaid") || "99";
 
   useEffect(() => {
+    // If no order ID, user didn't purchase -> redirect to checkout immediately
+    if (!orderId) {
+      router.replace("/xray-diagnosis/checkout");
+      return;
+    }
+
     if (verified.current) return;
     verified.current = true;
 
@@ -66,15 +77,11 @@ function ThankYouContent() {
 
     const runVerify = async () => {
       try {
-        const paymentId = params.get("razorpay_payment_id");
-        const signature = params.get("razorpay_signature");
-        const res = await fetch("/api/checkout/razorpay/verify", {
+        const res = await fetch("/api/checkout/cashfree/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            razorpay_payment_id: paymentId || `pay_mock_${Date.now()}`,
-            razorpay_order_id: orderId || `order_mock_${Date.now()}`,
-            razorpay_signature: signature || "mock_signature",
+            order_id: orderId,
             name,
             email,
             amountPaid,
@@ -85,8 +92,10 @@ function ThankYouContent() {
         });
         const data = await res.json();
 
+        // If payment was cancelled, failed, or not verified -> REDIRECT TO CHECKOUT!
         if (!res.ok || !data.verified) {
-          setStatus("failed");
+          console.warn("Order not verified or cancelled. Redirecting to checkout.");
+          router.replace("/xray-diagnosis/checkout?payment_status=cancelled");
           return;
         }
 
@@ -107,34 +116,51 @@ function ThankYouContent() {
           }
         }
 
-        const w = window as unknown as {
-          fbq?: (...a: unknown[]) => void;
-          gtag?: (...a: unknown[]) => void;
+        let trackAttempts = 0;
+        const firePurchase = () => {
+          const w = window as unknown as {
+            fbq?: (...a: unknown[]) => void;
+            gtag?: (...a: unknown[]) => void;
+          };
+
+          if (!w.fbq && !w.gtag && trackAttempts < 15) {
+            trackAttempts++;
+            window.setTimeout(firePurchase, 200);
+            return;
+          }
+
+          if (w.fbq) {
+            w.fbq(
+              "track",
+              "Purchase",
+              {
+                value: Number(amountPaid),
+                currency: "INR",
+                content_name: PRODUCT_NAME,
+              },
+              { eventID: orderId }
+            );
+          }
+
+          if (w.gtag) {
+            w.gtag("event", "purchase", {
+              transaction_id: orderId,
+              value: Number(amountPaid),
+              currency: "INR",
+              items: [{ item_name: PRODUCT_NAME, price: Number(amountPaid) }],
+            });
+          }
         };
-        w.fbq?.(
-          "track",
-          "Purchase",
-          {
-            value: Number(amountPaid),
-            currency: "INR",
-            content_name: PRODUCT_NAME,
-          },
-          { eventID: orderId }
-        );
-        w.gtag?.("event", "purchase", {
-          transaction_id: orderId,
-          value: Number(amountPaid),
-          currency: "INR",
-          items: [{ item_name: PRODUCT_NAME, price: Number(amountPaid) }],
-        });
+
+        firePurchase();
       } catch (err) {
-        console.error("Payment verification failed:", err);
-        setStatus("failed");
+        console.error("Payment verification check failed:", err);
+        router.replace("/xray-diagnosis/checkout?payment_status=cancelled");
       }
     };
 
     runVerify();
-  }, [amountPaid, email, name, orderId, addons, params]);
+  }, [amountPaid, email, name, orderId, addons, params, router]);
 
   return (
     <div className={`${styles.thankYouContainer} ${plusJakarta.variable}`}>

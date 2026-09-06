@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
-const XRAY_PRICE = 199;
+const XRAY_PRICE = 99;
 const XRAY_ADDON_ID = "lab-test-master-guide";
-const XRAY_ADDON_PRICE = 79;
+const XRAY_ADDON_PRICE = 49;
 
 export async function POST(req: Request) {
   try {
@@ -87,14 +87,13 @@ export async function POST(req: Request) {
 
     if (isXray) {
       const addonParam = xrayHasAddon ? XRAY_ADDON_ID : "";
-      returnUrl =
-        `${appUrl}/xray-diagnosis/thank-you?order_id={order_id}` +
-        `&name=${encodeURIComponent(cleanName)}` +
-        `&email=${encodeURIComponent(cleanEmail)}` +
-        `&amountPaid=${amount}` +
-        `&productName=${encodeURIComponent(productName || "X-Ray Diagnosis Guide (PDF)")}` +
-        `&product=xray&addons=${encodeURIComponent(addonParam)}`;
-      orderTags = { product: "xray", addons: addonParam };
+      returnUrl = `${appUrl}/api/checkout/cashfree/return?order_id={order_id}`;
+      orderTags = {
+        product: "xray",
+        addons: addonParam,
+        name: cleanName.slice(0, 80),
+        email: cleanEmail.slice(0, 80),
+      };
     } else if (isNorcet) {
       returnUrl =
         `${appUrl}/norcet-notes/thank-you?order_id={order_id}` +

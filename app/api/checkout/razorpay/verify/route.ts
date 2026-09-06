@@ -43,10 +43,10 @@ const PSY_ADDON_NAME = "800 Therapeutic Interventions";
 const NURSING_PRICE = 199;
 const NURSING_PRODUCT_NAME = "Nursing Protocol Reference Notebook";
 
-const XRAY_PRICE = 199;
+const XRAY_PRICE = 99;
 const XRAY_PRODUCT_NAME = "X-Ray Diagnosis Guide (PDF)";
 const XRAY_ADDON_ID = "lab-test-master-guide";
-const XRAY_ADDON_PRICE = 79;
+const XRAY_ADDON_PRICE = 49;
 const XRAY_ADDON_NAME = "Clinical Lab Test Master Guide";
 
 const REELS_PRICE = 148;
@@ -530,10 +530,13 @@ export async function POST(req: Request) {
       } else if (
         !xrayNotes.product &&
         (paidAmount === XRAY_PRICE ||
-          paidAmount === XRAY_PRICE + XRAY_ADDON_PRICE)
+          paidAmount === XRAY_PRICE + XRAY_ADDON_PRICE ||
+          paidAmount === 199 ||
+          paidAmount === 199 + 79)
       ) {
         // Compatibility for any order created before xray notes existed.
-        verifiedXrayAddon = paidAmount === XRAY_PRICE + XRAY_ADDON_PRICE;
+        verifiedXrayAddon =
+          paidAmount === XRAY_PRICE + XRAY_ADDON_PRICE || paidAmount === 199 + 79;
         verifiedXrayAmount = paidAmount;
       } else {
         return NextResponse.json(
