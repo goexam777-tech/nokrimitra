@@ -17,7 +17,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 
-import opdHero from "@/public/opdmastery.webp";
+import opdHero from "@/public/opd99.webp";
 import buySteps from "@/public/buyy.webp";
 import trustBadges from "@/public/trust.webp";
 import reviewer1 from "@/public/scdr1.webp";
@@ -35,7 +35,7 @@ const montserrat = Montserrat({
   variable: "--font-opd",
 });
 
-const PRICE = 199;
+const PRICE = 99;
 const OLD_PRICE = 999;
 const SAVE_PERCENT = Math.round((1 - PRICE / OLD_PRICE) * 100);
 const CHECKOUT = "/opd-mastery/checkout";
@@ -224,7 +224,7 @@ const faqs = [
   {
     emoji: "♾️",
     q: "Will I get lifetime access?",
-    a: "Yes. ₹199 is a single one-time payment with lifetime access. There is no subscription or recurring charge.",
+    a: "Yes. ₹99 is a single one-time payment with lifetime access. There is no subscription or recurring charge.",
   },
   {
     emoji: "🔄",
@@ -377,7 +377,7 @@ export default function OpdMasteryPage() {
               Today Offer =
             </h2>
             <p className={styles.offerPriceRow}>
-              Rs.199/-
+              Rs.99/-
             </p>
 
             <a className={styles.simpleCta} href={CHECKOUT}>

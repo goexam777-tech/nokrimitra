@@ -5,18 +5,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   ArrowLeft,
-  BadgeCheck,
   Check,
   CheckCircle2,
-  Clock,
-  Download,
-  Gift,
   Lock,
   Mail,
   MessageSquare,
-  RefreshCw,
   ShieldCheck,
-  X,
   Zap,
 } from "lucide-react";
 
@@ -24,8 +18,7 @@ import opdHero from "@/public/opd.jpg";
 import trustBadges from "@/public/trust.webp";
 import styles from "./checkout.module.css";
 
-const PRICE = 199;
-const EXIT_PRICE = 149;
+const PRICE = 99;
 const OLD_PRICE = 999;
 const ADDON_ID = "emergency-handbook";
 const ADDON_PRICE = 49;
@@ -73,13 +66,6 @@ export default function OpdCheckout() {
   const [error, setError] = useState("");
   const total = PRICE + (addonSelected ? ADDON_PRICE : 0);
 
-  // Exit-Intent Recovery Offer State (₹149 bundle)
-  const [showExitModal, setShowExitModal] = useState(false);
-  const [exitTimer, setExitTimer] = useState(600); // 10 minutes urgency
-  const [exitLoading, setExitLoading] = useState(false);
-  const [exitError, setExitError] = useState("");
-  const hasTriggeredExitOfferRef = useRef(false);
-
   const formStartedRef = useRef(false);
 
   const handleFormStart = () => {
@@ -119,66 +105,9 @@ export default function OpdCheckout() {
       currency: "INR",
       items: [{ item_name: PRODUCT_NAME, price: PRICE }],
     });
-
-    // Browser back button trap for Exit-Intent
-    if (typeof window !== "undefined") {
-      window.history.pushState({ page: "opd-checkout" }, "", window.location.href);
-    }
-
-    const onPopState = () => {
-      if (!hasTriggeredExitOfferRef.current) {
-        hasTriggeredExitOfferRef.current = true;
-        if (typeof window !== "undefined") {
-          window.history.pushState({ page: "opd-checkout" }, "", window.location.href);
-        }
-        setShowExitModal(true);
-        if (typeof window !== "undefined") {
-          const gw = window as unknown as { gtag?: (...a: unknown[]) => void };
-          gw.gtag?.("event", "exit_offer_shown", {
-            product_name: PRODUCT_NAME,
-            offer_price: EXIT_PRICE,
-          });
-        }
-      }
-    };
-
-    window.addEventListener("popstate", onPopState);
-    return () => {
-      window.removeEventListener("popstate", onPopState);
-    };
   }, []);
 
-  // Countdown timer for exit offer modal
-  useEffect(() => {
-    if (!showExitModal) return;
-    const t = setInterval(() => {
-      setExitTimer((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(t);
-  }, [showExitModal]);
-
   const handleBack = () => {
-    if (!hasTriggeredExitOfferRef.current) {
-      hasTriggeredExitOfferRef.current = true;
-      setShowExitModal(true);
-      if (typeof window !== "undefined") {
-        const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-        w.gtag?.("event", "exit_offer_shown", {
-          product_name: PRODUCT_NAME,
-          offer_price: EXIT_PRICE,
-        });
-      }
-      return;
-    }
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back();
-      return;
-    }
-    router.push("/opd-mastery");
-  };
-
-  const handleExitDecline = () => {
-    setShowExitModal(false);
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
       return;
@@ -309,122 +238,6 @@ export default function OpdCheckout() {
     }
   };
 
-  const handleExitPay = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!name.trim() || !email.trim()) {
-      setExitError("Please enter your name and email to proceed.");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setExitError("Please enter a valid email address (e.g. name@gmail.com).");
-      return;
-    }
-
-    if (typeof window !== "undefined") {
-      const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-      w.gtag?.("event", "exit_offer_submit", {
-        product_name: PRODUCT_NAME,
-        value: EXIT_PRICE,
-        currency: "INR",
-      });
-    }
-
-    setExitLoading(true);
-    setExitError("");
-
-    try {
-      const res = await fetch("/api/checkout/razorpay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          product: "opd",
-          offer: "exit149",
-          addons: [ADDON_ID],
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Order creation failed");
-
-      const goExitThankYou = (extra: Record<string, string>) => {
-        const q = new URLSearchParams({
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-          amountPaid: String(EXIT_PRICE),
-          productName: PRODUCT_NAME,
-          product: "opd",
-          addons: ADDON_ID,
-          ...extra,
-        });
-        router.push(`/opd-mastery/thank-you?${q.toString()}`);
-      };
-
-      if (data.mock) {
-        if (typeof window !== "undefined") {
-          const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-          w.gtag?.("event", "payment_redirect", {
-            order_id: data.orderId,
-            value: EXIT_PRICE,
-            currency: "INR",
-          });
-        }
-        setTimeout(
-          () => goExitThankYou({ orderId: data.orderId, mock: "true" }),
-          1000
-        );
-        return;
-      }
-
-      const ok = await loadRazorpay();
-      if (!ok)
-        throw new Error("Could not load the secure payment window. Please retry.");
-
-      if (typeof window !== "undefined") {
-        const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-        w.gtag?.("event", "payment_redirect", {
-          order_id: data.orderId,
-          value: EXIT_PRICE,
-          currency: "INR",
-        });
-      }
-
-      const rzp = new (
-        window as unknown as {
-          Razorpay: new (o: unknown) => { open: () => void };
-        }
-      ).Razorpay({
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || data.keyId,
-        amount: data.amount,
-        currency: data.currency || "INR",
-        name: "NokriMitra",
-        description: "OPD Mastery + Free Emergency Handbook (Special Offer)",
-        order_id: data.orderId,
-        handler: (r: {
-          razorpay_payment_id: string;
-          razorpay_order_id: string;
-          razorpay_signature: string;
-        }) =>
-          goExitThankYou({
-            razorpay_payment_id: r.razorpay_payment_id,
-            razorpay_order_id: r.razorpay_order_id,
-            razorpay_signature: r.razorpay_signature,
-          }),
-        prefill: { name: name.trim(), email: email.trim() },
-        theme: { color: "#28A745" },
-        modal: { ondismiss: () => setExitLoading(false) },
-      });
-      rzp.open();
-    } catch (err) {
-      setExitError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again or refresh."
-      );
-      setExitLoading(false);
-    }
-  };
 
   return (
     <div className={styles.page}>
@@ -484,7 +297,7 @@ export default function OpdCheckout() {
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
                   <span className={styles.priceCurrent}>₹{PRICE}</span>
-                  <span className={styles.priceSave}>Save 80%</span>
+                  <span className={styles.priceSave}>Save 90%</span>
                 </div>
                 <div className={styles.oneTimeAccessNote}>
                   <span>One-time payment</span>
@@ -632,22 +445,6 @@ export default function OpdCheckout() {
                 />
               </form>
 
-              <div className={styles.guarantee}>
-                <BadgeCheck size={20} />
-                <div>
-                  <strong>✓ Instant Delivery</strong>
-                  <p>
-                    Your PDF is delivered immediately after payment and emailed to you.
-                  </p>
-                  <p className={styles.guaranteeHelp}>
-                    Need help? Contact{" "}
-                    <a href="mailto:support@nokrimitra.in">
-                      support@nokrimitra.in
-                    </a>
-                  </p>
-                </div>
-              </div>
-
               <nav className={styles.legalNav} aria-label="Legal links">
                 <a href="/opd-mastery/privacy-policy">Privacy</a>
                 <a href="/opd-mastery/refund-policy">Refund</a>
@@ -659,145 +456,6 @@ export default function OpdCheckout() {
         </div>
       </main>
 
-      {showExitModal && (
-        <div
-          className={styles.modalOverlay}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="exit-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowExitModal(false);
-          }}
-        >
-          <div className={styles.modalCard}>
-            <button
-              type="button"
-              className={styles.modalCloseBtn}
-              onClick={() => setShowExitModal(false)}
-              aria-label="Close special offer"
-            >
-              <X size={16} />
-            </button>
-
-            <div className={styles.modalBody}>
-              <div className={styles.modalHeader}>
-                <div className={styles.exitBadge}>
-                  <Gift size={13} /> Exclusive One-Time Offer
-                </div>
-                <h3 id="exit-modal-title" className={styles.exitHeading}>
-                  Wait! Don&apos;t Leave Empty Handed
-                </h3>
-                <p className={styles.exitSub}>
-                  Get the complete <strong>OPD Mastery Guide</strong> plus the{" "}
-                  <strong>Emergency Medicine Handbook</strong> at our lowest price ever.
-                </p>
-
-                <div className={styles.exitTimerBar}>
-                  <Clock size={14} />
-                  <span>
-                    Special offer expires in:{" "}
-                    <strong>
-                      {Math.floor(exitTimer / 60)}:
-                      {String(exitTimer % 60).padStart(2, "0")}
-                    </strong>
-                  </span>
-                </div>
-              </div>
-
-              <div className={styles.exitBundleCard}>
-                <div className={styles.exitBundleItem}>
-                  <div className={styles.exitItemTitle}>
-                    <CheckCircle2 size={16} />
-                    <span>OPD Mastery E-Book</span>
-                  </div>
-                  <span className={styles.exitItemPrice}>Worth ₹199</span>
-                </div>
-                <div className={styles.exitBundleItem}>
-                  <div className={styles.exitItemTitle}>
-                    <CheckCircle2 size={16} />
-                    <span>🚑 Emergency Medicine Handbook</span>
-                  </div>
-                  <span className={styles.freePill}>FREE GIFT 🎁</span>
-                </div>
-              </div>
-
-              <div className={styles.exitDealBar}>
-                <div className={styles.exitOldPriceGroup}>
-                  <span className={styles.exitOldLabel}>Total Value</span>
-                  <span className={styles.exitOldValue}>₹248</span>
-                </div>
-                <div className={styles.exitNewPriceGroup}>
-                  <span className={styles.exitNewLabel}>Today Only</span>
-                  <div className={styles.exitNewValue}>₹{EXIT_PRICE}</div>
-                </div>
-              </div>
-
-              <form onSubmit={handleExitPay} noValidate>
-                {exitError && (
-                  <div className={styles.errorBanner} role="alert">
-                    {exitError}
-                  </div>
-                )}
-
-                <div className={styles.exitFields}>
-                  <input
-                    type="text"
-                    className={styles.exitInput}
-                    placeholder="Enter your full name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    disabled={exitLoading}
-                    required
-                  />
-                  <input
-                    type="email"
-                    className={styles.exitInput}
-                    placeholder="Enter your email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={exitLoading}
-                    required
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className={styles.exitPayBtn}
-                  disabled={exitLoading}
-                >
-                  {exitLoading ? (
-                    "Initiating payment…"
-                  ) : (
-                    <>
-                      <Lock size={16} />
-                      <span>Claim Complete Bundle - ₹{EXIT_PRICE}</span>
-                    </>
-                  )}
-                </button>
-
-                <div className={styles.exitTrustRow}>
-                  <span>
-                    <CheckCircle2 size={13} /> Instant PDF Access
-                  </span>
-                  <span>
-                    <ShieldCheck size={13} /> 100% Secure Checkout
-                  </span>
-                </div>
-
-                <div className={styles.exitDeclineWrap}>
-                  <button
-                    type="button"
-                    className={styles.exitDeclineBtn}
-                    onClick={handleExitDecline}
-                  >
-                    No thanks, I&apos;ll pass on this ₹149 deal
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

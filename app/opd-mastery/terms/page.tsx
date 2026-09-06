@@ -18,7 +18,7 @@ export default function OpdTermsPage() {
       <h2>The Product</h2>
       <p>
         OPD Mastery is a digital educational reference e-book (PDF) covering
-        selected common OPD topics, priced at ₹199 as a one-time payment.
+        selected common OPD topics, priced at ₹99 as a one-time payment.
         Access is provided through a download link shown after payment and also
         sent to your email.
       </p>

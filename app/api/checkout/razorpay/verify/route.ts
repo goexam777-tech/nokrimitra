@@ -29,7 +29,7 @@ import {
 import { createDownloadToken } from "@/lib/downloadToken";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
-const OPD_BASE_PRICE = 199;
+const OPD_BASE_PRICE = 99;
 const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;

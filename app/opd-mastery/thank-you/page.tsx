@@ -30,12 +30,12 @@ export default function OpdThankYou() {
   const [downloadPath, setDownloadPath] = useState("");
   const [downloads, setDownloads] = useState<VerifiedDownload[]>([]);
   const [confirmedAmount, setConfirmedAmount] = useState(
-    params.get("amountPaid") || "199"
+    params.get("amountPaid") || "99"
   );
 
   const name = params.get("name") || "";
   const email = params.get("email") || "";
-  const amountPaid = params.get("amountPaid") || "199";
+  const amountPaid = params.get("amountPaid") || "99";
   const addons = params.get("addons") || "";
   const orderId =
     params.get("razorpay_order_id") || params.get("orderId") || "";
