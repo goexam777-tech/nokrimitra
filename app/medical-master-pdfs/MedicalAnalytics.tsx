@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID || "2012096232739016";
+const PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || "905602885399577";
 const PRODUCT_NAME = "31 Medical Master PDFs Bundle";
 const PRICE = 149;
 

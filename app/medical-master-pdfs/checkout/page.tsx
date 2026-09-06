@@ -35,6 +35,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 const BASE_PRICE = 149;
 const OLD_PRICE = 2199;
 const PRODUCT_NAME = "31 Medical Master PDFs Bundle";
+const PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || "905602885399577";
 
 function loadCashfree(): Promise<unknown> {
   return new Promise((resolve) => {
@@ -74,6 +75,11 @@ export default function MedicalCheckoutPage() {
       gtag?: (...a: unknown[]) => void;
     };
     w.fbq?.("track", "InitiateCheckout", {
+      value: BASE_PRICE,
+      currency: "INR",
+      content_name: PRODUCT_NAME,
+    });
+    w.fbq?.("trackSingle", PIXEL_ID, "InitiateCheckout", {
       value: BASE_PRICE,
       currency: "INR",
       content_name: PRODUCT_NAME,

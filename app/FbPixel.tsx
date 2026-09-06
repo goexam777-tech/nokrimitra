@@ -12,7 +12,7 @@ const DEFAULT_PIXEL =
 const GSRTC_PIXEL =
   process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || DEFAULT_PIXEL;
 
-// Route prefixes that belong to the GSRTC conductor product.
+// Route prefixes that use the 905602885399577 pixel (GSRTC + Medical Master PDFs).
 const GSRTC_PREFIXES = [
   "/buy",
   "/thank-you",
@@ -20,6 +20,7 @@ const GSRTC_PREFIXES = [
   "/gsrtc-conductor-model-paper-1",
   "/mcq-1",
   "/gujarat-no-itihas",
+  "/medical-master-pdfs",
 ];
 
 function isGsrtcPath(path: string): boolean {
