@@ -101,8 +101,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid #f1f5f9;
 }
 .coverContainer {
   position: relative;
@@ -117,27 +115,7 @@
 .productInfo { min-width: 0; }
 .productName { display: block; color: var(--navy); font-size: 18px; font-weight: 800; letter-spacing: -.01em; }
 .productMeta { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; font-weight: 600; line-height: 1.4; }
-.productTagline { margin-top: 6px; color: #334155; font-size: 12.5px; font-weight: 500; line-height: 1.45; }
-.miniPrice { display: flex; align-items: baseline; gap: 9px; margin-top: 10px; }
-.miniPrice s { color: #94a3b8; font-size: 15px; text-decoration: line-through; }
-.miniPrice b { color: var(--blue); font-size: 24px; font-weight: 800; }
 
-.includedGrid {
-  display: grid;
-  gap: 11px;
-  padding-top: 18px;
-  list-style: none;
-}
-.includedGrid li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  color: #1e293b;
-  font-size: 14.5px;
-  font-weight: 600;
-  line-height: 1.5;
-}
-.includedGrid li svg { flex: none; margin-top: 2px; color: var(--green); }
 
 /* Right column form */
 .formColumn { min-width: 0; }

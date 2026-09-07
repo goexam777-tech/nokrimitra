@@ -6,7 +6,6 @@ import Image from "next/image";
 import {
   ArrowLeft,
   Check,
-  CheckCircle2,
   Lock,
   Mail,
   MessageSquare,
@@ -25,12 +24,6 @@ const ADDON_PRICE = 49;
 const PRODUCT_NAME = "OPD Mastery E-book (2026 Edition)";
 const PAYMENT_LABEL = "OPD Mastery E-book 2026";
 
-const included = [
-  "60+ Common OPD Cases",
-  "Ready-to-Use Prescription References",
-  "Drug Choice, Dosage & Duration",
-  "Red Flags + Referral Criteria",
-];
 
 const trustPoints = [
   { icon: Lock, text: "100% Secure Payment" },
@@ -277,13 +270,6 @@ export default function OpdCheckout() {
                 </div>
               </div>
 
-              <ul className={styles.includedGrid}>
-                {included.map((item) => (
-                  <li key={item}>
-                    <CheckCircle2 size={17} /> {item}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
 
