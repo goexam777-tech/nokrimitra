@@ -12,16 +12,14 @@ import {
   Mail,
   RefreshCw,
   ShieldCheck,
-  Star,
-  Users,
 } from "lucide-react";
 import razorpayImg from "@/public/razorpay.png";
 import clinicalCover from "@/public/clinical1.webp";
 import styles from "./checkout.module.css";
 
-const BASE_PRICE = 149;
+const BASE_PRICE = 99;
 const OLD_PRICE = 2499;
-const ADDON_PRICE = 99;
+const ADDON_PRICE = 49;
 const PRODUCT_NAME = "Psychology Notes (Basic to Advance)";
 
 const benefits = [
@@ -67,8 +65,23 @@ export default function PsyCheckout() {
   const [addon, setAddon] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [viewers, setViewers] = useState(10);
 
   const total = BASE_PRICE + (addon ? ADDON_PRICE : 0);
+
+  useEffect(() => {
+    // Subtle realistic fluctuation between 8 and 14
+    const timer = setInterval(() => {
+      setViewers((v) => {
+        const delta = Math.random() > 0.5 ? 1 : -1;
+        const next = v + delta;
+        if (next < 8) return 9;
+        if (next > 14) return 13;
+        return next;
+      });
+    }, 7500);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const w = window as unknown as {
@@ -198,28 +211,10 @@ export default function PsyCheckout() {
       </header>
 
       <main className={styles.wrap}>
-        <div className={styles.intro}>
-          <h1>
-            You&apos;re one step away from your <span>Psychology Notes</span>
-          </h1>
-          <div className={styles.socialProof}>
-            <span className={styles.stars}>
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={15} fill="#ffb020" stroke="none" />
-              ))}
-              <b>4.9/5</b>
-            </span>
-            <span className={styles.proofDot} />
-            <span className={styles.proofUsers}>
-              <Users size={14} /> Trusted by 900+ students
-            </span>
-          </div>
-        </div>
-
         <div className={styles.grid}>
-          {/* LEFT: product + trust */}
+          {/* LEFT: product + benefits together (unboxed) */}
           <div className={styles.leftCol}>
-            <div className={styles.productCard}>
+            <div className={styles.productHeader}>
               <div className={styles.coverWrap}>
                 <Image
                   src={clinicalCover}
@@ -236,7 +231,7 @@ export default function PsyCheckout() {
                 <div className={styles.miniPrice}>
                   <s>₹{OLD_PRICE.toLocaleString("en-IN")}</s>
                   <b>₹{BASE_PRICE}</b>
-                  <span className={styles.miniOff}>90% OFF</span>
+                  <span className={styles.miniOff}>96% OFF</span>
                 </div>
               </div>
             </div>
@@ -257,7 +252,7 @@ export default function PsyCheckout() {
           <div className={styles.formCol}>
             <div className={styles.orderCard}>
               <div className={styles.orderHeader}>
-                <span className={styles.discountBadge}>🔥 Limited-time 90% OFF</span>
+                <span className={styles.discountBadge}>🔥 Limited-time 96% OFF</span>
                 <div className={styles.pricePill}>
                   <span className={styles.priceOld}>₹{OLD_PRICE.toLocaleString("en-IN")}</span>
                   <span className={styles.priceNow}>₹{BASE_PRICE}</span>
@@ -266,6 +261,12 @@ export default function PsyCheckout() {
                 <p className={styles.orderSub}>
                   Instant download in seconds after checkout
                 </p>
+                <div className={styles.liveViewers}>
+                  <span className={styles.liveDot} />
+                  <span>
+                    <strong>{viewers} users</strong> live on this page
+                  </span>
+                </div>
               </div>
 
               <form className={styles.form} onSubmit={handlePay} noValidate>

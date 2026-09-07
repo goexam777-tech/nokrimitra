@@ -14,14 +14,14 @@ const base = {
 const single = {
   ...base,
   productName: "Psychology Notes",
-  amount: 149,
+  amount: 99,
 };
 
-// With the ₹99 upsell
+// With the ₹49 upsell
 const withAddon = {
   ...base,
   productName: "Psychology Notes + 800 Therapeutic Interventions",
-  amount: 248,
+  amount: 148,
   downloads: [
     { label: "Psychology Notes", url: "https://nokrimitra.in/psychology-notes/go" },
     {

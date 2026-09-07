@@ -17,7 +17,7 @@ function Content() {
     sp.get("orderId") || sp.get("razorpay_order_id") || "N/A";
   const paymentId = sp.get("razorpay_payment_id") || "";
   const productName = sp.get("productName") || "Psychology Notes";
-  const amountPaid = sp.get("amountPaid") || "149";
+  const amountPaid = sp.get("amountPaid") || "99";
   const email = sp.get("email") || "";
   const addons = sp.get("addons") || "";
 

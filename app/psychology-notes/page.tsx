@@ -8,7 +8,7 @@ import CountdownBar from "./CountdownBar";
 export const metadata: Metadata = {
   title: "Psychology Notes PDF — Basic to Advance | NokriMitra",
   description:
-    "Complete Psychology Notes PDF (Basic to Advance) with easy notes, visual diagrams and 17+ topics — from Science of Psychology to Personality & Disorders. Instant download after purchase. Limited-time 90% OFF at just ₹149.",
+    "Complete Psychology Notes PDF (Basic to Advance) with easy notes, visual diagrams and 17+ topics — from Science of Psychology to Personality & Disorders. Instant download after purchase. Limited-time 96% OFF at just ₹99.",
   keywords: [
     "Psychology Notes",
     "Psychology PDF",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Psychology Notes PDF — Basic to Advance | NokriMitra",
     description:
-      "Complete Psychology Notes (Basic to Advance) with easy notes & diagrams. Instant download. Limited-time 90% OFF — only ₹149.",
+      "Complete Psychology Notes (Basic to Advance) with easy notes & diagrams. Instant download. Limited-time 96% OFF — only ₹99.",
     url: "/psychology-notes",
     type: "website",
     images: [{ url: "/clinical1.webp" }],
@@ -203,9 +203,9 @@ export default function PsychologyNotesPage() {
             </div>
 
             <div className={styles.priceRow}>
-              <span className={styles.priceNow}>₹149</span>
+              <span className={styles.priceNow}>₹99</span>
               <span className={styles.priceOld}>₹2,499</span>
-              <span className={styles.offBadge}>90% OFF</span>
+              <span className={styles.offBadge}>96% OFF</span>
             </div>
             <div className={styles.limited}>⏳ Limited Time Offer</div>
 
@@ -257,7 +257,7 @@ export default function PsychologyNotesPage() {
           </div>
 
           <div className={styles.offerLine}>
-            🔥 Limited time — flat <strong>90% OFF</strong>, price goes up soon
+            🔥 Limited time — flat <strong>96% OFF</strong>, price goes up soon
           </div>
         </section>
 

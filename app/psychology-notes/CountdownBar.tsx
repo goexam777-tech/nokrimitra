@@ -10,9 +10,9 @@ export default function CountdownBar() {
     <div className={styles.bar}>
       <div className={styles.barInner}>
         <div className={styles.barPrice}>
-          <span className={styles.barNow}>₹149</span>
+          <span className={styles.barNow}>₹99</span>
           <span className={styles.barOld}>₹2,499</span>
-          <span className={styles.barOff}>90% OFF</span>
+          <span className={styles.barOff}>96% OFF</span>
         </div>
 
         <a className={styles.barBtn} href="/psychology-notes/checkout">

@@ -6,9 +6,9 @@ const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 
-const PSY_BASE_PRICE = 149;
+const PSY_BASE_PRICE = 99;
 const PSY_ADDON_ID = "therapeutic-interventions";
-const PSY_ADDON_PRICE = 99;
+const PSY_ADDON_PRICE = 49;
 
 const NURSING_PRICE = 199;
 

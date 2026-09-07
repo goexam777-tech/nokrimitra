@@ -46,20 +46,20 @@
 .grid { display: grid; gap: 22px; align-items: start; }
 
 /* Left */
-.leftCol { display: grid; gap: 16px; }
-.productCard { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 10px 28px rgba(11,23,47,.06); }
-.coverWrap { width: 92px; flex: none; border-radius: 6px; overflow: hidden; box-shadow: 0 8px 18px rgba(11,23,47,.2); }
+.leftCol { display: flex; flex-direction: column; gap: 18px; }
+.productHeader { display: flex; align-items: center; gap: 16px; }
+.coverWrap { width: 92px; flex: none; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 20px rgba(11,23,47,.16); }
 .coverImg { display: block; width: 100%; height: auto; }
-.productName { display: block; color: var(--navy); font-size: 17px; font-weight: 800; }
-.productMeta { display: block; margin-top: 3px; color: var(--muted); font-size: 12.5px; font-weight: 600; }
-.miniPrice { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.productName { display: block; color: var(--navy); font-size: 18px; font-weight: 800; letter-spacing: -.01em; }
+.productMeta { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; font-weight: 600; }
+.miniPrice { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .miniPrice s { color: #9aa5b5; font-size: 15px; }
 .miniPrice b { color: var(--navy); font-size: 24px; font-weight: 800; }
 .miniOff { padding: 3px 8px; border-radius: 6px; background: #e7f7ec; color: var(--green-dark); font-size: 11px; font-weight: 800; }
 
-.benefits { list-style: none; display: grid; gap: 11px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.7); }
-.benefits li { display: flex; align-items: flex-start; gap: 10px; color: #26313f; font-size: 15px; line-height: 1.5; }
-.bTick { flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 6px; background: linear-gradient(135deg, #16a34a, #12813c); color: #fff; }
+.benefits { list-style: none; display: grid; gap: 12px; margin: 0; padding: 18px 0 0 0; border-top: 1px solid rgba(18, 33, 63, 0.08); }
+.benefits li { display: flex; align-items: center; gap: 10px; color: #26313f; font-size: 15px; font-weight: 500; line-height: 1.4; }
+.bTick { flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #16a34a, #12813c); color: #fff; }
 
 .quoteCard { width: min(100%, 620px); margin: 22px auto 0; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 10px 28px rgba(11,23,47,.05); }
 .quoteStars { display: flex; gap: 2px; margin-bottom: 10px; }
@@ -81,6 +81,13 @@
 .priceNow { color: var(--navy); font-size: 42px; font-weight: 800; line-height: 1; }
 .orderTitle { margin-top: 8px; color: var(--navy); font-size: 19px; font-weight: 800; }
 .orderSub { margin-top: 2px; color: var(--green); font-size: 13px; font-weight: 600; }
+.liveViewers { display: inline-flex; align-items: center; gap: 7px; margin: 12px 0 2px; padding: 5px 13px; border-radius: 999px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 12px; font-weight: 600; }
+.liveDot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); animation: livePulse 2s infinite; }
+@keyframes livePulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(22, 163, 74, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
 
 .form { display: block; padding: 22px 24px 24px; }
 .err { margin-bottom: 12px; padding: 11px 13px; border: 1px solid #fed7d7; border-radius: 9px; background: #fff5f5; color: #c53030; font-size: 13px; font-weight: 600; }
