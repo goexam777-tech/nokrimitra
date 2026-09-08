@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -48,6 +48,42 @@ export default function MbbsCheckout() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const formStartedRef = useRef(false);
+
+  const handleFormStart = () => {
+    if (formStartedRef.current) return;
+    formStartedRef.current = true;
+    if (typeof window !== "undefined") {
+      const w = window as unknown as { gtag?: (...a: unknown[]) => void; dataLayer?: unknown[] };
+      w.dataLayer = w.dataLayer || [];
+      if (typeof w.gtag !== "function") {
+        w.gtag = function () {
+          w.dataLayer?.push(arguments);
+        };
+      }
+      w.gtag("event", "form_start", {
+        form_name: "mbbs_checkout_form",
+      });
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (typeof window !== "undefined") {
+      const w = window as unknown as { gtag?: (...a: unknown[]) => void; dataLayer?: unknown[] };
+      w.dataLayer = w.dataLayer || [];
+      if (typeof w.gtag !== "function") {
+        w.gtag = function () {
+          w.dataLayer?.push(arguments);
+        };
+      }
+      w.gtag("event", "purchase_button_click", {
+        product_name: PRODUCT_NAME,
+        price: BASE_PRICE,
+        currency: "INR",
+      });
+    }
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -110,6 +146,22 @@ export default function MbbsCheckout() {
       setError("Please enter a valid email address.");
       return;
     }
+
+    if (typeof window !== "undefined") {
+      const w = window as unknown as { gtag?: (...a: unknown[]) => void; dataLayer?: unknown[] };
+      w.dataLayer = w.dataLayer || [];
+      if (typeof w.gtag !== "function") {
+        w.gtag = function () {
+          w.dataLayer?.push(arguments);
+        };
+      }
+      w.gtag("event", "checkout_form_submit", {
+        product_name: PRODUCT_NAME,
+        value: BASE_PRICE,
+        currency: "INR",
+      });
+    }
+
     setLoading(true);
     setError("");
 
@@ -142,12 +194,41 @@ export default function MbbsCheckout() {
       if (!res.ok) throw new Error(data.error || "Order creation failed");
 
       if (data.mock) {
+        if (typeof window !== "undefined") {
+          const w = window as unknown as { gtag?: (...a: unknown[]) => void; dataLayer?: unknown[] };
+          w.dataLayer = w.dataLayer || [];
+          if (typeof w.gtag !== "function") {
+            w.gtag = function () {
+              w.dataLayer?.push(arguments);
+            };
+          }
+          w.gtag("event", "payment_redirect", {
+            order_id: data.orderId,
+            value: BASE_PRICE,
+            currency: "INR",
+          });
+        }
         setTimeout(() => goThankYou({ orderId: data.orderId, mock: "true" }), 800);
         return;
       }
 
       const ok = await loadRazorpay();
       if (!ok) throw new Error("Could not load secure Razorpay payment gateway. Please retry.");
+
+      if (typeof window !== "undefined") {
+        const w = window as unknown as { gtag?: (...a: unknown[]) => void; dataLayer?: unknown[] };
+        w.dataLayer = w.dataLayer || [];
+        if (typeof w.gtag !== "function") {
+          w.gtag = function () {
+            w.dataLayer?.push(arguments);
+          };
+        }
+        w.gtag("event", "payment_redirect", {
+          order_id: data.orderId,
+          value: BASE_PRICE,
+          currency: "INR",
+        });
+      }
 
       const rzp = new (window as unknown as { Razorpay: new (o: unknown) => { open: () => void } }).Razorpay({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || data.keyId,
@@ -196,7 +277,12 @@ export default function MbbsCheckout() {
           </p>
         </div>
 
-        <form onSubmit={handlePay} className={styles.checkoutForm}>
+        <form
+          onSubmit={handlePay}
+          onFocus={handleFormStart}
+          onChange={handleFormStart}
+          className={styles.checkoutForm}
+        >
           {error && <div className={styles.errorMessage}>{error}</div>}
 
           {/* 3. Card 1: WHERE SHOULD WE SEND IT */}
@@ -303,7 +389,12 @@ export default function MbbsCheckout() {
           </section>
 
           {/* 6. Pay CTA Button */}
-          <button type="submit" className={styles.payBtn} disabled={loading}>
+          <button
+            type="submit"
+            onClick={handleButtonClick}
+            className={styles.payBtn}
+            disabled={loading}
+          >
             {loading ? (
               "Securing Your Order..."
             ) : (

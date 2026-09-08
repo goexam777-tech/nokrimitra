@@ -347,7 +347,7 @@ export default function MbbsNotesPage() {
 
 
           {/* Primary CTA Button */}
-          <Link href={checkoutUrl} className={styles.primaryCtaBtn}>
+          <a href={checkoutUrl} className={styles.primaryCtaBtn}>
             <svg
               className={styles.downloadIcon}
               viewBox="0 0 24 24"
@@ -362,7 +362,7 @@ export default function MbbsNotesPage() {
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             <span>Get All 21 Subjects · ₹199</span>
-          </Link>
+          </a>
           <div className={styles.ctaSubHint}>
             <span>🔒 256-Bit SSL Secured</span>
             <span>•</span>
@@ -594,7 +594,7 @@ export default function MbbsNotesPage() {
 
         {/* 12. Persistent Sticky Bottom Bar (Exact match to reference image CTA) */}
         <div className={styles.stickyBottomBar}>
-          <Link href={checkoutUrl} className={styles.stickyCtaBtn}>
+          <a href={checkoutUrl} className={styles.stickyCtaBtn}>
             <svg
               className={styles.downloadIcon}
               viewBox="0 0 24 24"
@@ -609,7 +609,7 @@ export default function MbbsNotesPage() {
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             <span>Get All 21 Subjects · ₹199</span>
-          </Link>
+          </a>
         </div>
       </main>
     </div>
