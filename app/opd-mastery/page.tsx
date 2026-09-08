@@ -26,6 +26,7 @@ import reviewer3 from "@/public/scdr3.webp";
 import OfferTimer from "./OfferTimer";
 import ReviewCarousel, { type Review } from "./ReviewCarousel";
 import FaqAccordion from "./FaqAccordion";
+import OpdAnalytics from "./OpdAnalytics";
 import styles from "./opd.module.css";
 
 const montserrat = Montserrat({
@@ -246,6 +247,7 @@ const faqs = [
 export default function OpdMasteryPage() {
   return (
     <main className={`${styles.page} ${montserrat.variable}`}>
+      <OpdAnalytics />
       <section className={styles.simpleHero}>
         <div className={styles.simpleContainer}>
           <h1 className={styles.simpleTitle}>

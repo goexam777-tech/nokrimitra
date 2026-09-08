@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
-  ArrowLeft,
+  AlertCircle,
+  ArrowRight,
   Check,
   Lock,
   Mail,
@@ -13,7 +14,6 @@ import {
 } from "lucide-react";
 
 import opdHero from "@/public/opd.jpg";
-import trustBadges from "@/public/trust.webp";
 import styles from "./checkout.module.css";
 
 const PRICE = 99;
@@ -21,33 +21,37 @@ const OLD_PRICE = 999;
 const ADDON_ID = "emergency-handbook";
 const ADDON_PRICE = 49;
 const PRODUCT_NAME = "OPD Mastery E-book (2026 Edition)";
-const PAYMENT_LABEL = "OPD Mastery E-book 2026";
-
 
 const trustPoints = [
   { icon: Lock, text: "100% Secure Payment" },
   { icon: Zap, text: "Instant Delivery After Payment" },
 ];
 
-function loadRazorpay(): Promise<boolean> {
+function loadCashfree(): Promise<unknown> {
   return new Promise((resolve) => {
     if (
       typeof window !== "undefined" &&
-      (window as unknown as { Razorpay?: unknown }).Razorpay
+      (window as unknown as { Cashfree?: unknown }).Cashfree
     ) {
-      resolve(true);
+      resolve((window as unknown as { Cashfree: unknown }).Cashfree);
       return;
     }
     const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.onload = () => resolve(true);
-    s.onerror = () => resolve(false);
+    s.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
+    s.onload = () => {
+      const cf = (window as unknown as { Cashfree?: unknown }).Cashfree;
+      resolve(cf || null);
+    };
+    s.onerror = () => resolve(null);
     document.body.appendChild(s);
   });
 }
 
-export default function OpdCheckout() {
+function OpdCheckoutContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const paymentStatus = searchParams.get("payment_status");
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   // Opt-in by choice: the buyer ticks the add-on when they want it.
@@ -57,6 +61,18 @@ export default function OpdCheckout() {
   const total = PRICE + (addonSelected ? ADDON_PRICE : 0);
 
   const formStartedRef = useRef(false);
+
+  // Restore saved name and email on load
+  useEffect(() => {
+    try {
+      const savedName = sessionStorage.getItem("opd_name");
+      const savedEmail = sessionStorage.getItem("opd_email");
+      if (savedName) setName(savedName);
+      if (savedEmail) setEmail(savedEmail);
+    } catch {
+      // Storage unavailable
+    }
+  }, []);
 
   const handleFormStart = () => {
     if (formStartedRef.current) return;
@@ -97,14 +113,6 @@ export default function OpdCheckout() {
     });
   }, []);
 
-  const handleBack = () => {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back();
-      return;
-    }
-    router.push("/opd-mastery");
-  };
-
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -126,60 +134,32 @@ export default function OpdCheckout() {
       });
     }
 
+    try {
+      sessionStorage.setItem("opd_name", name.trim());
+      sessionStorage.setItem("opd_email", email.trim());
+    } catch {
+      // Storage unavailable
+    }
+
     setLoading(true);
     setError("");
 
     try {
       const selectedAddons = addonSelected ? [ADDON_ID] : [];
-      const res = await fetch("/api/checkout/razorpay", {
+      const res = await fetch("/api/checkout/cashfree", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           product: "opd",
           addons: selectedAddons,
-          name,
-          email,
+          name: name.trim(),
+          email: email.trim(),
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Order creation failed");
 
-      const orderTotal = Number(data.total ?? total);
-      const orderAddons: string[] = Array.isArray(data.addons)
-        ? data.addons
-        : selectedAddons;
-      const goThankYou = (extra: Record<string, string>) => {
-        const q = new URLSearchParams({
-          name,
-          email,
-          amountPaid: String(orderTotal),
-          productName: PRODUCT_NAME,
-          product: "opd",
-          addons: orderAddons.join(","),
-          ...extra,
-        });
-        router.push(`/opd-mastery/thank-you?${q.toString()}`);
-      };
-
-      if (data.mock) {
-        if (typeof window !== "undefined") {
-          const w = window as unknown as { gtag?: (...a: unknown[]) => void };
-          w.gtag?.("event", "payment_redirect", {
-            order_id: data.orderId,
-            value: orderTotal,
-            currency: "INR",
-          });
-        }
-        setTimeout(
-          () => goThankYou({ orderId: data.orderId, mock: "true" }),
-          1000
-        );
-        return;
-      }
-
-      const ok = await loadRazorpay();
-      if (!ok)
-        throw new Error("Could not load the secure payment window. Please retry.");
+      const orderTotal = Number(data.amount ?? total);
 
       if (typeof window !== "undefined") {
         const w = window as unknown as { gtag?: (...a: unknown[]) => void };
@@ -190,34 +170,49 @@ export default function OpdCheckout() {
         });
       }
 
-      const rzp = new (
-        window as unknown as {
-          Razorpay: new (o: unknown) => { open: () => void };
+      // Mock mode for local dev without Cashfree keys
+      if (data.mock) {
+        const q = new URLSearchParams({
+          order_id: data.orderId,
+          name: name.trim(),
+          email: email.trim(),
+          amountPaid: String(orderTotal),
+          productName: PRODUCT_NAME,
+          product: "opd",
+          addons: selectedAddons.join(","),
+          mock: "true",
+        });
+        setTimeout(() => {
+          router.push(`/opd-mastery/thank-you?${q.toString()}`);
+        }, 800);
+        return;
+      }
+
+      const CashfreeSDK = await loadCashfree();
+      if (!CashfreeSDK) {
+        throw new Error(
+          "Could not load the secure payment gateway. Please refresh and try again."
+        );
+      }
+
+      const envMode =
+        process.env.NEXT_PUBLIC_CASHFREE_ENV === "SANDBOX"
+          ? "sandbox"
+          : "production";
+
+      const cashfree = (
+        CashfreeSDK as (opts: { mode: string }) => {
+          checkout: (opts: {
+            paymentSessionId: string;
+            redirectTarget: string;
+          }) => Promise<unknown>;
         }
-      ).Razorpay({
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || data.keyId,
-        amount: data.amount,
-        currency: data.currency || "INR",
-        name: "NokriMitra",
-        description: orderAddons.length
-          ? `${PAYMENT_LABEL} + Emergency Medicine Handbook`
-          : PAYMENT_LABEL,
-        order_id: data.orderId,
-        handler: (r: {
-          razorpay_payment_id: string;
-          razorpay_order_id: string;
-          razorpay_signature: string;
-        }) =>
-          goThankYou({
-            razorpay_payment_id: r.razorpay_payment_id,
-            razorpay_order_id: r.razorpay_order_id,
-            razorpay_signature: r.razorpay_signature,
-          }),
-        prefill: { name, email },
-        theme: { color: "#1689ef" },
-        modal: { ondismiss: () => setLoading(false) },
+      )({ mode: envMode });
+
+      await cashfree.checkout({
+        paymentSessionId: data.paymentSessionId,
+        redirectTarget: "_self",
       });
-      rzp.open();
     } catch (err) {
       setError(
         err instanceof Error
@@ -228,20 +223,8 @@ export default function OpdCheckout() {
     }
   };
 
-
   return (
     <div className={styles.page}>
-      <header className={styles.topBar}>
-        <div className={styles.topBarInner}>
-          <button type="button" className={styles.backBtn} onClick={handleBack}>
-            <ArrowLeft size={16} /> Back
-          </button>
-          <span className={styles.secureTag}>
-            <Lock size={13} /> Secure checkout
-          </span>
-        </div>
-      </header>
-
       <main className={styles.wrap}>
         <div className={styles.grid}>
           {/* Left: product (unboxed) */}
@@ -260,9 +243,14 @@ export default function OpdCheckout() {
                 <strong className={styles.productName}>
                   OPD Mastery E-book
                 </strong>
-                <span className={styles.productMeta}>
-                  60+ Common OPD Cases • Practical Reference • 2026 Edition
-                </span>
+                <p className={styles.productTagline}>
+                  Master Common OPD Cases with Confidence.
+                </p>
+                <ul className={styles.productFeatures}>
+                  <li>Comprehensive OPD Reference</li>
+                  <li>Practical & Evidence-Based</li>
+                  <li>Drug Dosages & Prescriptions</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -272,12 +260,11 @@ export default function OpdCheckout() {
             <div className={styles.formCard}>
               <div className={styles.formHeader}>
                 <span className={styles.discountBadge}>
-                  🔥 Launch Price — ₹{PRICE} Only
+                  🔥 Limited Time Launch Offer
                 </span>
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
                   <span className={styles.priceCurrent}>₹{PRICE}</span>
-                  <span className={styles.priceSave}>Save 90%</span>
                 </div>
                 <div className={styles.oneTimeAccessNote}>
                   <span>One-time payment</span>
@@ -293,6 +280,15 @@ export default function OpdCheckout() {
                 onChange={handleFormStart}
                 noValidate
               >
+                {paymentStatus === "cancelled" && !error && (
+                  <div className={styles.cancelBanner} role="alert">
+                    <AlertCircle size={16} />
+                    <span>
+                      Your previous payment was not completed or cancelled. You can retry now below.
+                    </span>
+                  </div>
+                )}
+
                 {error && (
                   <div className={styles.errorBanner} role="alert">
                     {error}
@@ -395,8 +391,10 @@ export default function OpdCheckout() {
                     "Initiating payment…"
                   ) : (
                     <>
-                      <Lock size={17} strokeWidth={2.2} />
-                      <span>Pay ₹ {total} & Get Instant Access</span>
+                      <span>Complete Order</span>
+                      <span className={styles.btnIconCircle} aria-hidden="true">
+                        <ArrowRight size={14} strokeWidth={3.5} />
+                      </span>
                     </>
                   )}
                 </button>
@@ -408,13 +406,6 @@ export default function OpdCheckout() {
                     </li>
                   ))}
                 </ul>
-
-                <Image
-                  src={trustBadges}
-                  alt="Secure checkout, privacy protected and satisfaction guaranteed"
-                  className={styles.razorpayLogo}
-                  sizes="(max-width: 640px) 90vw, 380px"
-                />
 
                 <a
                   href="https://wa.me/919104826422?text=Hi%20NokriMitra%20Support,%20I%20have%20a%20query%20regarding%20OPD%20Mastery%20E-Book"
@@ -437,7 +428,18 @@ export default function OpdCheckout() {
           </div>
         </div>
       </main>
-
     </div>
+  );
+}
+
+export default function OpdCheckout() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ minHeight: "100vh", background: "#191D33" }} />
+      }
+    >
+      <OpdCheckoutContent />
+    </Suspense>
   );
 }

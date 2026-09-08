@@ -19,21 +19,31 @@ export async function GET(req: Request) {
         : `${protocol}://${host}`)
     ).replace(/\/$/, "");
 
-    // If no order ID, return to xray checkout
+    const requestedProduct = searchParams.get("product") || "";
+
+    // If no order ID, return to checkout
     if (!order_id) {
-      return NextResponse.redirect(
-        `${appUrl}/xray-diagnosis/checkout?payment_status=cancelled`
-      );
+      const fallbackCheckout = requestedProduct === "opd"
+        ? `${appUrl}/opd-mastery/checkout?payment_status=cancelled`
+        : `${appUrl}/xray-diagnosis/checkout?payment_status=cancelled`;
+      return NextResponse.redirect(fallbackCheckout);
     }
 
     // Mock handling for local testing
     if (order_id.startsWith("order_mock_")) {
+      const prod = requestedProduct || "opd";
       const q = new URLSearchParams({
         order_id,
         mock: "true",
+        name: searchParams.get("name") || "",
+        email: searchParams.get("email") || "",
         amountPaid: searchParams.get("amountPaid") || "99",
-        product: "xray",
+        product: prod,
+        addons: searchParams.get("addons") || "",
       });
+      if (prod === "opd") {
+        return NextResponse.redirect(`${appUrl}/opd-mastery/thank-you?${q.toString()}`);
+      }
       return NextResponse.redirect(
         `${appUrl}/xray-diagnosis/thank-you?${q.toString()}`
       );
@@ -74,6 +84,8 @@ export async function GET(req: Request) {
 
     const getCheckoutUrl = (prod: string, status = "cancelled") => {
       switch (prod) {
+        case "opd":
+          return `${appUrl}/opd-mastery/checkout?payment_status=${status}`;
         case "norcet":
           return `${appUrl}/norcet-notes/checkout?payment_status=${status}`;
         case "medical":
@@ -88,6 +100,8 @@ export async function GET(req: Request) {
 
     const getThankYouUrl = (prod: string, q: URLSearchParams) => {
       switch (prod) {
+        case "opd":
+          return `${appUrl}/opd-mastery/thank-you?${q.toString()}`;
         case "norcet":
           return `${appUrl}/norcet-notes/thank-you?${q.toString()}`;
         case "medical":

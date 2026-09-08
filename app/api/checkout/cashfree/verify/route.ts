@@ -3,6 +3,7 @@ import { buildOrderEmail, buildOrderEmailText } from "@/lib/emailTemplate";
 import { buildXrayEmail, buildXrayEmailText } from "@/lib/xrayEmailTemplate";
 import { buildNorcetEmail, buildNorcetEmailText } from "@/lib/norcetEmailTemplate";
 import { buildMedicalEmail, buildMedicalEmailText } from "@/lib/medicalEmailTemplate";
+import { buildOpdEmail, buildOpdEmailText } from "@/lib/opdEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
 
 const XRAY_PRICE = 99;
@@ -11,10 +12,17 @@ const XRAY_ADDON_ID = "lab-test-master-guide";
 const XRAY_ADDON_PRICE = 49;
 const XRAY_ADDON_NAME = "Clinical Lab Test Master Guide";
 
+const OPD_BASE_PRICE = 99;
+const OPD_EXIT_PRICE = 149;
+const OPD_PRODUCT_NAME = "OPD Mastery E-book (2026 Edition)";
+const OPD_ADDON_ID = "emergency-handbook";
+const OPD_ADDON_PRICE = 49;
+const OPD_ADDON_NAME = "Emergency Medicine Handbook";
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { order_id, name, email, amountPaid, productName, product, addons } =
+    const { order_id, name, email, amountPaid, productName, product, addons, offer, isExitOffer } =
       body;
 
     if (!order_id) {
@@ -35,6 +43,7 @@ export async function POST(req: Request) {
       !secretKey ||
       secretKey.includes("your_cashfree_secret");
 
+    const isOpd = product === "opd";
     const isXray = product === "xray";
     const isNorcet = product === "norcet";
     const isMedical = product === "medical" || product === "medical-master-pdfs";
@@ -52,6 +61,44 @@ export async function POST(req: Request) {
     ).replace(/\/$/, "");
 
     if (isMock) {
+      if (isOpd) {
+        const isExit =
+          String(amountPaid) === "149" ||
+          String(addons || "").includes("exit149") ||
+          offer === "exit149" ||
+          isExitOffer === true;
+        const hasAddon =
+          String(addons || "").includes(OPD_ADDON_ID) || isExit;
+        const opdToken = createDownloadToken("opd", order_id);
+        const opdAddonToken = hasAddon
+          ? createDownloadToken("opd-emergency-handbook", order_id)
+          : null;
+        const mockAmount = isExit
+          ? OPD_EXIT_PRICE
+          : OPD_BASE_PRICE + (hasAddon ? OPD_ADDON_PRICE : 0);
+
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          mock: true,
+          amountPaid: mockAmount,
+          downloadPath: `/opd-mastery/go${opdToken ? `?t=${opdToken}` : ""}`,
+          downloads: [
+            {
+              label: "OPD Mastery E-book",
+              path: `/opd-mastery/go${opdToken ? `?t=${opdToken}` : ""}`,
+            },
+            ...(opdAddonToken
+              ? [
+                  {
+                    label: OPD_ADDON_NAME,
+                    path: `/opd-mastery/go?item=${OPD_ADDON_ID}&t=${opdAddonToken}`,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
       if (isMbbs) {
         return NextResponse.json({
           success: true,
@@ -147,7 +194,121 @@ export async function POST(req: Request) {
     // The product + add-on are read back from Cashfree order tags, so the
     // browser can never inflate what was purchased.
     const tags = (data.order_tags || {}) as Record<string, string>;
-    const verifiedProduct = tags.product || (isXray ? "xray" : isNorcet ? "norcet" : isMedical ? "medical" : "mcq");
+    const verifiedProduct = tags.product || (isOpd ? "opd" : isXray ? "xray" : isNorcet ? "norcet" : isMedical ? "medical" : "mcq");
+
+    if (verifiedProduct === "opd") {
+      const isExitOffer =
+        tags.offer === "exit149" ||
+        Number(data.order_amount) === OPD_EXIT_PRICE;
+      const verifiedAddon =
+        isExitOffer ||
+        String(tags.addons || "")
+          .split(",")
+          .map((id) => id.trim())
+          .includes(OPD_ADDON_ID);
+      const expectedAmount = isExitOffer
+        ? OPD_EXIT_PRICE
+        : OPD_BASE_PRICE + (verifiedAddon ? OPD_ADDON_PRICE : 0);
+
+      if (Number(data.order_amount) !== expectedAmount) {
+        return NextResponse.json(
+          { error: "OPD order amount verification failed" },
+          { status: 400 }
+        );
+      }
+
+      const customerEmail = String(
+        email || data.customer_details?.customer_email || ""
+      ).trim();
+      const customerName =
+        String(name || data.customer_details?.customer_name || "Doctor/Student").trim() ||
+        "Doctor/Student";
+
+      const opdToken = createDownloadToken("opd", order_id);
+      const opdAddonToken = verifiedAddon
+        ? createDownloadToken("opd-emergency-handbook", order_id)
+        : null;
+      const opdDownloadUrl = `${appUrl}/opd-mastery/go${opdToken ? `?t=${opdToken}` : ""}`;
+      const opdAddonDownloadUrl = `${appUrl}/opd-mastery/go?item=${OPD_ADDON_ID}${
+        opdAddonToken ? `&t=${opdAddonToken}` : ""
+      }`;
+      const opdDownloads = [
+        { label: "OPD Mastery E-book", url: opdDownloadUrl },
+        ...(opdAddonToken
+          ? [{ label: OPD_ADDON_NAME, url: opdAddonDownloadUrl }]
+          : []),
+      ];
+
+      if (resendApiKey && resendApiKey !== "your_resend_key_here" && customerEmail) {
+        try {
+          const emailResponse = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${resendApiKey}`,
+            },
+            body: JSON.stringify({
+              from: emailFrom,
+              to: [customerEmail],
+              reply_to: "support@nokrimitra.in",
+              subject: `Your download is ready — OPD Mastery E-book (2026)`,
+              html: buildOpdEmail({
+                customerName,
+                productName: verifiedAddon
+                  ? `${OPD_PRODUCT_NAME} + ${OPD_ADDON_NAME}`
+                  : OPD_PRODUCT_NAME,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl: opdDownloadUrl,
+                downloads: opdDownloads,
+              }),
+              text: buildOpdEmailText({
+                customerName,
+                productName: verifiedAddon
+                  ? `${OPD_PRODUCT_NAME} + ${OPD_ADDON_NAME}`
+                  : OPD_PRODUCT_NAME,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl: opdDownloadUrl,
+                downloads: opdDownloads,
+              }),
+            }),
+          });
+          if (!emailResponse.ok) {
+            console.error(
+              "Resend API failed for OPD Cashfree verification:",
+              await emailResponse.text()
+            );
+          } else {
+            console.log(`OPD order email sent to ${customerEmail}`);
+          }
+        } catch (emailErr) {
+          console.error("Failed to send OPD Cashfree email:", emailErr);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        verified: true,
+        mock: false,
+        amountPaid: expectedAmount,
+        downloadPath: `/opd-mastery/go${opdToken ? `?t=${opdToken}` : ""}`,
+        downloads: [
+          {
+            label: "OPD Mastery E-book",
+            path: `/opd-mastery/go${opdToken ? `?t=${opdToken}` : ""}`,
+          },
+          ...(opdAddonToken
+            ? [
+                {
+                  label: OPD_ADDON_NAME,
+                  path: `/opd-mastery/go?item=${OPD_ADDON_ID}&t=${opdAddonToken}`,
+                },
+              ]
+            : []),
+        ],
+      });
+    }
 
     if (verifiedProduct === "medical") {
       const expectedAmount = 149;

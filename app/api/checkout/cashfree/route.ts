@@ -4,6 +4,11 @@ const XRAY_PRICE = 99;
 const XRAY_ADDON_ID = "lab-test-master-guide";
 const XRAY_ADDON_PRICE = 49;
 
+const OPD_BASE_PRICE = 99;
+const OPD_EXIT_PRICE = 149;
+const OPD_ADDON_ID = "emergency-handbook";
+const OPD_ADDON_PRICE = 49;
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -15,6 +20,8 @@ export async function POST(req: Request) {
       productName,
       product,
       addons,
+      offer,
+      isExitOffer,
     } = body;
 
     const appId = process.env.CASHFREE_APP_ID;
@@ -27,18 +34,32 @@ export async function POST(req: Request) {
       !secretKey ||
       secretKey.includes("your_cashfree_secret");
 
+    const isOpd = product === "opd";
+    const isOpdExitOffer =
+      isOpd && (offer === "exit149" || isExitOffer === true);
     const isXray = product === "xray";
     const isNorcet = product === "norcet";
     const isMedical = product === "medical" || product === "medical-master-pdfs";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
 
     // Amount is computed server-side for security
+    const opdHasAddon =
+      isOpd &&
+      (isOpdExitOffer ||
+        (Array.isArray(addons)
+          ? addons.includes(OPD_ADDON_ID)
+          : String(addons || "").includes(OPD_ADDON_ID)));
     const xrayHasAddon =
       isXray &&
       (Array.isArray(addons)
         ? addons.includes(XRAY_ADDON_ID)
         : String(addons || "").includes(XRAY_ADDON_ID));
-    const amount = isXray
+
+    const amount = isOpd
+      ? isOpdExitOffer
+        ? OPD_EXIT_PRICE
+        : OPD_BASE_PRICE + (opdHasAddon ? OPD_ADDON_PRICE : 0)
+      : isXray
       ? XRAY_PRICE + (xrayHasAddon ? XRAY_ADDON_PRICE : 0)
       : isNorcet
       ? 149
@@ -82,13 +103,23 @@ export async function POST(req: Request) {
     // Clean phone number format for Cashfree (must be 10 digits without leading 0 or +91)
     const cleanPhone = String(phone || "").replace(/\D/g, "").slice(-10) || "9999999999";
     const cleanEmail = String(email || "").trim() || "customer@example.com";
-    const cleanName = String(name || "").trim() || "Candidate";
+    const cleanName = String(name || "").trim() || "Doctor/Student";
 
     // Build the correct post-payment return URL + order tags per product.
     let returnUrl: string;
     let orderTags: Record<string, string> | undefined;
 
-    if (isXray) {
+    if (isOpd) {
+      const addonParam = opdHasAddon ? OPD_ADDON_ID : "";
+      returnUrl = `${appUrl}/api/checkout/cashfree/return?order_id={order_id}`;
+      orderTags = {
+        product: "opd",
+        offer: isOpdExitOffer ? "exit149" : "standard",
+        addons: addonParam,
+        name: cleanName.slice(0, 80),
+        email: cleanEmail.slice(0, 80),
+      };
+    } else if (isXray) {
       const addonParam = xrayHasAddon ? XRAY_ADDON_ID : "";
       returnUrl = `${appUrl}/api/checkout/cashfree/return?order_id={order_id}`;
       orderTags = {

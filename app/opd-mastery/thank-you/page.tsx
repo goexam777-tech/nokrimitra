@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -20,7 +20,8 @@ type VerifiedDownload = {
   path: string;
 };
 
-export default function OpdThankYou() {
+function OpdThankYouContent() {
+  const router = useRouter();
   const params = useSearchParams();
   const verified = useRef(false);
 
@@ -38,20 +39,25 @@ export default function OpdThankYou() {
   const amountPaid = params.get("amountPaid") || "99";
   const addons = params.get("addons") || "";
   const orderId =
-    params.get("razorpay_order_id") || params.get("orderId") || "";
+    params.get("order_id") ||
+    params.get("orderId") ||
+    params.get("cf_order_id") ||
+    params.get("razorpay_order_id") ||
+    "";
 
   useEffect(() => {
+    // If no order ID, user didn't initiate payment -> redirect to checkout
+    if (!orderId) {
+      router.replace("/opd-mastery/checkout");
+      return;
+    }
+
     if (verified.current) return;
     verified.current = true;
 
-    const paymentId = params.get("razorpay_payment_id");
-    const signature = params.get("razorpay_signature");
-    const isMock = params.get("mock") === "true";
     const cacheKey = orderId ? `opd_order_${orderId}` : "";
 
-    // A page refresh keeps the same query string. Without this guard the verify
-    // call would run again, re-sending the delivery email and double-counting
-    // the Purchase conversion.
+    // A page refresh keeps the same query string.
     if (cacheKey) {
       try {
         const cached = sessionStorage.getItem(cacheKey);
@@ -68,19 +74,17 @@ export default function OpdThankYou() {
           return;
         }
       } catch {
-        // Ignore unavailable/blocked storage and verify normally.
+        // Storage unavailable
       }
     }
 
     const run = async () => {
       try {
-        const res = await fetch("/api/checkout/razorpay/verify", {
+        const res = await fetch("/api/checkout/cashfree/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            razorpay_payment_id: paymentId || `pay_mock_${Date.now()}`,
-            razorpay_order_id: orderId || `order_mock_${Date.now()}`,
-            razorpay_signature: signature || "mock_signature",
+            order_id: orderId,
             name,
             email,
             amountPaid,
@@ -91,8 +95,10 @@ export default function OpdThankYou() {
         });
         const data = await res.json();
 
+        // If payment was cancelled, failed, or unverified -> return to checkout
         if (!res.ok || !data.verified) {
-          setStatus("failed");
+          console.warn("OPD Cashfree order not verified or cancelled:", data);
+          router.replace("/opd-mastery/checkout?payment_status=cancelled");
           return;
         }
 
@@ -116,45 +122,67 @@ export default function OpdThankYou() {
               })
             );
           } catch {
-            // Storage is optional; verification already succeeded.
+            // Storage is optional
           }
         }
 
-        const w = window as unknown as {
-          fbq?: (...a: unknown[]) => void;
-          gtag?: (...a: unknown[]) => void;
+        let trackAttempts = 0;
+        const firePurchase = () => {
+          const w = window as unknown as {
+            fbq?: (...a: unknown[]) => void;
+            gtag?: (...a: unknown[]) => void;
+          };
+
+          if (!w.fbq && !w.gtag && trackAttempts < 15) {
+            trackAttempts++;
+            window.setTimeout(firePurchase, 200);
+            return;
+          }
+
+          if (w.fbq) {
+            w.fbq(
+              "track",
+              "Purchase",
+              {
+                value: Number(paidAmount),
+                currency: "INR",
+                content_name: PRODUCT_NAME,
+              },
+              { eventID: orderId }
+            );
+          }
+
+          if (w.gtag) {
+            w.gtag("event", "purchase", {
+              transaction_id: orderId || `ord_${Date.now()}`,
+              value: Number(paidAmount),
+              currency: "INR",
+              items: verifiedDownloads.length
+                ? verifiedDownloads.map((item) => ({
+                    item_name: item.label,
+                    price: Number(paidAmount),
+                    quantity: 1,
+                  }))
+                : [
+                    {
+                      item_name: PRODUCT_NAME,
+                      price: Number(paidAmount),
+                      quantity: 1,
+                    },
+                  ],
+            });
+          }
         };
-        w.fbq?.("track", "Purchase", {
-          value: Number(paidAmount),
-          currency: "INR",
-        });
-        w.gtag?.("event", "purchase", {
-          transaction_id: orderId || paymentId || `ord_${Date.now()}`,
-          value: Number(paidAmount),
-          currency: "INR",
-          items: verifiedDownloads.length
-            ? verifiedDownloads.map((item) => ({
-                item_name: item.label,
-                price: Number(paidAmount),
-                quantity: 1,
-              }))
-            : [
-                {
-                  item_name: PRODUCT_NAME,
-                  price: Number(paidAmount),
-                  quantity: 1,
-                },
-              ],
-        });
-      } catch {
+
+        firePurchase();
+      } catch (err) {
+        console.error("OPD verification error:", err);
         setStatus("failed");
       }
-
-      void isMock;
     };
 
     run();
-  }, [params, name, email, amountPaid, addons, orderId]);
+  }, [router, name, email, amountPaid, addons, orderId]);
 
   return (
     <main className={styles.page}>
@@ -230,5 +258,21 @@ export default function OpdThankYou() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function OpdThankYou() {
+  return (
+    <Suspense
+      fallback={
+        <main className={styles.page}>
+          <div className={styles.card}>
+            <p className={styles.pending}>Loading order status...</p>
+          </div>
+        </main>
+      }
+    >
+      <OpdThankYouContent />
+    </Suspense>
   );
 }

@@ -21,7 +21,7 @@ export default function OpdPrivacyPage() {
         <li>Your name, email address and WhatsApp number, provided by you at checkout.</li>
         <li>
           Payment details are processed securely by our payment partner{" "}
-          <strong>Razorpay</strong>. We do not store your card number, UPI PIN
+          <strong>Cashfree Payments</strong>. We do not store your card number, UPI PIN
           or bank password.
         </li>
         <li>Basic usage data may be collected to improve the website experience.</li>
