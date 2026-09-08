@@ -50,49 +50,46 @@ export default function MbbsCheckout() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    let cancelled = false;
+    if (typeof window === "undefined") return;
+    const w = window as unknown as {
+      dataLayer?: unknown[];
+      gtag?: (...args: unknown[]) => void;
+      fbq?: (...args: unknown[]) => void;
+    };
 
-    const fire = () => {
-      if (cancelled) return;
-      const w = window as unknown as {
-        fbq?: (...args: unknown[]) => void;
-        gtag?: (...args: unknown[]) => void;
+    // 1. Google Analytics (begin_checkout)
+    w.dataLayer = w.dataLayer || [];
+    if (typeof w.gtag !== "function") {
+      w.gtag = function () {
+        w.dataLayer?.push(arguments);
       };
+    }
+    w.gtag("event", "begin_checkout", {
+      currency: "INR",
+      value: BASE_PRICE,
+      items: [
+        {
+          item_name: PRODUCT_NAME,
+          price: BASE_PRICE,
+          quantity: 1,
+        },
+      ],
+    });
 
-      if (!w.fbq && !w.gtag) {
-        window.setTimeout(fire, 200);
-        return;
-      }
-
-      if (w.fbq) {
+    // 2. Facebook Pixel (InitiateCheckout)
+    const fireFb = (attempts = 0) => {
+      if (typeof w.fbq === "function") {
         w.fbq("track", "InitiateCheckout", {
           content_name: PRODUCT_NAME,
           content_category: "Medical Notes",
           value: BASE_PRICE,
           currency: "INR",
         });
-      }
-
-      if (w.gtag) {
-        w.gtag("event", "begin_checkout", {
-          currency: "INR",
-          value: BASE_PRICE,
-          items: [
-            {
-              item_name: PRODUCT_NAME,
-              price: BASE_PRICE,
-              quantity: 1,
-            },
-          ],
-        });
+      } else if (attempts < 10) {
+        setTimeout(() => fireFb(attempts + 1), 300);
       }
     };
-
-    fire();
-
-    return () => {
-      cancelled = true;
-    };
+    fireFb();
   }, []);
 
   const handleBack = () => {

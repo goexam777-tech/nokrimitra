@@ -7,49 +7,42 @@ const PRICE = 199;
 
 export default function MbbsAnalytics() {
   useEffect(() => {
-    let cancelled = false;
+    if (typeof window === "undefined") return;
+    const w = window as any;
 
-    const fire = () => {
-      if (cancelled) return;
-      const w = window as unknown as {
-        fbq?: (...args: unknown[]) => void;
-        gtag?: (...args: unknown[]) => void;
+    // 1. Google Analytics (view_item)
+    w.dataLayer = w.dataLayer || [];
+    if (typeof w.gtag !== "function") {
+      w.gtag = function () {
+        w.dataLayer.push(arguments);
       };
+    }
+    w.gtag("event", "view_item", {
+      currency: "INR",
+      value: PRICE,
+      items: [
+        {
+          item_name: PRODUCT_NAME,
+          price: PRICE,
+          quantity: 1,
+        },
+      ],
+    });
 
-      if (!w.fbq && !w.gtag) {
-        window.setTimeout(fire, 200);
-        return;
-      }
-
-      if (w.fbq) {
+    // 2. Facebook Pixel (ViewContent)
+    const fireFb = (attempts = 0) => {
+      if (typeof w.fbq === "function") {
         w.fbq("track", "ViewContent", {
           content_name: PRODUCT_NAME,
           content_category: "Medical Notes",
           value: PRICE,
           currency: "INR",
         });
-      }
-
-      if (w.gtag) {
-        w.gtag("event", "view_item", {
-          currency: "INR",
-          value: PRICE,
-          items: [
-            {
-              item_name: PRODUCT_NAME,
-              price: PRICE,
-              quantity: 1,
-            },
-          ],
-        });
+      } else if (attempts < 10) {
+        setTimeout(() => fireFb(attempts + 1), 300);
       }
     };
-
-    fire();
-
-    return () => {
-      cancelled = true;
-    };
+    fireFb();
   }, []);
 
   return null;

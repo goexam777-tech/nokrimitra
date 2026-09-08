@@ -113,17 +113,49 @@ function ThankYouContent() {
         }
 
         // Fire Purchase Conversion Events
-        const w = window as unknown as {
-          fbq?: (...a: unknown[]) => void;
-          gtag?: (...a: unknown[]) => void;
-        };
-        w.fbq?.("track", "Purchase", { value: Number(finalAmount), currency: "INR" });
-        w.gtag?.("event", "purchase", {
-          transaction_id: orderId,
-          value: Number(finalAmount),
-          currency: "INR",
-          items: [{ item_name: PRODUCT_NAME, price: Number(finalAmount) }],
-        });
+        if (typeof window !== "undefined") {
+          const w = window as unknown as {
+            dataLayer?: unknown[];
+            gtag?: (...args: unknown[]) => void;
+            fbq?: (...args: unknown[]) => void;
+          };
+
+          // 1. Google Analytics Purchase
+          w.dataLayer = w.dataLayer || [];
+          if (typeof w.gtag !== "function") {
+            w.gtag = function () {
+              w.dataLayer?.push(arguments);
+            };
+          }
+          w.gtag("event", "purchase", {
+            transaction_id: orderId || paymentId || `ord_${Date.now()}`,
+            value: Number(finalAmount),
+            currency: "INR",
+            tax: 0,
+            shipping: 0,
+            items: [
+              {
+                item_id: "mbbs-notes-21-subjects",
+                item_name: PRODUCT_NAME,
+                price: Number(finalAmount),
+                quantity: 1,
+              },
+            ],
+          });
+
+          // 2. Facebook Pixel Purchase
+          const fireFb = (attempts = 0) => {
+            if (typeof w.fbq === "function") {
+              w.fbq("track", "Purchase", {
+                value: Number(finalAmount),
+                currency: "INR",
+              });
+            } else if (attempts < 10) {
+              setTimeout(() => fireFb(attempts + 1), 300);
+            }
+          };
+          fireFb();
+        }
       } catch {
         // Network fallback: still let user access the link if they arrived from checkout
         setStatus("ready");

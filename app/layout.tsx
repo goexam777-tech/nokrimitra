@@ -3,6 +3,7 @@ import { Noto_Sans_Gujarati } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import FbPixel from "./FbPixel";
+import GoogleAnalytics from "./GoogleAnalytics";
 
 const notoGujarati = Noto_Sans_Gujarati({
   subsets: ["gujarati", "latin"],
@@ -52,7 +53,8 @@ export default function RootLayout({
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
+            function gtag(){window.dataLayer.push(arguments);}
+            window.gtag = gtag;
             gtag('js', new Date());
             gtag('config', '${gaId}');
           `}
@@ -75,6 +77,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={notoGujarati.className} suppressHydrationWarning>
+        <GoogleAnalytics gaId={gaId} />
         <FbPixel />
         <noscript>
           <img
