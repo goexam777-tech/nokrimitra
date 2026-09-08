@@ -1,0 +1,432 @@
+/* Page backdrop matching landing page */
+.pageWrapper {
+  min-height: 100vh;
+  background: #F6F1E9;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  color: #1f2933;
+  font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
+/* Centered single column container matching mobile-first layout */
+.container {
+  width: 100%;
+  max-width: 500px;
+  background: #F6F1E9;
+  min-height: 100vh;
+  border-left: 1px solid #e5ded4;
+  border-right: 1px solid #e5ded4;
+  padding: 20px 18px 48px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 540px) {
+  .container {
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+    padding: 16px 14px 44px;
+  }
+}
+
+/* 1. Top Navigation Row matching Screenshot 1 */
+.topNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 6px 4px;
+  cursor: pointer;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 700;
+  transition: opacity 0.15s ease;
+  font-family: inherit;
+}
+
+.backBtn:hover {
+  opacity: 0.75;
+}
+
+.backChevron {
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 800;
+  margin-right: 2px;
+}
+
+.secureTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #1f8a5b; /* Emerald green matching screenshot */
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+}
+
+/* 2. Main Title & Subtitle */
+.headerBlock {
+  margin: 10px 0 20px;
+}
+
+.title {
+  font-size: 27px;
+  font-weight: 850;
+  color: #58111a; /* Deep burgundy matching screenshot & landing page */
+  line-height: 1.2;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.subTitle {
+  font-size: 14px;
+  color: #554e47;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 450;
+}
+
+/* Form */
+.checkoutForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.errorMessage {
+  background: #fef2f2;
+  border: 1.5px solid #f87171;
+  color: #991b1b;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 12px;
+  line-height: 1.4;
+}
+
+/* 3. Reusable Card Component matching screenshots */
+.card {
+  background: #ffffff;
+  border: 1.5px solid #ece4d8;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+}
+
+.cardHeader {
+  font-size: 13px;
+  font-weight: 800;
+  color: #4a443e; /* Darker warm charcoal matching screenshot */
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f2ece3;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.cardBody {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Field Groups */
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 14px;
+  font-weight: 550;
+  color: #374151;
+  letter-spacing: -0.1px;
+}
+
+.textInput {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #ded5c6;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #111827;
+  background: #ffffff;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.textInput::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.textInput:focus {
+  border-color: #58111a;
+  box-shadow: 0 0 0 3px rgba(88, 17, 26, 0.08);
+}
+
+.fieldHint {
+  font-size: 12.5px;
+  color: #786f66;
+  line-height: 1.35;
+  margin-top: 1px;
+}
+
+/* Phone Input with +91 block matching screenshot */
+.phoneInputRow {
+  display: flex;
+  border: 1.5px solid #ded5c6;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.phoneInputRow:focus-within {
+  border-color: #58111a;
+  box-shadow: 0 0 0 3px rgba(88, 17, 26, 0.08);
+}
+
+.phonePrefix {
+  padding: 12px 14px;
+  background: #ffffff;
+  font-weight: 550;
+  color: #374151;
+  font-size: 15px;
+  border-right: 1.5px solid #ded5c6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.phoneInput {
+  flex: 1;
+  border: none;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #111827;
+  background: transparent;
+  outline: none;
+  font-family: inherit;
+  width: 100%;
+}
+
+.phoneInput::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* 4. Payment Badges Image matching Screenshot 2 */
+.payMarksWrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px 0 8px;
+}
+
+.payMarksImg {
+  width: 100%;
+  height: auto;
+  max-height: 56px;
+  object-fit: contain;
+  display: block;
+}
+
+.paymentInfoText {
+  font-size: 13.5px;
+  color: #4a443e;
+  line-height: 1.5;
+  margin: 2px 0 0;
+  font-weight: 450;
+}
+
+.paymentInfoText strong {
+  color: #111827;
+  font-weight: 800;
+}
+
+/* 5. Order Row matching Screenshot 3 */
+.orderRow {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.orderItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.orderCoverImg {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ded5c6;
+}
+
+.orderMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.orderTitle {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.2px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.orderSubtitle {
+  font-size: 13.5px;
+  color: #60574f;
+  margin: 0;
+  line-height: 1.35;
+  font-weight: 450;
+}
+
+.orderPrice {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.3px;
+  font-feature-settings: "tnum";
+  white-space: nowrap;
+}
+
+/* 6. Pay CTA Button */
+.payBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1e293b;
+  font-size: 16.5px;
+  font-weight: 800;
+  padding: 15px 18px;
+  border-radius: 14px;
+  border: 1px solid #d97706;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: -0.2px;
+  margin-top: 6px;
+  font-family: inherit;
+}
+
+.payBtn:hover:not(:disabled) {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.payBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.payHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #786f66;
+  font-weight: 600;
+  text-align: center;
+  margin-top: -6px;
+}
+
+.trustBadgeWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 6px;
+}
+
+.trustBadgeImg {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* 7. Footer Links */
+.checkoutFooterLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.footerLink {
+  font-size: 13.5px;
+  font-weight: 750;
+  color: #58111a;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.footerLink:hover {
+  text-decoration: underline;
+}
+
+.footerDot {
+  color: #85755e;
+  font-size: 14px;
+}
+
+.footerHelp {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #58111a;
+}
+
+.footerWhatsApp {
+  font-weight: 850;
+}
+
+@media (max-width: 420px) {
+  .cardHeader {
+    padding: 12px 16px;
+  }
+  .cardBody {
+    padding: 16px 16px 18px;
+  }
+  .orderRow {
+    padding: 14px 16px;
+  }
+}

@@ -38,6 +38,7 @@ export async function POST(req: Request) {
     const isXray = product === "xray";
     const isNorcet = product === "norcet";
     const isMedical = product === "medical" || product === "medical-master-pdfs";
+    const isMbbs = product === "mbbs" || product === "mbbs-notes";
 
     // Public origin for links included in email + downloads.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
@@ -51,6 +52,15 @@ export async function POST(req: Request) {
     ).replace(/\/$/, "");
 
     if (isMock) {
+      if (isMbbs) {
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          mock: true,
+          amountPaid: 199,
+          downloadPath: "/mbbs-notes/go",
+        });
+      }
       if (isMedical) {
         return NextResponse.json({
           success: true,

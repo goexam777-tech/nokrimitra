@@ -1,0 +1,223 @@
+.pageWrapper {
+  min-height: 100vh;
+  background: #F6F1E9;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  color: #1f2933;
+  font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
+.container {
+  width: 100%;
+  max-width: 540px;
+  background: #F6F1E9;
+  min-height: 100vh;
+  border-left: 1px solid #e5ded4;
+  border-right: 1px solid #e5ded4;
+  padding: 24px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 540px) {
+  .container {
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+    padding: 18px 16px 40px;
+  }
+}
+
+.backRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #58111a;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.backLink:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+.productTag {
+  font-size: 12px;
+  font-weight: 750;
+  color: #0b6b3a;
+  background: #edf7f0;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid #cbead4;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 850;
+  color: #58111a;
+  line-height: 1.25;
+  margin: 0 0 6px;
+  letter-spacing: -0.4px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.updated {
+  font-size: 12.5px;
+  color: #7c7062;
+  font-weight: 500;
+  margin: 0 0 18px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1.5px solid #ece4d8;
+  border-radius: 20px;
+  padding: 22px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #3d3730;
+}
+
+.card h2 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+  margin: 22px 0 8px;
+  letter-spacing: -0.2px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.card h2:first-of-type {
+  margin-top: 10px;
+}
+
+.card p {
+  margin: 0 0 14px;
+  color: #4b443c;
+}
+
+.card ul {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card li {
+  color: #4b443c;
+}
+
+.card strong {
+  color: #111827;
+  font-weight: 700;
+}
+
+.calloutBox {
+  background: #fef8f0;
+  border-left: 4px solid #f59e0b;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  color: #78350f;
+  line-height: 1.5;
+}
+
+.guaranteeCallout {
+  background: #f0fdf4;
+  border-left: 4px solid #16a34a;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 18px;
+  font-size: 14px;
+  color: #14532d;
+  line-height: 1.5;
+}
+
+.whatsAppBanner {
+  margin-top: 20px;
+  background: #edf7f0;
+  border: 1.5px solid #c4e5cf;
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.whatsAppInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.whatsAppTitle {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0b6b3a;
+}
+
+.whatsAppSub {
+  font-size: 12.5px;
+  color: #436d52;
+}
+
+.whatsAppBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1f8a5b;
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(31, 138, 91, 0.25);
+  transition: background 0.15s ease;
+}
+
+.whatsAppBtn:hover {
+  background: #146c43;
+}
+
+.footerLinksRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.footerLink {
+  font-size: 13.5px;
+  font-weight: 750;
+  color: #58111a;
+  text-decoration: none;
+}
+
+.footerLink:hover {
+  text-decoration: underline;
+}
+
+.footerDot {
+  color: #85755e;
+  font-size: 14px;
+}

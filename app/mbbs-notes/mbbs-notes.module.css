@@ -1,0 +1,1361 @@
+/* Outer page backdrop that creates generous left & right space on desktop/tablet */
+.pageWrapper {
+  min-height: 100vh;
+  background: #F6F1E9;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  color: #1f2933;
+  font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
+/* Mobile-first centered container with desktop frame - pure #F6F1E9 background */
+.container {
+  width: 100%;
+  max-width: 500px;
+  background: #F6F1E9;
+  min-height: 100vh;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08), 0 0 30px rgba(0, 0, 0, 0.04);
+  border-left: 1px solid #e5ded4;
+  border-right: 1px solid #e5ded4;
+  padding: 28px 20px 76px; /* perfectly fitted bottom space for sticky CTA */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+@media (max-width: 540px) {
+  .pageWrapper {
+    background: #F6F1E9;
+  }
+  .container {
+    border-left: none;
+    border-right: none;
+    box-shadow: none;
+    padding: 20px 16px 72px;
+  }
+}
+
+/* Top Pill Badge */
+.topBadgeWrap {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.topBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8faf7;
+  border: 1px solid #d7e2d5;
+  color: #1f2933;
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.badgeHighlight {
+  color: #0b6b3a;
+  font-weight: 800;
+}
+
+/* Hero Titles */
+.heroHeader {
+  margin-bottom: 20px;
+}
+
+.mainTitle {
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.14;
+  letter-spacing: -0.8px;
+  color: #0b4d26; /* NokriMitra deep emerald brand color */
+  margin: 0 0 10px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.mainTitleAccent {
+  color: #0f172a;
+}
+
+.subTitle {
+  font-size: 15px;
+  color: #4b5563;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Showcase Card with Fanned Stack - #F6F1E9 hero box background */
+.showcaseCard {
+  background: #F6F1E9;
+  border: 1.5px solid #e0d8cc;
+  border-radius: 22px;
+  padding: 18px 14px 20px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.mockupWrapper {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  background: transparent;
+}
+
+.mockupImage {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.showcaseCard:hover .mockupImage {
+  transform: scale(1.015);
+}
+
+/* Under Mockup Badge */
+.includedBadge {
+  margin-top: 14px;
+  display: inline-block;
+  background: #50131d; /* Deep rich burgundy matching reference screenshot */
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(80, 19, 29, 0.25);
+}
+
+/* Redesigned Premium Pricing Card */
+.pricingCard {
+  background: linear-gradient(180deg, #ffffff 0%, #f4fbf6 100%);
+  border: 1.5px solid #a7f3d0;
+  border-radius: 20px;
+  padding: 18px 18px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 14px 34px -8px rgba(11, 107, 58, 0.14);
+}
+
+.pricingBadgeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.limitedOfferBadge {
+  background: #084d2a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.urgencyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.livePulseDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #dc2626;
+  box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+  animation: liveDotPulse 1.8s infinite;
+}
+
+@keyframes liveDotPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(220, 38, 38, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+.ratingBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8faf7;
+  border: 1px solid #e2ece0;
+  border-radius: 10px;
+  padding: 6px 12px;
+  margin-bottom: 14px;
+}
+
+.stars {
+  color: #f59e0b;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.ratingScore {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.ratingDivider {
+  width: 1px;
+  height: 12px;
+  background: #cbd5e1;
+}
+
+.ratingCount {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.mainPriceBlock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0 16px;
+}
+
+.priceLeft {
+  display: flex;
+  flex-direction: column;
+}
+
+.priceLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.priceFigures {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.priceCurrency {
+  font-size: 24px;
+  font-weight: 600;
+  color: #084d2a;
+}
+
+.priceValue {
+  font-size: 44px;
+  font-weight: 700;
+  color: #084d2a;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.priceOriginal {
+  font-size: 18px;
+  color: #94a3b8;
+  text-decoration: line-through;
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.saveBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.saveBadge span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.saveBadge strong {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+/* Primary CTA Button (Inline & in Card) */
+.primaryCtaBtn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1e293b;
+  font-size: 16.5px;
+  font-weight: 800;
+  padding: 15px 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid #d97706;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: -0.2px;
+}
+
+.primaryCtaBtn:hover {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+}
+
+.ctaSubHint {
+  text-align: center;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0b172f;
+  margin: 28px 0 14px;
+  letter-spacing: -0.4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* "Every subject, and its size" Section matching user screenshots */
+.subjectSizesSection {
+  margin: 36px 0 40px;
+}
+
+.subjectSizesHeader {
+  margin-bottom: 18px;
+}
+
+.subjectSizesTitle {
+  font-size: 26px;
+  font-weight: 850;
+  color: #50131d; /* Deep rich burgundy matching screenshot */
+  line-height: 1.2;
+  margin: 0 0 7px;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.subjectSizesSub {
+  font-size: 14.5px;
+  color: #5a524a;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 500;
+}
+
+.subjectSizesCard {
+  background: #ffffff;
+  border: 1px solid #e5dccf;
+  border-radius: 22px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.subjectSizeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 7.5px 18px; /* Compact top & bottom space as requested */
+  border-bottom: 1px solid #f2ece3;
+  transition: background-color 0.15s ease;
+}
+
+.subjectSizeRow:hover {
+  background-color: #fdfbf7;
+}
+
+.subjectSizeName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.15px;
+  line-height: 1.25;
+}
+
+.subjectSizeCount {
+  font-size: 16px;
+  font-weight: 650;
+  color: #72121e; /* Deep rich burgundy page count number */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  line-height: 1.25;
+}
+
+.subjectSizesFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10.5px 18px;
+  background: #e9e0d1; /* Warm darker beige footer block matching screenshot */
+  border-top: 1px solid #ded5c5;
+}
+
+.subjectSizesTotalLabel {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+}
+
+.subjectSizesTotalCount {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+}
+
+@media (max-width: 420px) {
+  .subjectSizeRow {
+    padding: 7px 15px;
+  }
+  .subjectSizesFooter {
+    padding: 9.5px 15px;
+  }
+}
+
+/* "Why ₹199" Comparison Card Section matching user screenshot */
+.whyPriceSection {
+  margin: 20px 0 16px;
+}
+
+.whyPriceTitle {
+  font-size: 26px;
+  font-weight: 850;
+  color: #50131d; /* Deep rich burgundy matching screenshot */
+  line-height: 1.2;
+  margin: 0 0 10px;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.whyPriceCard {
+  background: #ffffff;
+  border: 1px solid #e5dccf;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.whyPriceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8.5px 18px; /* Compact top & bottom padding matching subject table */
+  border-bottom: 1px solid #f2ece3;
+  transition: background-color 0.15s ease;
+}
+
+.whyPriceRow:hover {
+  background-color: #fdfbf7;
+}
+
+.whyPriceLabel {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.15px;
+  line-height: 1.35;
+}
+
+.whyPriceOld {
+  font-size: 17px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-decoration: line-through;
+  font-feature-settings: "tnum";
+  white-space: nowrap;
+}
+
+.whyPriceHighlightRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 18px; /* Compact top & bottom space */
+  background: #edf7f0; /* Soft mint green tint matching site emerald theme */
+  transition: background-color 0.15s ease;
+}
+
+.whyPriceHighlightLabel {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.15px;
+  line-height: 1.35;
+}
+
+.whyPriceActiveVal {
+  font-size: 21px;
+  font-weight: 850;
+  color: #084d2a; /* NokriMitra deep emerald green */
+  font-feature-settings: "tnum";
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .whyPriceRow {
+    padding: 7.5px 15px;
+  }
+  .whyPriceHighlightRow {
+    padding: 9px 15px;
+  }
+  .whyPriceLabel,
+  .whyPriceHighlightLabel {
+    font-size: 14px;
+  }
+  .whyPriceActiveVal {
+    font-size: 19px;
+  }
+}
+
+/* "What you get" Card Section matching user reference image */
+.whatYouGetSection {
+  margin: 26px 0 30px;
+}
+
+.whatYouGetTitle {
+  font-size: 26px;
+  font-weight: 850;
+  color: #50131d; /* Deep rich burgundy matching reference screenshot */
+  margin: 0 0 14px;
+  letter-spacing: -0.6px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.whatYouGetCard {
+  background: #ffffff;
+  border: 1.5px solid #e0d8cc;
+  border-radius: 22px;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.whatYouGetItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 13.5px 18px;
+  border-bottom: 1px solid #f0ebe2;
+  transition: background-color 0.15s ease;
+}
+
+.whatYouGetItem:last-child {
+  border-bottom: none;
+}
+
+.whatYouGetItem:hover {
+  background: #fdfbf7;
+}
+
+.whatYouGetIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.whatYouGetText {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+  line-height: 1.35;
+}
+
+/* "All 21 books in the bundle" 3-column Grid Section */
+.bundleBooksSection {
+  margin: 30px 0 34px;
+}
+
+.bundleBooksHeader {
+  margin-bottom: 16px;
+}
+
+.bundleBooksTitle {
+  font-size: 26px;
+  font-weight: 850;
+  color: #50131d; /* Deep rich maroon as shown in the screenshot */
+  line-height: 1.2;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.bundleBooksSub {
+  font-size: 14px;
+  color: #5b6270;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 500;
+}
+
+.bundleBooksGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 420px) {
+  .bundleBooksGrid {
+    gap: 8px;
+  }
+}
+
+.bundleBookCard {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  background: #0b172f;
+  display: flex;
+}
+
+.bundleBookCard:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
+}
+
+.bundleBookImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* "See the actual pages" Carousel Section matching reference screenshot */
+.actualPagesSection {
+  margin: 32px 0 36px;
+  position: relative;
+}
+
+.actualPagesHeader {
+  margin-bottom: 16px;
+}
+
+.actualPagesTitle {
+  font-size: 26px;
+  font-weight: 850;
+  color: #50131d; /* Deep rich burgundy matching reference screenshot */
+  line-height: 1.2;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.actualPagesSub {
+  font-size: 14px;
+  color: #5b6270;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 500;
+}
+
+.sliderRelativeWrap {
+  position: relative;
+  width: 100%;
+}
+
+.actualPagesTrack {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 4px 16px;
+  margin: 0 -12px;
+  padding-left: 12px;
+  padding-right: 12px;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.actualPagesTrack::-webkit-scrollbar {
+  display: none;
+}
+
+.actualPagesTrack.isDragging {
+  cursor: grabbing;
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+}
+
+.actualPageCard {
+  flex: 0 0 82%;
+  max-width: 370px;
+  scroll-snap-align: center;
+  background: #ffffff;
+  border: 1.5px solid #e0d8cc;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.actualPageCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.1);
+}
+
+.actualPageImgWrap {
+  width: 100%;
+  background: #ffffff;
+  padding: 12px 12px 6px;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #f0ebe2;
+  overflow: hidden;
+}
+
+.actualPageImg {
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: contain;
+  display: block;
+  border-radius: 10px 10px 0 0;
+  pointer-events: none;
+}
+
+.actualPageFooter {
+  padding: 14px 18px 16px;
+  background: #ffffff;
+}
+
+.actualPageSubject {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 3px;
+  letter-spacing: -0.2px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.actualPageTopic {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #556070;
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Slider Pagination Dots */
+.sliderDotsRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.sliderDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #d7cebf;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.sliderDot:hover {
+  background: #b8ac9a;
+}
+
+.sliderDotActive {
+  width: 22px;
+  background: #50131d; /* Deep burgundy elongated pill matching screenshot */
+}
+
+/* Slider Nav Arrows (Desktop friendly) */
+.sliderNavBtn {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ded5c6;
+  color: #1f2933;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.sliderNavBtn:hover {
+  background: #50131d;
+  color: #ffffff;
+  border-color: #50131d;
+  box-shadow: 0 6px 16px rgba(80, 19, 29, 0.3);
+}
+
+.sliderNavPrev {
+  left: -8px;
+}
+
+.sliderNavNext {
+  right: -8px;
+}
+
+/* Testimonials / Reviews Section matching landing page design system */
+.reviewsSection {
+  margin: 26px 0 24px;
+}
+
+.reviewsTitle {
+  font-size: 26px;
+  font-weight: 850;
+  color: #50131d; /* Deep rich burgundy matching all section headings */
+  line-height: 1.2;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reviewCard {
+  background: #ffffff;
+  border: 1.5px solid #ece4d8;
+  border-radius: 18px;
+  padding: 14px 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.reviewCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.06);
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.reviewUserGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatarWrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid #ded5c6;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  background: #f0ebe2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #58111a;
+  color: #f5b907;
+  font-weight: 850;
+  font-size: 14.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.reviewerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.reviewerName {
+  font-size: 14.5px;
+  font-weight: 750;
+  color: #111827;
+  letter-spacing: -0.15px;
+}
+
+.reviewerCollege {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.reviewRatingGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.reviewStars {
+  color: #f59e0b;
+  font-size: 12.5px;
+  letter-spacing: 1px;
+}
+
+.reviewVerifiedBadge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0b6b3a;
+  background: #edf7f0;
+  padding: 2px 7px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+.reviewComment {
+  font-size: 13.5px;
+  color: #4b5563;
+  line-height: 1.48;
+  margin: 0;
+  font-weight: 450;
+}
+
+/* "Before you buy" FAQ Accordion matching user screenshots */
+.faqSection {
+  margin: 34px 0 18px;
+}
+
+.faqTitle {
+  font-size: 26px;
+  font-weight: 850;
+  color: #50131d; /* Deep rich burgundy matching screenshot */
+  line-height: 1.2;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.faqCard {
+  background: #ffffff;
+  border: 1px solid #e5dccf;
+  border-radius: 22px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.faqItem {
+  border-bottom: 1px solid #f2ece3;
+}
+
+.faqItem:last-child {
+  border-bottom: none;
+}
+
+.faqSummary {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #1a1a1a;
+  padding: 16px 20px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.faqSummary::-webkit-details-marker {
+  display: none;
+}
+
+.faqSummary:hover {
+  background-color: #fdfbf7;
+}
+
+.faqQuestion {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.15px;
+  line-height: 1.35;
+}
+
+.faqToggleIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+}
+
+.faqToggleIcon::after {
+  content: "+";
+  font-size: 22px;
+  font-weight: 800;
+  color: #d97706; /* Golden amber matching user screenshot */
+  line-height: 1;
+}
+
+details[open] .faqToggleIcon::after {
+  content: "−";
+  font-size: 24px;
+  font-weight: 800;
+  color: #d97706;
+}
+
+.faqAnswerWrap {
+  padding: 0 20px 18px 20px;
+}
+
+.faqAnswer {
+  font-size: 14.5px;
+  color: #554e47;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 450;
+}
+
+@media (max-width: 420px) {
+  .faqSummary {
+    padding: 14px 16px;
+  }
+  .faqQuestion {
+    font-size: 14.5px;
+  }
+  .faqAnswerWrap {
+    padding: 0 16px 16px 16px;
+  }
+  .faqAnswer {
+    font-size: 14px;
+  }
+}
+
+/* "You will not be left stuck" Guarantee Card matching screenshot */
+.supportGuaranteeCard {
+  margin: 16px 0 20px;
+  background: #ffffff;
+  border: 2px solid #1f8a5b; /* Vibrant green outline border matching screenshot */
+  border-radius: 20px;
+  padding: 13px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  box-shadow: none;
+}
+
+.supportIconWrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.supportShieldIcon {
+  color: #1f8a5b;
+}
+
+.supportContent {
+  flex: 1;
+}
+
+.supportTitle {
+  font-size: 17.5px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px;
+  letter-spacing: -0.2px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.supportText {
+  font-size: 14px;
+  color: #554e47;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 450;
+}
+
+/* "How it works" 3-Step Section matching screenshot */
+.howItWorksSection {
+  margin: 20px 0 0;
+}
+
+.howItWorksTitle {
+  font-size: 26px;
+  font-weight: 850;
+  color: #58111a; /* Deep rich burgundy matching screenshot */
+  line-height: 1.2;
+  margin: 0 0 16px;
+  letter-spacing: -0.5px;
+  font-family: var(--font-heading, "Plus Jakarta Sans", system-ui, sans-serif);
+}
+
+.howItWorksGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.howItWorksCard {
+  background: #ffffff;
+  border: 1.5px solid #ece4d8;
+  border-radius: 16px;
+  padding: 20px 8px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 106px;
+}
+
+.howItWorksCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.06);
+}
+
+.stepNumberBadge {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #58111a; /* Burgundy circular badge */
+  color: #f5b907; /* Bright gold/amber number from screenshot */
+  font-size: 15px;
+  font-weight: 850;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepLabel {
+  font-size: 14.5px;
+  font-weight: 750;
+  color: #1a1a1a;
+  letter-spacing: -0.15px;
+  line-height: 1.25;
+}
+
+.howItWorksSubtext {
+  text-align: center;
+  font-size: 13.5px;
+  color: #7c7062;
+  font-weight: 500;
+  margin: 18px 0 6px;
+}
+
+.referenceFooterLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 2px;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+
+.refFooterLink {
+  font-size: 13.5px;
+  font-weight: 750;
+  color: #6d0d16;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.refFooterLink:hover {
+  text-decoration: underline;
+}
+
+.refFooterDot {
+  color: #85755e;
+  font-size: 14px;
+}
+
+.refHelpPrefix {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #6d0d16;
+}
+
+.refWhatsAppBold {
+  font-weight: 850;
+}
+
+@media (max-width: 420px) {
+  .supportGuaranteeCard {
+    padding: 12px 14px;
+    gap: 12px;
+    margin: 14px 0 18px;
+  }
+  .howItWorksGrid {
+    gap: 8px;
+  }
+  .howItWorksCard {
+    padding: 16px 6px 14px;
+    min-height: 96px;
+  }
+  .stepLabel {
+    font-size: 13px;
+  }
+}
+
+/* Sticky Bottom Bar */
+.stickyBottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  background: rgba(246, 241, 233, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid #e5ded4;
+  border-left: 1px solid #e5ded4;
+  border-right: 1px solid #e5ded4;
+  padding: 12px 16px;
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 540px) {
+  .stickyBottomBar {
+    border-left: none;
+    border-right: none;
+  }
+}
+
+.stickyCtaBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 800;
+  padding: 14px 18px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid #d97706;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  transition: all 0.2s ease;
+  letter-spacing: -0.2px;
+}
+
+.stickyCtaBtn:hover {
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+}
+
+.downloadIcon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Simple Footer */
+.footer {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.footerLink {
+  color: #64748b;
+  text-decoration: none;
+}
+
+.footerLink:hover {
+  color: #0b6b3a;
+  text-decoration: underline;
+}

@@ -26,6 +26,10 @@ import {
   buildReelsEmail,
   buildReelsEmailText,
 } from "@/lib/reelsEmailTemplate";
+import {
+  buildMbbsEmail,
+  buildMbbsEmailText,
+} from "@/lib/mbbsEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
@@ -51,6 +55,9 @@ const XRAY_ADDON_NAME = "Clinical Lab Test Master Guide";
 
 const REELS_PRICE = 148;
 const REELS_PRODUCT_NAME = "2000+ AI Baby Reels Bundle";
+
+const MBBS_PRICE = 199;
+const MBBS_PRODUCT_NAME = "Complete MBBS Notes (All 21 Subjects)";
 
 export async function POST(req: Request) {
   try {
@@ -576,6 +583,7 @@ export async function POST(req: Request) {
     const isNursing = product === "nursing";
     const isXray = product === "xray";
     const isReels = product === "reels";
+    const isMbbs = product === "mbbs" || product === "mbbs-notes";
     const deliveryEmail = isPsychology
       ? verifiedPsyEmail
       : isNursing
@@ -599,6 +607,12 @@ export async function POST(req: Request) {
     const escooterToken = isEscooter
       ? createDownloadToken("escooter", razorpay_order_id)
       : null;
+    const mbbsToken = isMbbs
+      ? createDownloadToken("mbbs", razorpay_order_id)
+      : null;
+    const mbbsDownloadUrl = `${appUrl}/mbbs-notes/go${
+      mbbsToken ? `?t=${mbbsToken}` : ""
+    }`;
     const opdToken = isOpd
       ? createDownloadToken("opd", razorpay_order_id)
       : null;
@@ -689,6 +703,8 @@ export async function POST(req: Request) {
       ? xrayDownloadUrl
       : isReels
       ? reelsDownloadUrl
+      : isMbbs
+      ? mbbsDownloadUrl
       : isVastu
       ? `${appUrl}/vastu-plan-checkout/go`
       : isMcq
@@ -793,6 +809,15 @@ export async function POST(req: Request) {
               downloadUrl,
               downloads: xrayDownloads,
             })
+          : isMbbs
+          ? buildMbbsEmail({
+              customerName: deliveryName || "Doctor",
+              productName: MBBS_PRODUCT_NAME,
+              orderId: razorpay_order_id,
+              amount: MBBS_PRICE,
+              downloadUrl: mbbsDownloadUrl,
+              supportEmail: "support@nokrimitra.in",
+            })
           : isEscooter
           ? buildEscooterEmail({
               customerName: name || "there",
@@ -864,6 +889,15 @@ export async function POST(req: Request) {
               downloadUrl,
               downloads: xrayDownloads,
             })
+          : isMbbs
+          ? buildMbbsEmailText({
+              customerName: deliveryName || "Doctor",
+              productName: MBBS_PRODUCT_NAME,
+              orderId: razorpay_order_id,
+              amount: MBBS_PRICE,
+              downloadUrl: mbbsDownloadUrl,
+              supportEmail: "support@nokrimitra.in",
+            })
           : isEscooter
           ? buildEscooterEmailText({
               customerName: name || "there",
@@ -889,7 +923,9 @@ export async function POST(req: Request) {
               downloadUrl,
             });
 
-        const subject = isReels
+        const subject = isMbbs
+          ? `Complete MBBS Notes (All 21 Subjects): Your download link is ready! 🩺📚`
+          : isReels
           ? `${REELS_PRODUCT_NAME}: Your download link is ready! 🎬`
           : isOpd
           ? `Your download is ready — OPD Mastery E-book (2026)`
@@ -1224,6 +1260,22 @@ export async function POST(req: Request) {
                 : []),
             ],
             alreadyFulfilled: xrayAlreadyFulfilled,
+          }
+        : {}),
+      ...(isMbbs
+        ? {
+            amountPaid: MBBS_PRICE,
+            downloadPath: `/mbbs-notes/go${
+              mbbsToken ? `?t=${mbbsToken}` : ""
+            }`,
+            downloads: [
+              {
+                label: "Complete MBBS Notes (All 21 Subjects)",
+                path: `/mbbs-notes/go${
+                  mbbsToken ? `?t=${mbbsToken}` : ""
+                }`,
+              },
+            ],
           }
         : {}),
     });

@@ -30,6 +30,7 @@ export async function POST(req: Request) {
     const isXray = product === "xray";
     const isNorcet = product === "norcet";
     const isMedical = product === "medical" || product === "medical-master-pdfs";
+    const isMbbs = product === "mbbs" || product === "mbbs-notes";
 
     // Amount is computed server-side for security
     const xrayHasAddon =
@@ -43,6 +44,8 @@ export async function POST(req: Request) {
       ? 149
       : isMedical
       ? 149
+      : isMbbs
+      ? 199
       : Number(reqAmount || 99);
 
     if (!Number.isFinite(amount) || amount <= 0) {
