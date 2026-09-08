@@ -8,8 +8,7 @@ import {
   Check,
   Lock,
   Mail,
-  MessageSquare,
-  ShieldCheck,
+  MessageCircle,
   Zap,
 } from "lucide-react";
 
@@ -28,8 +27,6 @@ const PAYMENT_LABEL = "OPD Mastery E-book 2026";
 const trustPoints = [
   { icon: Lock, text: "100% Secure Payment" },
   { icon: Zap, text: "Instant Delivery After Payment" },
-  { icon: Mail, text: "PDF Delivered to Your Email" },
-  { icon: MessageSquare, text: "Support Available" },
 ];
 
 function loadRazorpay(): Promise<boolean> {
@@ -247,29 +244,26 @@ export default function OpdCheckout() {
 
       <main className={styles.wrap}>
         <div className={styles.grid}>
-          {/* Left: product + trust */}
+          {/* Left: product (unboxed) */}
           <div className={styles.productColumn}>
-            <div className={styles.productCard}>
-              <div className={styles.productCardTop}>
-                <div className={styles.coverContainer}>
-                  <Image
-                    src={opdHero}
-                    alt="OPD Mastery e-book cover"
-                    fill
-                    priority
-                    className={styles.coverImg}
-                  />
-                </div>
-                <div className={styles.productInfo}>
-                  <strong className={styles.productName}>
-                    OPD Mastery E-book
-                  </strong>
-                  <span className={styles.productMeta}>
-                    60+ Common OPD Cases • Practical Reference • 2026 Edition
-                  </span>
-                </div>
+            <div className={styles.productHeader}>
+              <div className={styles.coverContainer}>
+                <Image
+                  src={opdHero}
+                  alt="OPD Mastery e-book cover"
+                  fill
+                  priority
+                  className={styles.coverImg}
+                />
               </div>
-
+              <div className={styles.productInfo}>
+                <strong className={styles.productName}>
+                  OPD Mastery E-book
+                </strong>
+                <span className={styles.productMeta}>
+                  60+ Common OPD Cases • Practical Reference • 2026 Edition
+                </span>
+              </div>
             </div>
           </div>
 
@@ -290,10 +284,6 @@ export default function OpdCheckout() {
                   <span className={styles.dotSeparator}>•</span>
                   <span>Lifetime access</span>
                 </div>
-                <h2 className={styles.formHeaderTitle}>Complete your order</h2>
-                <p className={styles.formHeaderSub}>
-                  Instant access in seconds after payment
-                </p>
               </div>
 
               <form
@@ -364,7 +354,7 @@ export default function OpdCheckout() {
                       <li>60+ Emergency Protocols</li>
                       <li>Medicine • Trauma • Obstetrics • Paediatrics</li>
                       <li>6-Step Management + Critical Red Flags</li>
-                      <li>Essential Treatment &amp; Admission Criteria</li>
+                      <li>Essential Treatment & Admission Criteria</li>
                       <li>📥 Instant PDF Access</li>
                     </ul>
                   </div>
@@ -405,7 +395,8 @@ export default function OpdCheckout() {
                     "Initiating payment…"
                   ) : (
                     <>
-                      <span>🔒 Get Instant Access - ₹{total}</span>
+                      <Lock size={17} strokeWidth={2.2} />
+                      <span>Pay ₹ {total} & Get Instant Access</span>
                     </>
                   )}
                 </button>
@@ -418,17 +409,22 @@ export default function OpdCheckout() {
                   ))}
                 </ul>
 
-                <p className={styles.payNote}>
-                  <ShieldCheck size={14} /> Card, UPI &amp; net-banking details
-                  are handled securely by Razorpay — never stored by us.
-                </p>
-
                 <Image
                   src={trustBadges}
                   alt="Secure checkout, privacy protected and satisfaction guaranteed"
                   className={styles.razorpayLogo}
                   sizes="(max-width: 640px) 90vw, 380px"
                 />
+
+                <a
+                  href="https://wa.me/919104826422?text=Hi%20NokriMitra%20Support,%20I%20have%20a%20query%20regarding%20OPD%20Mastery%20E-Book"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.whatsappSupportBtn}
+                >
+                  <MessageCircle size={17} className={styles.whatsappIcon} />
+                  <span>WhatsApp Support: <strong>+91 9104826422</strong></span>
+                </a>
               </form>
 
               <nav className={styles.legalNav} aria-label="Legal links">

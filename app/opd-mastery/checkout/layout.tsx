@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 
-const inter = Inter({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
   variable: "--font-opd",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-opd-display",
 });
 
 export const metadata: Metadata = {
@@ -26,6 +21,6 @@ export default function OpdCheckoutLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${inter.variable} ${playfair.variable}`}>{children}</div>
+    <div className={plusJakarta.variable}>{children}</div>
   );
 }
