@@ -184,6 +184,10 @@ export async function POST(req: Request) {
 
     let verifiedOpdAddons: string[] = [];
     let verifiedOpdAmount = Number(amountPaid || OPD_BASE_PRICE);
+    let opdNotes: Record<string, string> = {};
+    let opdAlreadyFulfilled = false;
+    let verifiedOpdEmail = String(email || "").trim().toLowerCase();
+    let verifiedOpdName = String(name || "Doctor").trim() || "Doctor";
     if (product === "opd") {
       const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
       if (!keyId) {
@@ -211,6 +215,7 @@ export async function POST(req: Request) {
         );
       }
 
+      opdNotes = (order.notes || {}) as Record<string, string>;
       const isExitOffer =
         order.notes?.offer === "exit149" ||
         Number(order.amount) === OPD_EXIT_PRICE * 100;
@@ -237,6 +242,14 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
+
+      verifiedOpdEmail = String(
+        opdNotes.customerEmail || verifiedOpdEmail
+      ).trim().toLowerCase();
+      verifiedOpdName = String(
+        opdNotes.customerName || verifiedOpdName
+      ).trim() || "Doctor";
+      opdAlreadyFulfilled = Boolean(opdNotes.fulfilledAt);
     }
 
     let verifiedEscooterAmount: number = ESCOOTER_CATALOG.price;
@@ -592,6 +605,8 @@ export async function POST(req: Request) {
       ? verifiedXrayEmail
       : isReels
       ? verifiedReelsEmail
+      : isOpd
+      ? verifiedOpdEmail
       : email;
     const deliveryName = isPsychology
       ? verifiedPsyName
@@ -601,6 +616,8 @@ export async function POST(req: Request) {
       ? verifiedXrayName
       : isReels
       ? verifiedReelsName
+      : isOpd
+      ? verifiedOpdName
       : name;
 
     // Only buyers get a signed download link (issued after signature check).
@@ -745,7 +762,8 @@ export async function POST(req: Request) {
       (isPsychology && psyAlreadyFulfilled) ||
       (isNursing && nursingAlreadyFulfilled) ||
       (isXray && xrayAlreadyFulfilled) ||
-      (isReels && reelsAlreadyFulfilled);
+      (isReels && reelsAlreadyFulfilled) ||
+      (isOpd && opdAlreadyFulfilled);
 
     if (
       resendApiKey &&
@@ -774,7 +792,7 @@ export async function POST(req: Request) {
             })
           : isOpd
           ? buildOpdEmail({
-              customerName: name || "there",
+              customerName: deliveryName || "Doctor",
               productName: opdProductName,
               orderId: razorpay_order_id,
               amount: verifiedOpdAmount,
@@ -854,7 +872,7 @@ export async function POST(req: Request) {
             })
           : isOpd
           ? buildOpdEmailText({
-              customerName: name || "there",
+              customerName: deliveryName || "Doctor",
               productName: opdProductName,
               orderId: razorpay_order_id,
               amount: verifiedOpdAmount,
@@ -1145,6 +1163,39 @@ export async function POST(req: Request) {
       }
     }
 
+    if (isOpd && !opdAlreadyFulfilled && emailDelivered) {
+      try {
+        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+        const stampResponse = await fetch(
+          `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization:
+                "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
+            },
+            body: JSON.stringify({
+              notes: {
+                ...opdNotes,
+                product: "opd",
+                catalogVersion: opdNotes.catalogVersion || "1",
+                fulfilledAt: new Date().toISOString(),
+              },
+            }),
+          }
+        );
+        if (!stampResponse.ok) {
+          console.error(
+            "Could not mark OPD order as fulfilled:",
+            await stampResponse.text()
+          );
+        }
+      } catch (stampErr) {
+        console.error("Could not mark OPD order as fulfilled:", stampErr);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       verified: true,
@@ -1176,6 +1227,7 @@ export async function POST(req: Request) {
                   ]
                 : []),
             ],
+            alreadyFulfilled: opdAlreadyFulfilled,
           }
         : {}),
       ...(isPsychology

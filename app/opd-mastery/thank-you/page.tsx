@@ -39,11 +39,16 @@ function OpdThankYouContent() {
   const amountPaid = params.get("amountPaid") || "99";
   const addons = params.get("addons") || "";
   const orderId =
+    params.get("razorpay_order_id") ||
     params.get("order_id") ||
     params.get("orderId") ||
-    params.get("cf_order_id") ||
-    params.get("razorpay_order_id") ||
     "";
+  const paymentId =
+    params.get("razorpay_payment_id") ||
+    params.get("payment_id") ||
+    "";
+  const signature = params.get("razorpay_signature") || "";
+  const isMock = params.get("mock") === "true";
 
   useEffect(() => {
     // If no order ID, user didn't initiate payment -> redirect to checkout
@@ -80,11 +85,13 @@ function OpdThankYouContent() {
 
     const run = async () => {
       try {
-        const res = await fetch("/api/checkout/cashfree/verify", {
+        const res = await fetch("/api/checkout/razorpay/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            order_id: orderId,
+            razorpay_payment_id: paymentId || (isMock ? "pay_mock_direct" : ""),
+            razorpay_order_id: orderId,
+            razorpay_signature: signature || (isMock ? "mock_signature" : ""),
             name,
             email,
             amountPaid,
@@ -97,7 +104,7 @@ function OpdThankYouContent() {
 
         // If payment was cancelled, failed, or unverified -> return to checkout
         if (!res.ok || !data.verified) {
-          console.warn("OPD Cashfree order not verified or cancelled:", data);
+          console.warn("OPD Razorpay order not verified or cancelled:", data);
           router.replace("/opd-mastery/checkout?payment_status=cancelled");
           return;
         }
@@ -124,6 +131,10 @@ function OpdThankYouContent() {
           } catch {
             // Storage is optional
           }
+        }
+
+        if (data.alreadyFulfilled) {
+          return;
         }
 
         let trackAttempts = 0;
@@ -182,7 +193,7 @@ function OpdThankYouContent() {
     };
 
     run();
-  }, [router, name, email, amountPaid, addons, orderId]);
+  }, [router, name, email, amountPaid, addons, orderId, paymentId, signature, isMock]);
 
   return (
     <main className={styles.page}>

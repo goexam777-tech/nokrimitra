@@ -10,12 +10,12 @@
   --white: #ffffff;
   --block: 880px;
   --gap-y: clamp(24px, 3.2vw, 40px);
-  --section-bg: #eef6ff;
+  --section-bg: #ffffff;
   min-height: 100vh;
   overflow-x: clip;
   /* Cancels the site-wide body padding-bottom used by other pages' sticky bars */
   margin-bottom: -76px;
-  background: var(--section-bg);
+  background: #ffffff;
   color: var(--ink);
   font-family: var(--font-opd), Arial, sans-serif;
   font-size: 16px;
@@ -38,25 +38,183 @@
 .narrowContainer { width: min(100%, 900px); }
 
 /* Simple, clear hero */
-.simpleHero { padding: clamp(24px, 5vw, 48px) 0 clamp(20px, 4vw, 36px); background: #fff; }
-.simpleContainer { width: min(100%, 560px); margin-inline: auto; padding-inline: 18px; text-align: center; }
+.simpleHero { padding: clamp(24px, 5vw, 48px) 0 clamp(20px, 4vw, 36px); background: #ffffff; }
+.simpleContainer { width: min(100%, 780px); margin-inline: auto; padding-inline: 18px; text-align: center; }
+
+/* Hero Badge Pill */
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto clamp(14px, 3vw, 22px);
+  padding: 10px 24px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22a745 0%, #1b8a39 100%);
+  color: #ffffff;
+  font-size: clamp(0.78rem, 2.6vw, 0.92rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 18px rgba(27, 138, 57, 0.28);
+}
+
 .simpleTitle {
   margin: 0;
   color: #0f1720;
-  font-size: clamp(2.1rem, 8.5vw, 3.2rem);
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1.65rem, 6vw, 2.8rem);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.18;
   letter-spacing: -.02em;
+  text-align: center;
+  white-space: nowrap;
 }
 .simpleTitleLine2 {
   white-space: nowrap;
 }
+.simpleTitleBlue {
+  color: #1689ef;
+}
 
 @media (max-width: 599px) {
-  .simpleTitle span {
+  .simpleTitle {
+    white-space: normal;
+  }
+  .simpleTitleBlue {
     display: block;
+    margin-top: 2px;
   }
 }
+
+/* Hero Feature Lines */
+.heroFeatures {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: clamp(12px, 3vw, 20px);
+}
+.heroFeatureLine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  color: #18242f;
+  font-size: clamp(0.82rem, 2.8vw, 0.98rem);
+  font-weight: 700;
+  line-height: 1.5;
+}
+.heroFeatureLine span {
+  font-family: "Segoe UI Emoji", sans-serif;
+  font-weight: 400;
+}
+.heroDot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #667585;
+  vertical-align: middle;
+  font-style: normal;
+}
+.heroTrusted {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  color: #15a13b;
+  font-size: clamp(0.84rem, 2.8vw, 1rem);
+  font-weight: 800;
+  line-height: 1.5;
+}
+.heroTrusted span {
+  font-family: "Segoe UI Emoji", sans-serif;
+  font-weight: 400;
+}
+
+/* Hero Perks Row */
+.heroPerks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 20px);
+  margin-top: clamp(16px, 3.5vw, 24px);
+}
+.heroPerk {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #d8e5f2;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.heroPerk:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+.heroPerk span {
+  font-family: "Segoe UI Emoji", sans-serif;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+.heroPerk strong {
+  color: #0f1720;
+  font-size: clamp(0.72rem, 2.4vw, 0.84rem);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* New Hero CTA Button — simple modern */
+.heroCtaNew,
+.heroCtaNew:link,
+.heroCtaNew:visited,
+.heroCtaNew:hover,
+.heroCtaNew:active,
+.heroCtaNew * {
+  color: #ffffff !important;
+}
+.heroCtaNew {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: clamp(18px, 4vw, 26px) auto 0;
+  padding: 16px 38px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #22a745 0%, #1b8a39 100%);
+  color: #ffffff !important;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(0.95rem, 3.4vw, 1.15rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 22px rgba(27, 138, 57, 0.3);
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.heroCtaNew:hover {
+  background: linear-gradient(135deg, #1e9a3e 0%, #177a32 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(27, 138, 57, 0.38);
+}
+.heroCtaNew:active {
+  transform: translateY(0);
+}
+.heroCtaNew svg {
+  flex: none;
+}
+.heroCtaNew b {
+  font-weight: 500;
+  font-size: inherit;
+}
+
 .simpleImageWrap { margin: clamp(18px, 4vw, 26px) 0 0; }
 .simpleImage { display: block; width: 100%; height: auto; border-radius: 14px; }
 .imagePlaceholder {
@@ -80,24 +238,31 @@
 }
 .simpleCta {
   position: relative;
-  display: flex;
-  min-height: 64px;
+  display: inline-flex;
+  min-height: 56px;
+  width: 100%;
+  max-width: 420px;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: clamp(18px, 4vw, 26px) 0 0;
-  padding: 14px 22px;
-  border-radius: 12px;
+  margin: clamp(18px, 4vw, 26px) auto 0;
+  padding: 14px 28px;
+  border-radius: 999px;
   background: linear-gradient(135deg, #22a745 0%, #1b8a39 100%);
   color: #ffffff !important;
-  font-size: clamp(1.05rem, 3.6vw, 1.25rem);
-  font-weight: 800;
-  letter-spacing: 0.025em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  box-shadow: 0 10px 24px rgba(27, 138, 57, .32);
-  transition: background .16s ease, transform .12s ease;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1rem, 3.4vw, 1.18rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 24px rgba(34, 167, 69, .32);
+  transition: all .2s ease;
 }
-.simpleCta:hover { background: #1c8d3a; transform: translateY(-1px); }
+.simpleCta:hover {
+  background: linear-gradient(135deg, #1e9a3e 0%, #177a32 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(34, 167, 69, .42);
+}
 .simpleCta:active { transform: translateY(0); }
 .simpleCta svg { flex: none; color: #ffffff !important; }
 .simpleSubhead {
@@ -160,8 +325,9 @@
   gap: 10px;
   margin: 0;
   color: #0f1720;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
   font-size: clamp(1.4rem, 5vw, 2.2rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -.02em;
 }
 .wiTitle span { font-family: "Segoe UI Emoji", sans-serif; font-weight: 400; }
@@ -219,8 +385,9 @@
 }
 .wiLabelGroup h3 {
   margin: 0;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
   font-size: clamp(1.05rem, 3.5vw, 1.25rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -.01em;
 }
 .wiCardBlue .wiLabelGroup h3 { color: #0284c7; }
@@ -296,34 +463,27 @@
   grid-column: 1 / -1;
 }
 
-/* Perfect For & Why You'll Love It section */
+/* Perfect For section - Modern No-Box Pill Layout */
 .pfSection {
-  padding: clamp(24px, 4vw, 40px) 0 clamp(30px, 5vw, 48px);
-  background: #ffffff;
+  padding: clamp(28px, 5vw, 44px) 0 clamp(32px, 5vw, 52px);
+  background: #ffffff !important;
 }
 .pfContainer {
-  display: grid;
-  gap: clamp(18px, 4vw, 24px);
-  width: min(100%, 540px);
+  width: min(100%, 780px);
   margin-inline: auto;
-  padding-inline: clamp(14px, 3.5vw, 20px);
-}
-.pfCard {
-  padding: clamp(22px, 4vw, 30px) clamp(18px, 4vw, 24px);
-  border: 1px solid #e5eaf1;
-  border-radius: 20px;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.05);
+  padding-inline: clamp(14px, 4vw, 24px);
+  text-align: center;
 }
 .pfTitle {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: 0 0 clamp(16px, 3.5vw, 22px);
+  margin: 0 0 clamp(16px, 3.5vw, 24px);
   color: #0f1720;
-  font-size: clamp(1.3rem, 4.5vw, 1.65rem);
-  font-weight: 800;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1.4rem, 4.8vw, 2rem);
+  font-weight: 700;
   letter-spacing: -.02em;
   text-align: center;
 }
@@ -331,113 +491,229 @@
   font-family: "Segoe UI Emoji", sans-serif;
   font-weight: 400;
 }
-.pfList {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.pfList li {
+.pfPillsWrap {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 13px 4px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #1e293b;
-  font-size: clamp(0.88rem, 2.7vw, 0.98rem);
-  font-weight: 600;
-  line-height: 1.45;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(10px, 2.2vw, 14px);
+  max-width: 660px;
+  margin-inline: auto;
 }
-.pfList li:last-child {
-  border-bottom: 0;
+.pfPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: all 0.25s ease;
+}
+.pfPill:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
 }
 .pfEmoji {
   font-family: "Segoe UI Emoji", sans-serif;
   font-size: 1.15rem;
-  line-height: 1.2;
+  line-height: 1;
   flex: none;
 }
-.pfCheckEmoji {
-  font-family: "Segoe UI Emoji", sans-serif;
-  font-size: 1.1rem;
-  line-height: 1.2;
-  flex: none;
+.pfText {
+  color: #0f1720;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(0.9rem, 2.6vw, 1.02rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 599px) {
+  .pfPillsWrap {
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    max-width: 295px;
+    margin-inline: auto;
+  }
+  .pfPill {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 11px 20px;
+    gap: 12px;
+  }
+}
+
+/* Simple. Fast. OPD-Ready Section */
+.formatSection {
+  padding: clamp(32px, 6vw, 56px) 0 clamp(36px, 6vw, 60px);
+  background: #ffffff !important;
+}
+.formatContainer {
+  width: min(100%, 720px);
+  margin-inline: auto;
+  padding-inline: clamp(14px, 4vw, 24px);
+}
+.formatTitle {
+  margin: 0 0 clamp(18px, 4vw, 26px);
+  color: #0b192c;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1.55rem, 5.2vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.formatZap {
+  font-size: 0.85em;
+  color: #f59e0b;
+  display: inline-block;
+}
+.formatBox {
+  background: #ffffff !important;
+  border-radius: 20px;
+  padding: clamp(14px, 3vw, 20px) clamp(18px, 4.5vw, 32px);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.05);
+  border: 1px solid #e5eaf1;
+}
+.formatItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.formatItem:last-child {
+  border-bottom: none;
+}
+.formatCheck {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.formatText {
+  color: #1e293b;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(0.96rem, 2.7vw, 1.1rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -.01em;
+}
+
+@media (max-width: 599px) {
+  .formatBox {
+    padding: 12px 14px;
+    border-radius: 18px;
+  }
+  .formatItem {
+    gap: 12px;
+    padding: 13px 2px;
+  }
+  .formatCheck {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 /* Today Offer Section with 30-minute Timer */
 .todayOfferSection {
-  padding: clamp(32px, 5vw, 60px) 0;
-  background: #ffffff;
+  padding: clamp(32px, 5vw, 56px) 0;
+  background: #ffffff !important;
 }
 .todayOfferBox {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  max-width: 520px;
+  margin-inline: auto;
 }
 .actualPriceRow {
   margin: 0;
-  color: #0f1720;
-  font-size: clamp(1.35rem, 4.2vw, 2rem);
+  color: #64748b;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1.2rem, 3.8vw, 1.55rem);
   font-weight: 700;
   letter-spacing: -.01em;
 }
 .strikePrice {
-  color: #e5271c;
+  color: #dc2626;
   text-decoration: line-through;
   text-decoration-thickness: 2.5px;
   font-weight: 700;
   margin-left: 6px;
 }
 .todayOfferTitle {
-  margin: clamp(8px, 2vw, 14px) 0 0;
+  margin: clamp(6px, 1.8vw, 12px) 0 0;
   color: #0f1720;
-  font-size: clamp(2.1rem, 6.5vw, 3.2rem);
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1.9rem, 6vw, 2.85rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: -.02em;
 }
 .offerPriceRow {
   margin: 2px 0 0;
-  color: #1e8d38;
-  font-size: clamp(2.6rem, 8.5vw, 4.5rem);
+  color: #16a34a;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(2.8rem, 9vw, 4.4rem);
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -.02em;
+  letter-spacing: -.03em;
 }
 .boxesTimerWrap {
-  margin-top: clamp(24px, 4vw, 36px);
+  margin-top: clamp(24px, 4.5vw, 32px);
   width: 100%;
 }
 .timerBoxesContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(12px, 3vw, 22px);
+  gap: clamp(12px, 3.5vw, 20px);
 }
 .timerBoxGroup {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
 }
 .timerBox {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(66px, 17vw, 88px);
-  height: clamp(66px, 17vw, 88px);
-  border-radius: 16px;
-  background: #333333;
-  color: #ffb020;
-  font-size: clamp(1.65rem, 5.8vw, 2.6rem);
-  font-weight: 600;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+  width: clamp(68px, 18vw, 84px);
+  height: clamp(68px, 18vw, 84px);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #2b323c 0%, #1a2028 100%);
+  color: #ffb72b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1.75rem, 5.5vw, 2.35rem);
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
   font-variant-numeric: tabular-nums;
 }
 .timerLabel {
-  color: #475569;
-  font-size: clamp(0.72rem, 2.2vw, 0.84rem);
-  font-weight: 500;
+  color: #64748b;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(0.72rem, 2vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 /* Readers Reviews Section */
@@ -457,9 +733,10 @@
 .readersTitle {
   margin: 0;
   color: #0f172a;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
   font-size: clamp(1.6rem, 5vw, 2.5rem);
-  font-weight: 800;
-  letter-spacing: -.03em;
+  font-weight: 700;
+  letter-spacing: -.02em;
 }
 .readersSubtitle {
   margin: 8px 0 0;
@@ -571,9 +848,10 @@
 .faqTitleNew {
   margin: 0;
   color: #0f172a;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
   font-size: clamp(1.6rem, 5vw, 2.4rem);
-  font-weight: 800;
-  letter-spacing: -.03em;
+  font-weight: 700;
+  letter-spacing: -.02em;
 }
 .faqSubtitleNew {
   margin: 8px 0 0;
@@ -1123,6 +1401,16 @@
   font-size: clamp(.82rem, 1.8vw, .96rem);
   font-weight: 700;
 }
+.stepsBanner {
+  margin: clamp(16px, 3vw, 24px) auto 0;
+  max-width: 440px;
+  width: 100%;
+}
+.stepsImage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 .priceCta,
 .priceCta:link,
 .priceCta:visited,
@@ -1134,12 +1422,12 @@
 .priceCta {
   position: relative;
   display: flex;
-  min-height: 66px;
+  min-height: 64px;
   align-items: center;
   justify-content: center;
   gap: 10px;
   overflow: hidden;
-  margin: clamp(20px, 3.2vw, 30px) 0 0;
+  margin: clamp(14px, 2.5vw, 20px) 0 0;
   padding: 14px 24px;
   border-radius: 18px;
   background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
@@ -1457,10 +1745,11 @@
   border-radius: 14px;
   background: linear-gradient(135deg, #f9483c 0%, #e5271c 55%, #c81c12 100%);
   color: #fff;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
   font-size: clamp(.86rem, 3.6vw, .98rem);
-  font-weight: 800;
-  letter-spacing: -.01em;
-  text-shadow: 0 1px 2px rgba(88, 10, 6, .42);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(88, 10, 6, .3);
   box-shadow:
     0 10px 24px rgba(217, 38, 28, .34),
     inset 0 1px 0 rgba(255, 255, 255, .28);
@@ -1484,7 +1773,7 @@
   border-radius: 999px;
   background: rgba(255, 255, 255, .2);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3);
-  font-weight: 900;
+  font-weight: 600;
 }
 
 @keyframes barPulse {
@@ -1627,5 +1916,79 @@
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+  }
+}
+
+/* Floating Circular WhatsApp Support Button */
+.floatWhatsApp,
+.floatWhatsApp:link,
+.floatWhatsApp:visited,
+.floatWhatsApp:hover,
+.floatWhatsApp:active,
+.floatWhatsApp * {
+  color: #ffffff !important;
+}
+.floatWhatsApp {
+  position: fixed;
+  z-index: 99;
+  right: clamp(16px, 3.5vw, 28px);
+  bottom: clamp(36px, 4.5vw, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #ffffff !important;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.45);
+  animation: waPulse 2.4s ease-in-out infinite;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.floatWhatsApp:hover {
+  animation-play-state: paused;
+  transform: scale(1.12) translateY(-2px);
+  box-shadow: 0 14px 34px rgba(37, 211, 102, 0.6);
+}
+.floatWhatsApp:active {
+  transform: scale(0.96);
+}
+.floatWaIcon {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  color: #ffffff !important;
+  transition: transform 0.2s ease;
+}
+.floatWhatsApp:hover .floatWaIcon {
+  transform: scale(1.06);
+}
+
+@keyframes waPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.65), 0 8px 24px rgba(37, 211, 102, 0.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 14px rgba(37, 211, 102, 0), 0 12px 28px rgba(37, 211, 102, 0.55);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 211, 102, 0), 0 8px 24px rgba(37, 211, 102, 0.45);
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 1023px) {
+  .floatWhatsApp {
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    right: 16px;
+    width: 52px;
+    height: 52px;
+  }
+  .floatWaIcon {
+    width: 28px;
+    height: 28px;
   }
 }
