@@ -24,6 +24,7 @@ function OpdThankYouContent() {
   const router = useRouter();
   const params = useSearchParams();
   const verified = useRef(false);
+  const purchaseTracked = useRef(false);
 
   const [status, setStatus] = useState<"checking" | "ready" | "failed">(
     "checking"
@@ -149,6 +150,9 @@ function OpdThankYouContent() {
             window.setTimeout(firePurchase, 200);
             return;
           }
+
+          if (purchaseTracked.current) return;
+          purchaseTracked.current = true;
 
           if (w.fbq) {
             w.fbq(

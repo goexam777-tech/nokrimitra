@@ -127,7 +127,12 @@ function OpdCheckoutContent() {
     }
   };
 
+  const beginCheckoutFiredRef = useRef(false);
+
   useEffect(() => {
+    if (beginCheckoutFiredRef.current) return;
+    beginCheckoutFiredRef.current = true;
+
     const w = window as unknown as {
       fbq?: (...a: unknown[]) => void;
       gtag?: (...a: unknown[]) => void;

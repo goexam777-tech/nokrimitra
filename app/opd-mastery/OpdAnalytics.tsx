@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const PRODUCT_NAME = "OPD Mastery E-book (2026 Edition)";
 const PRICE = 99;
 
 export default function OpdAnalytics() {
+  const hasTrackedRef = useRef(false);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (hasTrackedRef.current) return;
+    hasTrackedRef.current = true;
+
     const w = window as unknown as {
       dataLayer?: unknown[];
       gtag?: (...args: unknown[]) => void;
