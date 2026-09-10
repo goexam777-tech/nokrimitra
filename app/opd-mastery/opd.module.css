@@ -62,28 +62,27 @@
   margin: 0;
   color: #0f1720;
   font-family: var(--font-poppins), "Poppins", sans-serif;
-  font-size: clamp(1.65rem, 6vw, 2.8rem);
-  font-weight: 700;
-  line-height: 1.18;
-  letter-spacing: -.02em;
+  font-size: clamp(1.8rem, 5.5vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
   text-align: center;
-  white-space: nowrap;
-}
-.simpleTitleLine2 {
-  white-space: nowrap;
 }
 .simpleTitleBlue {
+  display: block;
+  margin-top: clamp(4px, 1.2vw, 8px);
   color: #1689ef;
 }
 
-@media (max-width: 599px) {
-  .simpleTitle {
-    white-space: normal;
-  }
-  .simpleTitleBlue {
-    display: block;
-    margin-top: 2px;
-  }
+.heroSubtitle {
+  margin: clamp(14px, 3vw, 20px) auto 0;
+  max-width: 640px;
+  color: #475569;
+  font-family: var(--font-opd), "Montserrat", sans-serif;
+  font-size: clamp(0.95rem, 2.4vw, 1.08rem);
+  line-height: 1.6;
+  font-weight: 500;
+  text-align: center;
 }
 
 /* Hero Feature Lines */
@@ -135,40 +134,76 @@
   font-weight: 400;
 }
 
-/* Hero Perks Row */
+/* Hero Perks Row — Mobile Responsive */
 .heroPerks {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(10px, 3vw, 20px);
-  margin-top: clamp(16px, 3.5vw, 24px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 2.5vw, 16px);
+  margin: clamp(16px, 3.5vw, 24px) auto 0;
+  width: 100%;
+  max-width: 520px;
 }
 .heroPerk {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 12px 16px;
-  border-radius: 14px;
+  justify-content: center;
+  gap: clamp(4px, 1.2vw, 6px);
+  padding: clamp(10px, 2.5vw, 14px) clamp(6px, 1.8vw, 16px);
+  border-radius: clamp(10px, 2.5vw, 14px);
   background: #ffffff;
   border: 1px solid #d8e5f2;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-width: 0;
+  text-align: center;
 }
 .heroPerk:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
 }
-.heroPerk span {
+.heroPerkIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: clamp(24px, 6vw, 30px);
   font-family: "Segoe UI Emoji", sans-serif;
-  font-size: 1.4rem;
+  font-size: clamp(1.15rem, 3.8vw, 1.45rem);
   line-height: 1;
+}
+.heroPerkIcon svg {
+  width: clamp(20px, 5.5vw, 26px);
+  height: clamp(20px, 5.5vw, 26px);
 }
 .heroPerk strong {
   color: #0f1720;
-  font-size: clamp(0.72rem, 2.4vw, 0.84rem);
+  font-size: clamp(0.72rem, 2.3vw, 0.85rem);
   font-weight: 700;
+  line-height: 1.25;
   white-space: nowrap;
+  text-align: center;
+}
+
+@media (max-width: 440px) {
+  .heroPerks {
+    gap: 6px;
+  }
+  .heroPerk {
+    padding: 9px 4px;
+    gap: 4px;
+    border-radius: 10px;
+  }
+  .heroPerk strong {
+    font-size: 0.68rem;
+    white-space: normal;
+    word-break: normal;
+  }
+}
+
+@media (max-width: 350px) {
+  .heroPerk strong {
+    font-size: 0.62rem;
+  }
 }
 
 /* New Hero CTA Button — simple modern */
@@ -181,38 +216,70 @@
   color: #ffffff !important;
 }
 .heroCtaNew {
+  position: relative;
   display: inline-flex;
+  min-height: 62px;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  overflow: hidden;
   margin: clamp(18px, 4vw, 26px) auto 0;
-  padding: 16px 38px;
+  padding: 14px 28px;
+  width: min(100%, 460px);
+  box-sizing: border-box;
   border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #22a745 0%, #1b8a39 100%);
+  border-radius: 18px;
+  background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
   color: #ffffff !important;
   font-family: var(--font-poppins), "Poppins", sans-serif;
-  font-size: clamp(0.95rem, 3.4vw, 1.15rem);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 8px 22px rgba(27, 138, 57, 0.3);
-  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  font-size: clamp(0.92rem, 3.2vw, 1.18rem);
+  font-weight: 800;
+  letter-spacing: 0.025em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 14px 32px rgba(22, 163, 74, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
 }
+
+.heroCtaNew::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -60%;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+}
+
 .heroCtaNew:hover {
-  background: linear-gradient(135deg, #1e9a3e 0%, #177a32 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(27, 138, 57, 0.38);
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(22, 163, 74, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
+
+.heroCtaNew:hover::after {
+  left: 115%;
+}
+
 .heroCtaNew:active {
   transform: translateY(0);
 }
-.heroCtaNew svg {
-  flex: none;
+
+.heroCtaEmoji {
+  font-family: "Segoe UI Emoji", sans-serif;
+  font-size: clamp(1.2rem, 3.6vw, 1.45rem);
+  line-height: 1;
+  flex-shrink: 0;
 }
-.heroCtaNew b {
-  font-weight: 500;
-  font-size: inherit;
+
+@media (max-width: 480px) {
+  .heroCtaNew {
+    min-height: 56px;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-size: clamp(0.86rem, 3vw, 1rem);
+  }
 }
 
 .simpleImageWrap { margin: clamp(18px, 4vw, 26px) 0 0; }

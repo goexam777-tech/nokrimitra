@@ -122,7 +122,7 @@ const caseFormat = [
   "Dosage & Duration",
   "Important Contraindications",
   "Lifestyle & Diet Advice",
-  "Emergency Red Flag Signs",
+  "Emergency Red Flags",
   "Quick OPD Reference Format",
 ];
 
@@ -149,7 +149,7 @@ const opdFormatList = [
   "Dosage & Duration",
   "Important Contraindications",
   "Lifestyle & Diet Advice",
-  "Emergency Red Flag Signs",
+  "Emergency Red Flags",
   "Quick OPD Reference Format",
 ];
 
@@ -272,22 +272,13 @@ export default function OpdMasteryPage() {
           </span>
 
           <h1 className={styles.simpleTitle}>
-            Stop Guessing. <span className={styles.simpleTitleBlue}>Start Prescribing Right.</span>
+            Become More Confident
+            <span className={styles.simpleTitleBlue}>in Daily OPD Practice</span>
           </h1>
 
-          <div className={styles.heroFeatures}>
-            <p className={styles.heroFeatureLine}>
-              <span aria-hidden="true">🤝</span> 60+ real OPD cases
-              <i className={styles.heroDot} aria-hidden="true" />
-              <span aria-hidden="true">📋</span> Ready Prescriptions
-            </p>
-            <p className={styles.heroFeatureLine}>
-              <span aria-hidden="true">⏱️</span> Save Time Every Consultation
-            </p>
-            <p className={styles.heroTrusted}>
-              <span aria-hidden="true">✅</span> 100% Trusted Website
-            </p>
-          </div>
+          <p className={styles.heroSubtitle}>
+            Stop wasting time searching treatment protocols. Get ready-to-use, case-based management for the most common OPD cases in one practical eBook.
+          </p>
 
           <div className={styles.simpleImageWrap}>
             <Image
@@ -301,21 +292,24 @@ export default function OpdMasteryPage() {
 
           <div className={styles.heroPerks}>
             <div className={styles.heroPerk}>
-              <span aria-hidden="true">📄</span>
+              <span className={styles.heroPerkIcon} aria-hidden="true">📄</span>
               <strong>Instant PDF</strong>
             </div>
             <div className={styles.heroPerk}>
-              <InfinityIcon size={28} color="#1689ef" strokeWidth={2.5} />
+              <span className={styles.heroPerkIcon} aria-hidden="true">
+                <InfinityIcon size={24} color="#1689ef" strokeWidth={2.5} />
+              </span>
               <strong>Lifetime Access</strong>
             </div>
             <div className={styles.heroPerk}>
-              <span aria-hidden="true">📱</span>
+              <span className={styles.heroPerkIcon} aria-hidden="true">📱</span>
               <strong>Mobile Friendly</strong>
             </div>
           </div>
 
           <a className={styles.heroCtaNew} href={CHECKOUT}>
-            <Download size={20} /> GET YOUR E-BOOK — <b>₹99</b>
+            <span className={styles.heroCtaEmoji} aria-hidden="true">📘</span>
+            <span>GET OPD MASTERY PDF NOW</span>
           </a>
         </div>
       </section>
@@ -379,7 +373,7 @@ export default function OpdMasteryPage() {
       <section className={styles.formatSection} style={{ backgroundColor: "#ffffff" }}>
         <div className={styles.formatContainer}>
           <h2 className={styles.formatTitle}>
-            Simple. Fast. OPD-Ready. <span className={styles.formatZap} aria-hidden="true">⚡</span>
+            Simple Fast OPD-Ready
           </h2>
           <div className={styles.formatBox} style={{ backgroundColor: "#ffffff" }}>
             {opdFormatList.map((item) => (
