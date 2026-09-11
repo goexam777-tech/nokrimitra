@@ -138,62 +138,66 @@ function OpdThankYouContent() {
           }
         }
 
-        if (data.alreadyFulfilled) {
-          return;
-        }
-
-        let trackAttempts = 0;
-        const firePurchase = () => {
-          const w = window as unknown as {
-            fbq?: (...a: unknown[]) => void;
-            gtag?: (...a: unknown[]) => void;
-          };
-
-          if (!w.fbq && !w.gtag && trackAttempts < 15) {
-            trackAttempts++;
-            window.setTimeout(firePurchase, 200);
-            return;
-          }
-
-          if (purchaseTracked.current) return;
+        // Fire Purchase Conversion Events for both Facebook Pixel and Google Analytics
+        if (!purchaseTracked.current && typeof window !== "undefined") {
           purchaseTracked.current = true;
 
-          if (w.fbq) {
-            w.fbq(
-              "track",
-              "Purchase",
-              {
-                value: Number(paidAmount),
-                currency: "INR",
-                content_name: PRODUCT_NAME,
-              },
-              { eventID: orderId }
-            );
-          }
+          const w = window as unknown as {
+            dataLayer?: unknown[];
+            gtag?: (...args: unknown[]) => void;
+            fbq?: (...args: unknown[]) => void;
+          };
 
-          if (w.gtag) {
-            w.gtag("event", "purchase", {
-              transaction_id: orderId || `ord_${Date.now()}`,
-              value: Number(paidAmount),
-              currency: "INR",
-              items: verifiedDownloads.length
-                ? verifiedDownloads.map((item) => ({
-                    item_name: item.label,
-                    price: Number(paidAmount),
+          const finalPaid = Number(paidAmount) || 99;
+
+          // 1. Google Analytics (GA4) Purchase Event
+          w.dataLayer = w.dataLayer || [];
+          if (typeof w.gtag !== "function") {
+            w.gtag = function () {
+              w.dataLayer?.push(arguments);
+            };
+          }
+          w.gtag("event", "purchase", {
+            transaction_id: orderId || paymentId || `ord_${Date.now()}`,
+            value: finalPaid,
+            currency: "INR",
+            items: verifiedDownloads.length
+              ? verifiedDownloads.map((item) => ({
+                  item_id: "opd-mastery-ebook",
+                  item_name: item.label,
+                  price: finalPaid,
+                  quantity: 1,
+                }))
+              : [
+                  {
+                    item_id: "opd-mastery-ebook",
+                    item_name: PRODUCT_NAME,
+                    price: finalPaid,
                     quantity: 1,
-                  }))
-                : [
-                    {
-                      item_name: PRODUCT_NAME,
-                      price: Number(paidAmount),
-                      quantity: 1,
-                    },
-                  ],
-            });
-          }
-        };
+                  },
+                ],
+          });
 
-        firePurchase();
+          // 2. Facebook (Meta) Pixel Purchase Event (with retry if script still loading)
+          const fireFbPurchase = (attempts = 0) => {
+            if (typeof w.fbq === "function") {
+              w.fbq(
+                "track",
+                "Purchase",
+                {
+                  value: finalPaid,
+                  currency: "INR",
+                  content_name: PRODUCT_NAME,
+                  content_type: "product",
+                },
+                { eventID: orderId || `ord_${Date.now()}` }
+              );
+            } else if (attempts < 15) {
+              setTimeout(() => fireFbPurchase(attempts + 1), 250);
+            }
+          };
+          fireFbPurchase();
+        }
       } catch (err) {
         console.error("OPD verification error:", err);
         setStatus("failed");
