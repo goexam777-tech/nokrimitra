@@ -128,9 +128,8 @@ export default function WhatsAppBuyerProofs() {
               setIsPaused(true);
               setTimeout(() => setIsPaused(false), 4000);
             }}
-            className={`${styles.carouselDot} ${
-              idx === currentIndex ? styles.carouselDotActive : ""
-            }`}
+            className={`${styles.carouselDot} ${idx === currentIndex ? styles.carouselDotActive : ""
+              }`}
             aria-label={`Go to slide ${idx + 1}`}
           />
         ))}
