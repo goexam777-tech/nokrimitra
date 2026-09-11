@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
 
-const XRAY_PRICE = 99;
-const XRAY_ADDON_ID = "lab-test-master-guide";
-const XRAY_ADDON_PRICE = 49;
 
 const OPD_BASE_PRICE = 99;
 const OPD_EXIT_PRICE = 149;
@@ -37,9 +34,7 @@ export async function POST(req: Request) {
     const isOpd = product === "opd";
     const isOpdExitOffer =
       isOpd && (offer === "exit149" || isExitOffer === true);
-    const isXray = product === "xray";
     const isNorcet = product === "norcet";
-    const isMedical = product === "medical" || product === "medical-master-pdfs";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
 
     // Amount is computed server-side for security
@@ -49,21 +44,12 @@ export async function POST(req: Request) {
         (Array.isArray(addons)
           ? addons.includes(OPD_ADDON_ID)
           : String(addons || "").includes(OPD_ADDON_ID)));
-    const xrayHasAddon =
-      isXray &&
-      (Array.isArray(addons)
-        ? addons.includes(XRAY_ADDON_ID)
-        : String(addons || "").includes(XRAY_ADDON_ID));
 
     const amount = isOpd
       ? isOpdExitOffer
         ? OPD_EXIT_PRICE
         : OPD_BASE_PRICE + (opdHasAddon ? OPD_ADDON_PRICE : 0)
-      : isXray
-      ? XRAY_PRICE + (xrayHasAddon ? XRAY_ADDON_PRICE : 0)
       : isNorcet
-      ? 149
-      : isMedical
       ? 149
       : isMbbs
       ? 199
@@ -119,15 +105,7 @@ export async function POST(req: Request) {
         name: cleanName.slice(0, 80),
         email: cleanEmail.slice(0, 80),
       };
-    } else if (isXray) {
-      const addonParam = xrayHasAddon ? XRAY_ADDON_ID : "";
-      returnUrl = `${appUrl}/api/checkout/cashfree/return?order_id={order_id}`;
-      orderTags = {
-        product: "xray",
-        addons: addonParam,
-        name: cleanName.slice(0, 80),
-        email: cleanEmail.slice(0, 80),
-      };
+
     } else if (isNorcet) {
       returnUrl =
         `${appUrl}/norcet-notes/thank-you?order_id={order_id}` +
@@ -137,15 +115,7 @@ export async function POST(req: Request) {
         `&productName=${encodeURIComponent(productName || "NORCET 11 Notes (700+ Pages PDF)")}` +
         `&product=norcet`;
       orderTags = { product: "norcet" };
-    } else if (isMedical) {
-      returnUrl =
-        `${appUrl}/medical-master-pdfs/thank-you?order_id={order_id}` +
-        `&name=${encodeURIComponent(cleanName)}` +
-        `&email=${encodeURIComponent(cleanEmail)}` +
-        `&amountPaid=${amount}` +
-        `&productName=${encodeURIComponent(productName || "31 Medical Master PDFs Bundle")}` +
-        `&product=medical`;
-      orderTags = { product: "medical" };
+
     } else {
       returnUrl =
         `${appUrl}/gsrtc-mcq-course/thank-you?order_id={order_id}` +

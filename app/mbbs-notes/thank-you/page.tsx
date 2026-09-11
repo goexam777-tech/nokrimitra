@@ -120,18 +120,13 @@ function ThankYouContent() {
             fbq?: (...args: unknown[]) => void;
           };
 
-          // 1. Google Analytics page_view & purchase
+          // 1. Google Analytics purchase
           w.dataLayer = w.dataLayer || [];
           if (typeof w.gtag !== "function") {
             w.gtag = function () {
               w.dataLayer?.push(arguments);
             };
           }
-          w.gtag("event", "page_view", {
-            page_title: "Thank You - MBBS Notes",
-            page_location: window.location.href,
-            page_path: "/mbbs-notes/thank-you",
-          });
           w.gtag("event", "purchase", {
             transaction_id: orderId || paymentId || `ord_${Date.now()}`,
             value: Number(finalAmount),

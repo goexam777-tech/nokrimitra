@@ -1,0 +1,211 @@
+.toastContainer {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 998;
+  max-width: 360px;
+  width: calc(100vw - 32px);
+  pointer-events: none;
+  font-family: var(--font-opd, system-ui, -apple-system, sans-serif);
+}
+
+.toast {
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px 14px;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 185, 129, 0.28);
+  box-shadow: 
+    0 16px 36px -6px rgba(15, 23, 42, 0.16),
+    0 4px 14px -2px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toast:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 20px 42px -6px rgba(15, 23, 42, 0.22),
+    0 6px 18px -2px rgba(15, 23, 42, 0.1);
+}
+
+.toastExiting {
+  animation: slideOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  margin-top: 2px;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  line-height: 1.25;
+  margin-bottom: 2px;
+}
+
+.name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.roleLoc {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.35;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #047857;
+  line-height: 1.3;
+}
+
+.timeAgo {
+  display: inline-block;
+  font-size: 10.5px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.closeBtn:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.progressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: 0 0 14px 14px;
+  animation: shrinkProgress 5.5s linear forwards;
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+}
+
+@keyframes shrinkProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Mobile responsive - place above the sticky mobile buy button */
+@media (max-width: 768px) {
+  .toastContainer {
+    bottom: 84px;
+    left: 12px;
+    right: 12px;
+    max-width: calc(100vw - 24px);
+  }
+  .toast {
+    padding: 10px 12px 12px;
+    border-radius: 12px;
+  }
+  .avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+  .name {
+    font-size: 13px;
+  }
+  .roleLoc {
+    font-size: 11px;
+  }
+  .actionRow {
+    font-size: 11.5px;
+  }
+}

@@ -6,17 +6,7 @@ const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 
-const PSY_BASE_PRICE = 99;
-const PSY_ADDON_ID = "therapeutic-interventions";
-const PSY_ADDON_PRICE = 49;
-
 const NURSING_PRICE = 199;
-
-const XRAY_PRICE = 99;
-const XRAY_ADDON_ID = "lab-test-master-guide";
-const XRAY_ADDON_PRICE = 49;
-
-const REELS_PRICE = 148;
 
 const MBBS_PRICE = 199;
 
@@ -27,22 +17,15 @@ export async function POST(req: Request) {
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
     const isOpd = body.product === "opd";
     const isOpdExitOffer = isOpd && (body.offer === "exit149" || body.isExitOffer === true);
-    const isPsychology = body.product === "psychology";
     const isNursing = body.product === "nursing";
-    const isXray = body.product === "xray";
-    const isReels = body.product === "reels";
     const isMbbs = body.product === "mbbs" || body.product === "mbbs-notes";
     const isEscooter = body.product === ESCOOTER_CATALOG.product;
     const requestedAddons = Array.isArray(body.addons) ? body.addons.map(String) : [];
     const unknownAddons = isOpd
       ? requestedAddons.filter((id: string) => id !== OPD_ADDON_ID)
-      : isPsychology
-        ? requestedAddons.filter((id: string) => id !== PSY_ADDON_ID)
-        : isXray
-          ? requestedAddons.filter((id: string) => id !== XRAY_ADDON_ID)
-        : isEscooter
-          ? requestedAddons
-          : [];
+      : isEscooter
+        ? requestedAddons
+        : [];
 
     if (unknownAddons.length) {
       return NextResponse.json({ error: "Invalid add-on selected" }, { status: 400 });
@@ -52,25 +35,15 @@ export async function POST(req: Request) {
       ? isOpdExitOffer
         ? [OPD_ADDON_ID]
         : requestedAddons.filter((id: string) => id === OPD_ADDON_ID).slice(0, 1)
-      : isPsychology
-        ? requestedAddons.filter((id: string) => id === PSY_ADDON_ID).slice(0, 1)
-        : isXray
-          ? requestedAddons.filter((id: string) => id === XRAY_ADDON_ID).slice(0, 1)
-        : [];
+      : [];
     const amount = isOpd
       ? isOpdExitOffer
         ? OPD_EXIT_PRICE
         : OPD_BASE_PRICE + (addons.length ? OPD_ADDON_PRICE : 0)
-      : isPsychology
-        ? PSY_BASE_PRICE + (addons.length ? PSY_ADDON_PRICE : 0)
-        : isNursing
-          ? NURSING_PRICE
-          : isXray
-            ? XRAY_PRICE + (addons.length ? XRAY_ADDON_PRICE : 0)
-          : isReels
-            ? REELS_PRICE
-          : isMbbs
-            ? MBBS_PRICE
+      : isNursing
+        ? NURSING_PRICE
+        : isMbbs
+          ? MBBS_PRICE
           : isEscooter
             ? ESCOOTER_CATALOG.price
             : Number(body.amount || 99);
@@ -94,32 +67,9 @@ export async function POST(req: Request) {
           customerEmail: String(body.email || "").trim().toLowerCase(),
           customerName: String(body.name || "").trim().slice(0, 120),
         }
-      : isPsychology
-      ? {
-          product: "psychology",
-          addons: addons.join(","),
-          catalogVersion: "1",
-          customerEmail: String(body.email || "").trim().toLowerCase(),
-          customerName: String(body.name || "").trim().slice(0, 120),
-        }
       : isNursing
       ? {
           product: "nursing",
-          catalogVersion: "1",
-          customerEmail: String(body.email || "").trim().toLowerCase(),
-          customerName: String(body.name || "").trim().slice(0, 120),
-        }
-      : isXray
-      ? {
-          product: "xray",
-          addons: addons.join(","),
-          catalogVersion: "1",
-          customerEmail: String(body.email || "").trim().toLowerCase(),
-          customerName: String(body.name || "").trim().slice(0, 120),
-        }
-      : isReels
-      ? {
-          product: "reels",
           catalogVersion: "1",
           customerEmail: String(body.email || "").trim().toLowerCase(),
           customerName: String(body.name || "").trim().slice(0, 120),
@@ -160,6 +110,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       orderId: data.id,
+      keyId,
       amount: data.amount,
       total: amount,
       addons,

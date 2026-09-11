@@ -23,9 +23,7 @@ export async function GET(req: Request) {
 
     // If no order ID, return to checkout
     if (!order_id) {
-      const fallbackCheckout = requestedProduct === "opd"
-        ? `${appUrl}/opd-mastery/checkout?payment_status=cancelled`
-        : `${appUrl}/xray-diagnosis/checkout?payment_status=cancelled`;
+      const fallbackCheckout = `${appUrl}/opd-mastery/checkout?payment_status=cancelled`;
       return NextResponse.redirect(fallbackCheckout);
     }
 
@@ -41,12 +39,7 @@ export async function GET(req: Request) {
         product: prod,
         addons: searchParams.get("addons") || "",
       });
-      if (prod === "opd") {
-        return NextResponse.redirect(`${appUrl}/opd-mastery/thank-you?${q.toString()}`);
-      }
-      return NextResponse.redirect(
-        `${appUrl}/xray-diagnosis/thank-you?${q.toString()}`
-      );
+      return NextResponse.redirect(`${appUrl}/opd-mastery/thank-you?${q.toString()}`);
     }
 
     const appId = process.env.CASHFREE_APP_ID;
@@ -74,43 +67,35 @@ export async function GET(req: Request) {
         await response.text().catch(() => "")
       );
       return NextResponse.redirect(
-        `${appUrl}/xray-diagnosis/checkout?payment_status=cancelled`
+        `${appUrl}/opd-mastery/checkout?payment_status=cancelled`
       );
     }
 
     const data = await response.json();
     const tags = (data.order_tags || {}) as Record<string, string>;
-    const product = tags.product || "xray";
+    const product = tags.product || "opd";
 
     const getCheckoutUrl = (prod: string, status = "cancelled") => {
       switch (prod) {
-        case "opd":
-          return `${appUrl}/opd-mastery/checkout?payment_status=${status}`;
         case "norcet":
           return `${appUrl}/norcet-notes/checkout?payment_status=${status}`;
-        case "medical":
-          return `${appUrl}/medical-master-pdfs/checkout?payment_status=${status}`;
         case "mcq":
           return `${appUrl}/gsrtc-mcq-course/checkout?payment_status=${status}`;
-        case "xray":
+        case "opd":
         default:
-          return `${appUrl}/xray-diagnosis/checkout?payment_status=${status}`;
+          return `${appUrl}/opd-mastery/checkout?payment_status=${status}`;
       }
     };
 
     const getThankYouUrl = (prod: string, q: URLSearchParams) => {
       switch (prod) {
-        case "opd":
-          return `${appUrl}/opd-mastery/thank-you?${q.toString()}`;
         case "norcet":
           return `${appUrl}/norcet-notes/thank-you?${q.toString()}`;
-        case "medical":
-          return `${appUrl}/medical-master-pdfs/thank-you?${q.toString()}`;
         case "mcq":
           return `${appUrl}/gsrtc-mcq-course/thank-you?${q.toString()}`;
-        case "xray":
+        case "opd":
         default:
-          return `${appUrl}/xray-diagnosis/thank-you?${q.toString()}`;
+          return `${appUrl}/opd-mastery/thank-you?${q.toString()}`;
       }
     };
 
@@ -145,7 +130,7 @@ export async function GET(req: Request) {
     const configuredAppUrl =
       process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "";
     return NextResponse.redirect(
-      `${configuredAppUrl}/xray-diagnosis/checkout?payment_status=cancelled`
+      `${configuredAppUrl}/opd-mastery/checkout?payment_status=cancelled`
     );
   }
 }

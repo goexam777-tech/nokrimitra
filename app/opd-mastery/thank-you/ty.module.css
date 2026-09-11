@@ -24,5 +24,8 @@
 .backLink svg { flex:none; }
 .disclaimer { margin:10px 0 0; padding:16px 30px; border-top:1px solid #EFEFEF; background:#FAFAF8; color:#999; font-size:11.5px; line-height:1.6; text-align:center; }
 .page a:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
-@media (max-width:520px) { .page { padding:20px 14px 40px; }.card { border-radius:14px; }.card h1 { margin:22px 20px 0; font-size:25px; }.lead { margin:10px 20px 18px; font-size:13.5px; }.downloads,.primary,.pending { margin-inline:20px; }.downloads .primary { margin-inline:0; }.primary { min-height:54px; font-size:14px; }.emailNote,.order,.backLink { margin-inline:20px; }.disclaimer { padding-inline:20px; } }
+.whatsappBtn { display:flex; min-height:52px; align-items:center; justify-content:center; gap:10px; margin:12px 30px 0; padding:12px 20px; border-radius:10px; background:#25D366; color:#fff; font-size:14.5px; font-weight:700; text-decoration:none; transition:filter .18s ease, transform .18s ease; }
+.whatsappBtn:hover { filter:brightness(1.06); transform:translateY(-1px); }
+.whatsappBtn svg { flex:none; }
+@media (max-width:520px) { .whatsappBtn { margin-inline:20px; min-height:48px; font-size:13.5px; } }
 @media (prefers-reduced-motion:reduce) { .primary { transition:none; } }

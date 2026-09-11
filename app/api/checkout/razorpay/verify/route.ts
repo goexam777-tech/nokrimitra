@@ -2,14 +2,6 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { buildOrderEmail, buildOrderEmailText } from "@/lib/emailTemplate";
 import {
-  buildPsychologyEmail,
-  buildPsychologyEmailText,
-} from "@/lib/psychologyEmailTemplate";
-import {
-  buildVastuEmail,
-  buildVastuEmailText,
-} from "@/lib/vastuEmailTemplate";
-import {
   buildEscooterEmail,
   buildEscooterEmailText,
 } from "@/lib/escooterEmailTemplate";
@@ -18,14 +10,6 @@ import {
   buildNursingEmail,
   buildNursingEmailText,
 } from "@/lib/nursingEmailTemplate";
-import {
-  buildXrayEmail,
-  buildXrayEmailText,
-} from "@/lib/xrayEmailTemplate";
-import {
-  buildReelsEmail,
-  buildReelsEmailText,
-} from "@/lib/reelsEmailTemplate";
 import {
   buildMbbsEmail,
   buildMbbsEmailText,
@@ -39,22 +23,8 @@ const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 const OPD_ADDON_NAME = "Emergency Medicine Handbook";
 
-const PSY_BASE_PRICE = 99;
-const PSY_ADDON_ID = "therapeutic-interventions";
-const PSY_ADDON_PRICE = 49;
-const PSY_ADDON_NAME = "800 Therapeutic Interventions";
-
 const NURSING_PRICE = 199;
 const NURSING_PRODUCT_NAME = "Nursing Protocol Reference Notebook";
-
-const XRAY_PRICE = 99;
-const XRAY_PRODUCT_NAME = "X-Ray Diagnosis Guide (PDF)";
-const XRAY_ADDON_ID = "lab-test-master-guide";
-const XRAY_ADDON_PRICE = 49;
-const XRAY_ADDON_NAME = "Clinical Lab Test Master Guide";
-
-const REELS_PRICE = 148;
-const REELS_PRODUCT_NAME = "2000+ AI Baby Reels Bundle";
 
 const MBBS_PRICE = 199;
 const MBBS_PRODUCT_NAME = "Complete MBBS Notes (All 21 Subjects)";
@@ -110,9 +80,6 @@ export async function POST(req: Request) {
       const mockHasOpdAddon =
         product === "opd" &&
         (String(addons || "").split(",").includes(OPD_ADDON_ID) || isExitOfferMock);
-      const mockHasPsyAddon =
-        product === "psychology" &&
-        String(addons || "").split(",").includes(PSY_ADDON_ID);
       const mockAddonToken =
         inMockMode && mockHasOpdAddon
           ? createDownloadToken("opd-emergency-handbook", razorpay_order_id)
@@ -122,15 +89,11 @@ export async function POST(req: Request) {
           ? isExitOfferMock
             ? OPD_EXIT_PRICE
             : OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
-          : product === "psychology"
-            ? PSY_BASE_PRICE + (mockHasPsyAddon ? PSY_ADDON_PRICE : 0)
-            : product === "nursing"
-              ? NURSING_PRICE
-              : product === "reels"
-                ? REELS_PRICE
-              : product === ESCOOTER_CATALOG.product
-                ? ESCOOTER_CATALOG.price
-                : Number(amountPaid || 0);
+          : product === "nursing"
+            ? NURSING_PRICE
+            : product === ESCOOTER_CATALOG.product
+              ? ESCOOTER_CATALOG.price
+              : Number(amountPaid || 0);
       const mockDownloads = [
         ...(mockTokenProduct === "opd" && mockToken
           ? [{ label: "OPD Mastery E-book", path: `${mockBase}?t=${mockToken}` }]
@@ -138,16 +101,8 @@ export async function POST(req: Request) {
         ...(mockAddonToken
           ? [{ label: OPD_ADDON_NAME, path: `/opd-mastery/go?item=${OPD_ADDON_ID}&t=${mockAddonToken}` }]
           : []),
-        ...(product === "psychology"
-          ? [
-              { label: "Psychology Notes", path: "/psychology-notes/go" },
-              ...(mockHasPsyAddon
-                ? [{ label: PSY_ADDON_NAME, path: `/psychology-notes/go?item=${PSY_ADDON_ID}` }]
-                : []),
-            ]
-          : []),
         ...(product === "nursing"
-          ? [{ label: NURSING_PRODUCT_NAME, path: "/nursing-mastery/go" }]
+          ? [{ label: NURSING_PRODUCT_NAME, path: "/nursing-notes/go" }]
           : []),
       ];
 
@@ -311,80 +266,6 @@ export async function POST(req: Request) {
     }
 
     // Read the Psychology add-on from Razorpay itself. The browser's amount,
-    // product name, and query string are never trusted for fulfilment.
-    let verifiedPsyAddon = false;
-    let verifiedPsyAmount = PSY_BASE_PRICE;
-    let verifiedPsyEmail = String(email || "").trim().toLowerCase();
-    let verifiedPsyName = String(name || "there").trim() || "there";
-    let psyNotes: Record<string, string> = {};
-    let psyAlreadyFulfilled = false;
-    if (product === "psychology") {
-      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-      if (!keyId) {
-        return NextResponse.json(
-          { error: "Razorpay key ID not configured on server" },
-          { status: 500 }
-        );
-      }
-
-      const orderResponse = await fetch(
-        `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
-        {
-          headers: {
-            Authorization:
-              "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
-          },
-          cache: "no-store",
-        }
-      );
-      const order = await orderResponse.json();
-      if (!orderResponse.ok || order.currency !== "INR") {
-        return NextResponse.json(
-          { error: "Could not verify Psychology order details" },
-          { status: 400 }
-        );
-      }
-
-      psyNotes = (order.notes || {}) as Record<string, string>;
-      verifiedPsyEmail = String(
-        psyNotes.customerEmail || verifiedPsyEmail
-      ).trim().toLowerCase();
-      verifiedPsyName = String(
-        psyNotes.customerName || verifiedPsyName
-      ).trim() || "there";
-      const paidAmount = Number(order.amount) / 100;
-      if (psyNotes.product === "psychology") {
-        verifiedPsyAddon = String(psyNotes.addons || "")
-          .split(",")
-          .map((id: string) => id.trim())
-          .includes(PSY_ADDON_ID);
-        verifiedPsyAmount =
-          PSY_BASE_PRICE + (verifiedPsyAddon ? PSY_ADDON_PRICE : 0);
-      } else if (
-        !psyNotes.product &&
-        (paidAmount === PSY_BASE_PRICE ||
-          paidAmount === PSY_BASE_PRICE + PSY_ADDON_PRICE)
-      ) {
-        // Compatibility for orders created just before Psychology order notes
-        // were introduced. The paid Razorpay amount is still server-verified.
-        verifiedPsyAddon = paidAmount === PSY_BASE_PRICE + PSY_ADDON_PRICE;
-        verifiedPsyAmount = paidAmount;
-      } else {
-        return NextResponse.json(
-          { error: "Could not verify Psychology product details" },
-          { status: 400 }
-        );
-      }
-
-      if (Number(order.amount) !== verifiedPsyAmount * 100) {
-        return NextResponse.json(
-          { error: "Psychology order amount verification failed" },
-          { status: 400 }
-        );
-      }
-      psyAlreadyFulfilled = Boolean(psyNotes.fulfilledAt);
-    }
-
     // Nursing e-book: single product, verified server-side against Razorpay.
     let verifiedNursingAmount = NURSING_PRICE;
     let verifiedNursingEmail = String(email || "").trim().toLowerCase();
@@ -444,142 +325,6 @@ export async function POST(req: Request) {
       nursingAlreadyFulfilled = Boolean(nursingNotes.fulfilledAt);
     }
 
-    // AI Baby Reels bundle: single product, verified server-side against Razorpay.
-    let verifiedReelsAmount = REELS_PRICE;
-    let verifiedReelsEmail = String(email || "").trim().toLowerCase();
-    let verifiedReelsName = String(name || "there").trim() || "there";
-    let reelsNotes: Record<string, string> = {};
-    let reelsAlreadyFulfilled = false;
-    if (product === "reels") {
-      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-      if (!keyId) {
-        return NextResponse.json(
-          { error: "Razorpay key ID not configured on server" },
-          { status: 500 }
-        );
-      }
-
-      const orderResponse = await fetch(
-        `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
-        {
-          headers: {
-            Authorization:
-              "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
-          },
-          cache: "no-store",
-        }
-      );
-      const order = await orderResponse.json();
-      if (!orderResponse.ok || order.currency !== "INR") {
-        return NextResponse.json(
-          { error: "Could not verify AI Baby Reels order details" },
-          { status: 400 }
-        );
-      }
-
-      reelsNotes = (order.notes || {}) as Record<string, string>;
-      const paidAmount = Number(order.amount) / 100;
-      if (reelsNotes.product === "reels" || paidAmount === REELS_PRICE) {
-        verifiedReelsAmount = REELS_PRICE;
-      } else {
-        return NextResponse.json(
-          { error: "Could not verify AI Baby Reels product details" },
-          { status: 400 }
-        );
-      }
-
-      if (Number(order.amount) !== verifiedReelsAmount * 100) {
-        return NextResponse.json(
-          { error: "AI Baby Reels order amount verification failed" },
-          { status: 400 }
-        );
-      }
-      verifiedReelsEmail = String(
-        reelsNotes.customerEmail || verifiedReelsEmail
-      ).trim().toLowerCase();
-      verifiedReelsName = String(
-        reelsNotes.customerName || verifiedReelsName
-      ).trim() || "there";
-      reelsAlreadyFulfilled = Boolean(reelsNotes.fulfilledAt);
-    }
-
-    // X-Ray Diagnosis guide: main product + optional ₹99 upsell, verified
-    // server-side against Razorpay order notes.
-    let verifiedXrayAmount = XRAY_PRICE;
-    let verifiedXrayAddon = false;
-    let verifiedXrayEmail = String(email || "").trim().toLowerCase();
-    let verifiedXrayName = String(name || "there").trim() || "there";
-    let xrayNotes: Record<string, string> = {};
-    let xrayAlreadyFulfilled = false;
-    if (product === "xray") {
-      const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-      if (!keyId) {
-        return NextResponse.json(
-          { error: "Razorpay key ID not configured on server" },
-          { status: 500 }
-        );
-      }
-
-      const orderResponse = await fetch(
-        `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
-        {
-          headers: {
-            Authorization:
-              "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
-          },
-          cache: "no-store",
-        }
-      );
-      const order = await orderResponse.json();
-      if (!orderResponse.ok || order.currency !== "INR") {
-        return NextResponse.json(
-          { error: "Could not verify X-Ray order details" },
-          { status: 400 }
-        );
-      }
-
-      xrayNotes = (order.notes || {}) as Record<string, string>;
-      const paidAmount = Number(order.amount) / 100;
-      if (xrayNotes.product === "xray") {
-        verifiedXrayAddon = String(xrayNotes.addons || "")
-          .split(",")
-          .map((id: string) => id.trim())
-          .includes(XRAY_ADDON_ID);
-        verifiedXrayAmount =
-          XRAY_PRICE + (verifiedXrayAddon ? XRAY_ADDON_PRICE : 0);
-      } else if (
-        !xrayNotes.product &&
-        (paidAmount === XRAY_PRICE ||
-          paidAmount === XRAY_PRICE + XRAY_ADDON_PRICE ||
-          paidAmount === 199 ||
-          paidAmount === 199 + 79)
-      ) {
-        // Compatibility for any order created before xray notes existed.
-        verifiedXrayAddon =
-          paidAmount === XRAY_PRICE + XRAY_ADDON_PRICE || paidAmount === 199 + 79;
-        verifiedXrayAmount = paidAmount;
-      } else {
-        return NextResponse.json(
-          { error: "Could not verify X-Ray product details" },
-          { status: 400 }
-        );
-      }
-
-      if (Number(order.amount) !== verifiedXrayAmount * 100) {
-        return NextResponse.json(
-          { error: "X-Ray order amount verification failed" },
-          { status: 400 }
-        );
-      }
-      verifiedXrayEmail = String(
-        xrayNotes.customerEmail || verifiedXrayEmail
-      ).trim().toLowerCase();
-      verifiedXrayName = String(
-        xrayNotes.customerName || verifiedXrayName
-      ).trim() || "there";
-      xrayAlreadyFulfilled = Boolean(xrayNotes.fulfilledAt);
-    }
-
     // Prefer an explicitly configured public origin for links included in email.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
     const host = req.headers.get("host") || "localhost:3000";
@@ -588,34 +333,18 @@ export async function POST(req: Request) {
       (process.env.NODE_ENV === "production"
         ? "https://nokrimitra.in"
         : `${protocol}://${host}`)).replace(/\/$/, "");
-    const isPsychology = product === "psychology";
-    const isVastu = product === "vastu";
     const isMcq = product === "mcq";
     const isEscooter = product === "escooter";
     const isOpd = product === "opd";
     const isNursing = product === "nursing";
-    const isXray = product === "xray";
-    const isReels = product === "reels";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
-    const deliveryEmail = isPsychology
-      ? verifiedPsyEmail
-      : isNursing
+    const deliveryEmail = isNursing
       ? verifiedNursingEmail
-      : isXray
-      ? verifiedXrayEmail
-      : isReels
-      ? verifiedReelsEmail
       : isOpd
       ? verifiedOpdEmail
       : email;
-    const deliveryName = isPsychology
-      ? verifiedPsyName
-      : isNursing
+    const deliveryName = isNursing
       ? verifiedNursingName
-      : isXray
-      ? verifiedXrayName
-      : isReels
-      ? verifiedReelsName
       : isOpd
       ? verifiedOpdName
       : name;
@@ -652,32 +381,6 @@ export async function POST(req: Request) {
     const escooterDownloadUrl = `${appUrl}/electric-scooter-repairing/go${
       escooterToken ? `?t=${escooterToken}` : ""
     }`;
-    const psyToken = isPsychology
-      ? createDownloadToken("psychology", razorpay_order_id)
-      : null;
-    const psyAddonToken =
-      isPsychology && verifiedPsyAddon
-        ? createDownloadToken(
-            "psychology-therapeutic-interventions",
-            razorpay_order_id
-          )
-        : null;
-    const psyDownloadUrl = `${appUrl}/psychology-notes/go${
-      psyToken ? `?t=${psyToken}` : ""
-    }`;
-    const psyAddonDownloadUrl = `${appUrl}/psychology-notes/go?item=${PSY_ADDON_ID}${
-      psyAddonToken ? `&t=${psyAddonToken}` : ""
-    }`;
-
-    // Main notes are always included. The signed add-on URL is created only
-    // when Razorpay confirms the buyer paid the extra ₹99.
-    const psyDownloads = [
-      { label: "Psychology Notes", url: psyDownloadUrl },
-      ...(psyAddonToken
-        ? [{ label: PSY_ADDON_NAME, url: psyAddonDownloadUrl }]
-        : []),
-    ];
-
     const nursingToken = isNursing
       ? createDownloadToken("nursing", razorpay_order_id)
       : null;
@@ -685,45 +388,10 @@ export async function POST(req: Request) {
       nursingToken ? `?t=${nursingToken}` : ""
     }`;
 
-    const reelsToken = isReels
-      ? createDownloadToken("reels", razorpay_order_id)
-      : null;
-    const reelsDownloadUrl = `${appUrl}/ai-baby-reels/go${
-      reelsToken ? `?t=${reelsToken}` : ""
-    }`;
-
-    const xrayToken = isXray
-      ? createDownloadToken("xray", razorpay_order_id)
-      : null;
-    const xrayAddonToken =
-      isXray && verifiedXrayAddon
-        ? createDownloadToken("xray-lab-test-master-guide", razorpay_order_id)
-        : null;
-    const xrayDownloadUrl = `${appUrl}/xray-diagnosis/go${
-      xrayToken ? `?t=${xrayToken}` : ""
-    }`;
-    const xrayAddonDownloadUrl = `${appUrl}/xray-diagnosis/go?item=${XRAY_ADDON_ID}${
-      xrayAddonToken ? `&t=${xrayAddonToken}` : ""
-    }`;
-    const xrayDownloads = [
-      { label: "DOWNLOAD X-RAY DIAGNOSIS GUIDE", url: xrayDownloadUrl },
-      ...(xrayAddonToken
-        ? [{ label: XRAY_ADDON_NAME, url: xrayAddonDownloadUrl }]
-        : []),
-    ];
-
-    const downloadUrl = isPsychology
-      ? psyDownloadUrl
-      : isNursing
+    const downloadUrl = isNursing
       ? nursingDownloadUrl
-      : isXray
-      ? xrayDownloadUrl
-      : isReels
-      ? reelsDownloadUrl
       : isMbbs
       ? mbbsDownloadUrl
-      : isVastu
-      ? `${appUrl}/vastu-plan-checkout/go`
       : isMcq
       ? `${appUrl}/gsrtc-mcq-course/go`
       : isEscooter
@@ -732,26 +400,6 @@ export async function POST(req: Request) {
       ? opdDownloadUrl
       : `${appUrl}/go`;
 
-    // Build per-item download links for the Vastu bundle (main + purchased upsells)
-    const vastuAddonLabels: Record<string, string> = {
-      vedic: "Vedic Remedies Mastery",
-      "vastu-guide": "Practical Vastu Shastra Guide",
-    };
-    const vastuDownloads = [
-      {
-        label: "Main Bundle (10k Vastu Floor Plans)",
-        url: `${appUrl}/vastu-plan-checkout/go`,
-      },
-      ...String(addons || "")
-        .split(",")
-        .map((a: string) => a.trim())
-        .filter((id: string) => vastuAddonLabels[id])
-        .map((id: string) => ({
-          label: vastuAddonLabels[id],
-          url: `${appUrl}/vastu-plan-checkout/go?item=${id}`,
-        })),
-    ];
-
     // Trigger Email sending via Resend API
     const resendApiKey = process.env.RESEND_API_KEY;
     const emailFrom = process.env.EMAIL_FROM || "NokriMitra <onboarding@resend.dev>";
@@ -759,10 +407,7 @@ export async function POST(req: Request) {
     let emailDelivered = false;
     const skipDuplicateDelivery =
       (isEscooter && escooterAlreadyFulfilled) ||
-      (isPsychology && psyAlreadyFulfilled) ||
       (isNursing && nursingAlreadyFulfilled) ||
-      (isXray && xrayAlreadyFulfilled) ||
-      (isReels && reelsAlreadyFulfilled) ||
       (isOpd && opdAlreadyFulfilled);
 
     if (
@@ -772,25 +417,11 @@ export async function POST(req: Request) {
       !skipDuplicateDelivery
     ) {
       try {
-        const psyProductName = verifiedPsyAddon
-          ? "Psychology Notes + 800 Therapeutic Interventions"
-          : "Psychology Notes";
-        const vastuProductName =
-          productName || "10k Vastu Floor Plan Editable Bundle";
         const gsrtcProductName = "GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ";
         const escooterProductName = ESCOOTER_CATALOG.name;
         const opdProductName = productName || "OPD Mastery E-book (2026 Edition)";
 
-        const htmlContent = isReels
-          ? buildReelsEmail({
-              customerName: deliveryName || "there",
-              productName: REELS_PRODUCT_NAME,
-              orderId: razorpay_order_id,
-              amount: verifiedReelsAmount,
-              downloadUrl,
-              bonusUrl: `${appUrl}/10000-Bonus-free-khgxw3.pdf`,
-            })
-          : isOpd
+        const htmlContent = isOpd
           ? buildOpdEmail({
               customerName: deliveryName || "Doctor",
               productName: opdProductName,
@@ -799,15 +430,6 @@ export async function POST(req: Request) {
               downloadUrl,
               downloads: opdDownloads,
             })
-          : isPsychology
-          ? buildPsychologyEmail({
-              customerName: deliveryName || "there",
-              productName: psyProductName,
-              orderId: razorpay_order_id,
-              amount: verifiedPsyAmount,
-              downloadUrl,
-              downloads: psyDownloads,
-            })
           : isNursing
           ? buildNursingEmail({
               customerName: deliveryName || "there",
@@ -815,17 +437,6 @@ export async function POST(req: Request) {
               orderId: razorpay_order_id,
               amount: verifiedNursingAmount,
               downloadUrl,
-            })
-          : isXray
-          ? buildXrayEmail({
-              customerName: deliveryName || "there",
-              productName: verifiedXrayAddon
-                ? `${XRAY_PRODUCT_NAME} + ${XRAY_ADDON_NAME}`
-                : XRAY_PRODUCT_NAME,
-              orderId: razorpay_order_id,
-              amount: verifiedXrayAmount,
-              downloadUrl,
-              downloads: xrayDownloads,
             })
           : isMbbs
           ? buildMbbsEmail({
@@ -844,15 +455,6 @@ export async function POST(req: Request) {
               amount: verifiedEscooterAmount,
               downloadUrl,
             })
-          : isVastu
-          ? buildVastuEmail({
-              customerName: name || "there",
-              productName: vastuProductName,
-              orderId: razorpay_order_id,
-              amount: Number(amountPaid || 149),
-              downloadUrl,
-              downloads: vastuDownloads,
-            })
           : buildOrderEmail({
               customerName: name || "વિદ્યાર્થી",
               productName: productName || gsrtcProductName,
@@ -861,16 +463,7 @@ export async function POST(req: Request) {
               downloadUrl,
             });
 
-        const textContent = isReels
-          ? buildReelsEmailText({
-              customerName: deliveryName || "there",
-              productName: REELS_PRODUCT_NAME,
-              orderId: razorpay_order_id,
-              amount: verifiedReelsAmount,
-              downloadUrl,
-              bonusUrl: `${appUrl}/10000-Bonus-free-khgxw3.pdf`,
-            })
-          : isOpd
+        const textContent = isOpd
           ? buildOpdEmailText({
               customerName: deliveryName || "Doctor",
               productName: opdProductName,
@@ -879,15 +472,6 @@ export async function POST(req: Request) {
               downloadUrl,
               downloads: opdDownloads,
             })
-          : isPsychology
-          ? buildPsychologyEmailText({
-              customerName: deliveryName || "there",
-              productName: psyProductName,
-              orderId: razorpay_order_id,
-              amount: verifiedPsyAmount,
-              downloadUrl,
-              downloads: psyDownloads,
-            })
           : isNursing
           ? buildNursingEmailText({
               customerName: deliveryName || "there",
@@ -895,17 +479,6 @@ export async function POST(req: Request) {
               orderId: razorpay_order_id,
               amount: verifiedNursingAmount,
               downloadUrl,
-            })
-          : isXray
-          ? buildXrayEmailText({
-              customerName: deliveryName || "there",
-              productName: verifiedXrayAddon
-                ? `${XRAY_PRODUCT_NAME} + ${XRAY_ADDON_NAME}`
-                : XRAY_PRODUCT_NAME,
-              orderId: razorpay_order_id,
-              amount: verifiedXrayAmount,
-              downloadUrl,
-              downloads: xrayDownloads,
             })
           : isMbbs
           ? buildMbbsEmailText({
@@ -924,15 +497,6 @@ export async function POST(req: Request) {
               amount: verifiedEscooterAmount,
               downloadUrl,
             })
-          : isVastu
-          ? buildVastuEmailText({
-              customerName: name || "there",
-              productName: vastuProductName,
-              orderId: razorpay_order_id,
-              amount: Number(amountPaid || 149),
-              downloadUrl,
-              downloads: vastuDownloads,
-            })
           : buildOrderEmailText({
               customerName: name || "વિદ્યાર્થી",
               productName: productName || gsrtcProductName,
@@ -943,20 +507,12 @@ export async function POST(req: Request) {
 
         const subject = isMbbs
           ? `Complete MBBS Notes (All 21 Subjects): Your download link is ready! 🩺📚`
-          : isReels
-          ? `${REELS_PRODUCT_NAME}: Your download link is ready! 🎬`
           : isOpd
           ? `Your download is ready — OPD Mastery E-book (2026)`
-          : isPsychology
-          ? `${psyProductName}: Your download link is ready! 🎉`
           : isNursing
           ? `${NURSING_PRODUCT_NAME}: Your download link is ready! 🩺`
-          : isXray
-          ? `${XRAY_PRODUCT_NAME}: Your download link is ready! 🩻`
           : isEscooter
           ? `Your EV Repair 3-Book Bundle is ready`
-          : isVastu
-          ? `${vastuProductName}: Your download link is ready! 🎉`
           : `${productName || gsrtcProductName}: આપનો ડાઉનલોડ લિંક તૈયાર છે! 📚🎉`;
 
         const emailResponse = await fetch("https://api.resend.com/emails", {
@@ -968,10 +524,7 @@ export async function POST(req: Request) {
           body: JSON.stringify({
             from: emailFrom,
             to: [deliveryEmail],
-            reply_to:
-              isVastu
-                ? "goexam777@gmail.com"
-                : "support@nokrimitra.in",
+            reply_to: "support@nokrimitra.in",
             subject,
             html: htmlContent,
             text: textContent,
@@ -1029,40 +582,6 @@ export async function POST(req: Request) {
       }
     }
 
-    if (isPsychology && !psyAlreadyFulfilled && emailDelivered) {
-      try {
-        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-        const stampResponse = await fetch(
-          `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization:
-                "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
-            },
-            body: JSON.stringify({
-              notes: {
-                ...psyNotes,
-                product: "psychology",
-                addons: verifiedPsyAddon ? PSY_ADDON_ID : "",
-                catalogVersion: psyNotes.catalogVersion || "1",
-                fulfilledAt: new Date().toISOString(),
-              },
-            }),
-          }
-        );
-        if (!stampResponse.ok) {
-          console.error(
-            "Could not mark Psychology order as fulfilled:",
-            await stampResponse.text()
-          );
-        }
-      } catch (stampErr) {
-        console.error("Could not mark Psychology order as fulfilled:", stampErr);
-      }
-    }
-
     if (isNursing && !nursingAlreadyFulfilled && emailDelivered) {
       try {
         const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
@@ -1093,73 +612,6 @@ export async function POST(req: Request) {
         }
       } catch (stampErr) {
         console.error("Could not mark Nursing order as fulfilled:", stampErr);
-      }
-    }
-
-    if (isXray && !xrayAlreadyFulfilled && emailDelivered) {
-      try {
-        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-        const stampResponse = await fetch(
-          `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization:
-                "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
-            },
-            body: JSON.stringify({
-              notes: {
-                ...xrayNotes,
-                product: "xray",
-                addons: verifiedXrayAddon ? XRAY_ADDON_ID : "",
-                catalogVersion: xrayNotes.catalogVersion || "1",
-                fulfilledAt: new Date().toISOString(),
-              },
-            }),
-          }
-        );
-        if (!stampResponse.ok) {
-          console.error(
-            "Could not mark X-Ray order as fulfilled:",
-            await stampResponse.text()
-          );
-        }
-      } catch (stampErr) {
-        console.error("Could not mark X-Ray order as fulfilled:", stampErr);
-      }
-    }
-
-    if (isReels && !reelsAlreadyFulfilled && emailDelivered) {
-      try {
-        const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-        const stampResponse = await fetch(
-          `https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpay_order_id)}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization:
-                "Basic " + Buffer.from(`${keyId}:${keySecret}`).toString("base64"),
-            },
-            body: JSON.stringify({
-              notes: {
-                ...reelsNotes,
-                product: "reels",
-                catalogVersion: reelsNotes.catalogVersion || "1",
-                fulfilledAt: new Date().toISOString(),
-              },
-            }),
-          }
-        );
-        if (!stampResponse.ok) {
-          console.error(
-            "Could not mark AI Baby Reels order as fulfilled:",
-            await stampResponse.text()
-          );
-        }
-      } catch (stampErr) {
-        console.error("Could not mark AI Baby Reels order as fulfilled:", stampErr);
       }
     }
 
@@ -1230,88 +682,21 @@ export async function POST(req: Request) {
             alreadyFulfilled: opdAlreadyFulfilled,
           }
         : {}),
-      ...(isPsychology
-        ? {
-            amountPaid: verifiedPsyAmount,
-            downloadPath: `/psychology-notes/go${
-              psyToken ? `?t=${psyToken}` : ""
-            }`,
-            downloads: [
-              {
-                label: "Psychology Notes",
-                path: `/psychology-notes/go${
-                  psyToken ? `?t=${psyToken}` : ""
-                }`,
-              },
-              ...(psyAddonToken
-                ? [
-                    {
-                      label: PSY_ADDON_NAME,
-                      path: `/psychology-notes/go?item=${PSY_ADDON_ID}&t=${psyAddonToken}`,
-                    },
-                  ]
-                : []),
-            ],
-            alreadyFulfilled: psyAlreadyFulfilled,
-          }
-        : {}),
       ...(isNursing
         ? {
             amountPaid: verifiedNursingAmount,
-            downloadPath: `/nursing-mastery/go${
+            downloadPath: `/nursing-notes/go${
               nursingToken ? `?t=${nursingToken}` : ""
             }`,
             downloads: [
               {
                 label: NURSING_PRODUCT_NAME,
-                path: `/nursing-mastery/go${
+                path: `/nursing-notes/go${
                   nursingToken ? `?t=${nursingToken}` : ""
                 }`,
               },
             ],
             alreadyFulfilled: nursingAlreadyFulfilled,
-          }
-        : {}),
-      ...(isReels
-        ? {
-            amountPaid: verifiedReelsAmount,
-            downloadPath: `/ai-baby-reels/go${
-              reelsToken ? `?t=${reelsToken}` : ""
-            }`,
-            downloads: [
-              {
-                label: "AI Baby Reels Bundle",
-                path: `/ai-baby-reels/go${
-                  reelsToken ? `?t=${reelsToken}` : ""
-                }`,
-              },
-            ],
-            alreadyFulfilled: reelsAlreadyFulfilled,
-          }
-        : {}),
-      ...(isXray
-        ? {
-            amountPaid: verifiedXrayAmount,
-            downloadPath: `/xray-diagnosis/go${
-              xrayToken ? `?t=${xrayToken}` : ""
-            }`,
-            downloads: [
-              {
-                label: "X-Ray Diagnosis Guide",
-                path: `/xray-diagnosis/go${
-                  xrayToken ? `?t=${xrayToken}` : ""
-                }`,
-              },
-              ...(xrayAddonToken
-                ? [
-                    {
-                      label: XRAY_ADDON_NAME,
-                      path: `/xray-diagnosis/go?item=${XRAY_ADDON_ID}&t=${xrayAddonToken}`,
-                    },
-                  ]
-                : []),
-            ],
-            alreadyFulfilled: xrayAlreadyFulfilled,
           }
         : {}),
       ...(isMbbs

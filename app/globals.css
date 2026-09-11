@@ -27,19 +27,6 @@
   animation: shine 2.5s ease-in-out infinite;
 }
 
-.ai-reels-page-root {
-  background-color: #ffffff !important;
-  color: #111827 !important;
-  line-height: 1.5 !important;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
-}
-
-.ai-reels-page-root h1,
-.ai-reels-page-root h2,
-.ai-reels-page-root h3,
-.ai-reels-page-root h4 {
-  font-family: Georgia, Cambria, "Times New Roman", Times, serif !important;
-}
 
 h1, h2, h3, h4, h5, h6 {
   font-family: Georgia, Cambria, "Times New Roman", Times, serif;
