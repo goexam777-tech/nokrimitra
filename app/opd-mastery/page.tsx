@@ -27,7 +27,6 @@ import ReviewCarousel, { type Review } from "./ReviewCarousel";
 import FaqAccordion from "./FaqAccordion";
 import OpdAnalytics from "./OpdAnalytics";
 import LiveSocialProof from "./LiveSocialProof";
-import WhatsAppBuyerProofs from "./WhatsAppBuyerProofs";
 import styles from "./opd.module.css";
 
 const montserrat = Montserrat({
@@ -438,8 +437,6 @@ export default function OpdMasteryPage() {
               </div>
             ))}
           </div>
-
-          <WhatsAppBuyerProofs />
         </div>
       </section>
 
