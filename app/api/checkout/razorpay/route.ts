@@ -15,8 +15,10 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
     const keySecret = process.env.RAZORPAY_KEY_SECRET;
-    const isOpd = body.product === "opd";
+    const isOpdEbook = body.product === "opd-ebook" || body.product === "opd_ebook";
+    const isOpd = body.product === "opd" || isOpdEbook;
     const isOpdExitOffer = isOpd && (body.offer === "exit149" || body.isExitOffer === true);
+    const opdBase = isOpdEbook ? 149 : OPD_BASE_PRICE;
     const isNursing = body.product === "nursing";
     const isMbbs = body.product === "mbbs" || body.product === "mbbs-notes";
     const isEscooter = body.product === ESCOOTER_CATALOG.product;
@@ -39,7 +41,7 @@ export async function POST(req: Request) {
     const amount = isOpd
       ? isOpdExitOffer
         ? OPD_EXIT_PRICE
-        : OPD_BASE_PRICE + (addons.length ? OPD_ADDON_PRICE : 0)
+        : opdBase + (addons.length ? OPD_ADDON_PRICE : 0)
       : isNursing
         ? NURSING_PRICE
         : isMbbs
@@ -60,7 +62,7 @@ export async function POST(req: Request) {
 
     const notes = isOpd
       ? {
-          product: "opd",
+          product: isOpdEbook ? "opd-ebook" : "opd",
           offer: isOpdExitOffer ? "exit149" : "standard",
           addons: addons.join(","),
           catalogVersion: "1",

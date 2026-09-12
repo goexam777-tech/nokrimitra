@@ -31,9 +31,10 @@ export async function POST(req: Request) {
       !secretKey ||
       secretKey.includes("your_cashfree_secret");
 
-    const isOpd = product === "opd";
+    const isOpdEbook = product === "opd-ebook" || product === "opd_ebook";
+    const isOpd = product === "opd" || isOpdEbook;
     const isOpdExitOffer =
-      isOpd && (offer === "exit149" || isExitOffer === true);
+      isOpd && !isOpdEbook && (offer === "exit149" || isExitOffer === true);
     const isNorcet = product === "norcet";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
 
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
     const amount = isOpd
       ? isOpdExitOffer
         ? OPD_EXIT_PRICE
-        : OPD_BASE_PRICE + (opdHasAddon ? OPD_ADDON_PRICE : 0)
+        : (isOpdEbook ? 149 : OPD_BASE_PRICE) + (opdHasAddon ? OPD_ADDON_PRICE : 0)
       : isNorcet
       ? 149
       : isMbbs
@@ -99,7 +100,7 @@ export async function POST(req: Request) {
       const addonParam = opdHasAddon ? OPD_ADDON_ID : "";
       returnUrl = `${appUrl}/api/checkout/cashfree/return?order_id={order_id}`;
       orderTags = {
-        product: "opd",
+        product: isOpdEbook ? "opd-ebook" : "opd",
         offer: isOpdExitOffer ? "exit149" : "standard",
         addons: addonParam,
         name: cleanName.slice(0, 80),

@@ -35,7 +35,8 @@ export async function POST(req: Request) {
       !secretKey ||
       secretKey.includes("your_cashfree_secret");
 
-    const isOpd = product === "opd";
+    const isOpdEbook = product === "opd-ebook" || product === "opd_ebook";
+    const isOpd = product === "opd" || isOpdEbook;
     const isNorcet = product === "norcet";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
 
@@ -53,10 +54,7 @@ export async function POST(req: Request) {
     if (isMock) {
       if (isOpd) {
         const isExit =
-          String(amountPaid) === "149" ||
-          String(addons || "").includes("exit149") ||
-          offer === "exit149" ||
-          isExitOffer === true;
+          String(amountPaid) === "149" && !isOpdEbook && (offer === "exit149" || isExitOffer === true);
         const hasAddon =
           String(addons || "").includes(OPD_ADDON_ID) || isExit;
         const opdToken = createDownloadToken("opd", order_id);
@@ -65,7 +63,7 @@ export async function POST(req: Request) {
           : null;
         const mockAmount = isExit
           ? OPD_EXIT_PRICE
-          : OPD_BASE_PRICE + (hasAddon ? OPD_ADDON_PRICE : 0);
+          : (isOpdEbook ? 149 : OPD_BASE_PRICE) + (hasAddon ? OPD_ADDON_PRICE : 0);
 
         return NextResponse.json({
           success: true,
@@ -154,12 +152,14 @@ export async function POST(req: Request) {
     // The product + add-on are read back from Cashfree order tags, so the
     // browser can never inflate what was purchased.
     const tags = (data.order_tags || {}) as Record<string, string>;
-    const verifiedProduct = tags.product || (isOpd ? "opd" : isNorcet ? "norcet" : "mcq");
+    const verifiedProduct = tags.product || (isOpd ? (isOpdEbook ? "opd-ebook" : "opd") : isNorcet ? "norcet" : "mcq");
 
-    if (verifiedProduct === "opd") {
+    if (verifiedProduct === "opd" || verifiedProduct === "opd-ebook" || verifiedProduct === "opd_ebook") {
+      const isVerifiedOpdEbook = verifiedProduct === "opd-ebook" || verifiedProduct === "opd_ebook" || isOpdEbook;
       const isExitOffer =
-        tags.offer === "exit149" ||
-        Number(data.order_amount) === OPD_EXIT_PRICE;
+        !isVerifiedOpdEbook &&
+        (tags.offer === "exit149" ||
+        Number(data.order_amount) === OPD_EXIT_PRICE);
       const verifiedAddon =
         isExitOffer ||
         String(tags.addons || "")
@@ -168,7 +168,7 @@ export async function POST(req: Request) {
           .includes(OPD_ADDON_ID);
       const expectedAmount = isExitOffer
         ? OPD_EXIT_PRICE
-        : OPD_BASE_PRICE + (verifiedAddon ? OPD_ADDON_PRICE : 0);
+        : (isVerifiedOpdEbook ? 149 : OPD_BASE_PRICE) + (verifiedAddon ? OPD_ADDON_PRICE : 0);
 
       if (Number(data.order_amount) !== expectedAmount) {
         return NextResponse.json(

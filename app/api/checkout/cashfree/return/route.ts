@@ -77,6 +77,9 @@ export async function GET(req: Request) {
 
     const getCheckoutUrl = (prod: string, status = "cancelled") => {
       switch (prod) {
+        case "opd-ebook":
+        case "opd_ebook":
+          return `${appUrl}/opd-mastery-ebook/checkout?payment_status=${status}`;
         case "norcet":
           return `${appUrl}/norcet-notes/checkout?payment_status=${status}`;
         case "mcq":
@@ -89,6 +92,9 @@ export async function GET(req: Request) {
 
     const getThankYouUrl = (prod: string, q: URLSearchParams) => {
       switch (prod) {
+        case "opd-ebook":
+        case "opd_ebook":
+          return `${appUrl}/opd-mastery-ebook/thank-you?${q.toString()}`;
         case "norcet":
           return `${appUrl}/norcet-notes/thank-you?${q.toString()}`;
         case "mcq":

@@ -117,9 +117,10 @@ export async function POST(req: Request) {
     const resendApiKey = process.env.RESEND_API_KEY;
     const emailFrom = process.env.EMAIL_FROM || "NokriMitra <download@pdf.nokrimitra.in>";
 
-    if (product === "opd") {
+    if (product === "opd" || product === "opd-ebook" || product === "opd_ebook") {
       const isExitOffer =
         notes.offer === "exit149" || Number(order.amount) === OPD_EXIT_PRICE * 100;
+      const isOpdEbook = product === "opd-ebook" || product === "opd_ebook" || notes.product === "opd-ebook";
       const opdAddons = isExitOffer
         ? [OPD_ADDON_ID]
         : String(notes.addons || "")
@@ -129,7 +130,7 @@ export async function POST(req: Request) {
 
       const verifiedAmount = isExitOffer
         ? OPD_EXIT_PRICE
-        : OPD_BASE_PRICE + (opdAddons.includes(OPD_ADDON_ID) ? OPD_ADDON_PRICE : 0);
+        : (isOpdEbook ? 149 : OPD_BASE_PRICE) + (opdAddons.includes(OPD_ADDON_ID) ? OPD_ADDON_PRICE : 0);
 
       const opdToken = createDownloadToken("opd", orderId);
       const opdAddonToken = opdAddons.includes(OPD_ADDON_ID)

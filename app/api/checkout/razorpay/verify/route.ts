@@ -143,7 +143,7 @@ export async function POST(req: Request) {
     let opdAlreadyFulfilled = false;
     let verifiedOpdEmail = String(email || "").trim().toLowerCase();
     let verifiedOpdName = String(name || "Doctor").trim() || "Doctor";
-    if (product === "opd") {
+    if (product === "opd" || product === "opd-ebook" || product === "opd_ebook") {
       const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
       if (!keyId) {
         return NextResponse.json(
@@ -163,7 +163,8 @@ export async function POST(req: Request) {
         }
       );
       const order = await orderResponse.json();
-      if (!orderResponse.ok || order.notes?.product !== "opd") {
+      const isOrderOpd = order.notes?.product === "opd" || order.notes?.product === "opd-ebook" || order.notes?.product === "opd_ebook";
+      if (!orderResponse.ok || !isOrderOpd) {
         return NextResponse.json(
           { error: "Could not verify OPD order details" },
           { status: 400 }
@@ -174,6 +175,7 @@ export async function POST(req: Request) {
       const isExitOffer =
         order.notes?.offer === "exit149" ||
         Number(order.amount) === OPD_EXIT_PRICE * 100;
+      const isOpdEbook = product === "opd-ebook" || product === "opd_ebook" || order.notes?.product === "opd-ebook" || order.notes?.product === "opd_ebook";
 
       if (isExitOffer) {
         verifiedOpdAddons = [OPD_ADDON_ID];
@@ -184,7 +186,7 @@ export async function POST(req: Request) {
           .map((id: string) => id.trim())
           .filter((id: string) => id === OPD_ADDON_ID);
         verifiedOpdAmount =
-          OPD_BASE_PRICE +
+          (isOpdEbook ? 149 : OPD_BASE_PRICE) +
           (verifiedOpdAddons.includes(OPD_ADDON_ID) ? OPD_ADDON_PRICE : 0);
       }
 
@@ -335,7 +337,7 @@ export async function POST(req: Request) {
         : `${protocol}://${host}`)).replace(/\/$/, "");
     const isMcq = product === "mcq";
     const isEscooter = product === "escooter";
-    const isOpd = product === "opd";
+    const isOpd = product === "opd" || product === "opd-ebook" || product === "opd_ebook";
     const isNursing = product === "nursing";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
     const deliveryEmail = isNursing
