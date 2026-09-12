@@ -697,6 +697,169 @@
   }
 }
 
+/* Demo / Sample WhatsApp Section */
+.demoSection {
+  padding: clamp(36px, 6vw, 60px) 16px;
+  background: linear-gradient(180deg, #f8fafc 0%, #f0fdf4 100%);
+  position: relative;
+}
+
+.demoContainer {
+  max-width: 620px;
+  margin-inline: auto;
+}
+
+.demoCard {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: clamp(24px, 5vw, 40px) clamp(18px, 4vw, 32px);
+  border: 1.5px solid #86efac;
+  box-shadow: 0 16px 36px -10px rgba(16, 185, 129, 0.16), 0 4px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.demoBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: clamp(0.78rem, 2.2vw, 0.88rem);
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  border: 1px solid #bbf7d0;
+}
+
+.demoDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.35);
+  animation: demoPulse 2s infinite ease-in-out;
+}
+
+@keyframes demoPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.7;
+  }
+}
+
+.demoTitle {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1.45rem, 4.2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.demoHighlight {
+  color: #16a34a;
+  text-decoration: underline;
+  text-decoration-color: #86efac;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.demoDesc {
+  margin: 0 0 20px;
+  color: #475569;
+  font-size: clamp(0.92rem, 2.6vw, 1.05rem);
+  line-height: 1.55;
+  max-width: 480px;
+}
+
+.demoDesc strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.demoFeatures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px clamp(12px, 3vw, 18px);
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.demoFeatureItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: clamp(0.8rem, 2.2vw, 0.88rem);
+  font-weight: 600;
+  color: #334155;
+}
+
+.demoCheckIcon {
+  color: #16a34a;
+  flex-shrink: 0;
+}
+
+.demoWhatsAppBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: #ffffff !important;
+  font-family: var(--font-poppins), "Poppins", sans-serif;
+  font-size: clamp(1rem, 2.8vw, 1.18rem);
+  font-weight: 700;
+  padding: clamp(14px, 3.2vw, 18px) 24px;
+  border-radius: 14px;
+  text-decoration: none;
+  box-shadow: 0 10px 24px -4px rgba(37, 211, 102, 0.42), 0 4px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  cursor: pointer;
+}
+
+.demoWhatsAppBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -4px rgba(37, 211, 102, 0.52), 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.demoWhatsAppBtn:active {
+  transform: translateY(1px);
+}
+
+.demoWhatsAppIcon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.demoFootnote {
+  margin: 14px 0 0;
+  color: #64748b;
+  font-size: clamp(0.75rem, 2vw, 0.82rem);
+  font-weight: 500;
+}
+
 /* Today Offer Section with 30-minute Timer */
 .todayOfferSection {
   padding: clamp(32px, 5vw, 56px) 0;

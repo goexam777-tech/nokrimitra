@@ -40,9 +40,11 @@ export async function GET(req: Request) {
     return blockedResponse(check.reason);
   }
 
+  const defaultMainDrive =
+    "https://drive.google.com/file/d/1wcIJs8JmqScgV7NuW-DGet6YRTLWWtYn/view?usp=sharing";
   const driveUrl = isAddon
     ? process.env.OPD_EMERGENCY_MEDICINE_HANDBOOK_DRIVE_URL
-    : process.env.OPD_DRIVE_URL;
+    : (process.env.OPD_DRIVE_URL || defaultMainDrive);
 
   if (
     driveUrl &&

@@ -15,7 +15,7 @@ import {
 import opdHero from "@/public/opd.jpg";
 import styles from "./checkout.module.css";
 
-const PRICE = 99;
+const PRICE = 149;
 const OLD_PRICE = 999;
 const ADDON_ID = "emergency-handbook";
 const ADDON_PRICE = 49;

@@ -17,7 +17,7 @@ import {
 import { createDownloadToken } from "@/lib/downloadToken";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
-const OPD_BASE_PRICE = 99;
+const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
@@ -461,7 +461,7 @@ export async function POST(req: Request) {
               customerName: name || "વિદ્યાર્થી",
               productName: productName || gsrtcProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 99),
+              amount: Number(amountPaid || 149),
               downloadUrl,
             });
 
@@ -503,7 +503,7 @@ export async function POST(req: Request) {
               customerName: name || "વિદ્યાર્થી",
               productName: productName || gsrtcProductName,
               orderId: razorpay_order_id,
-              amount: Number(amountPaid || 99),
+              amount: Number(amountPaid || 149),
               downloadUrl,
             });
 

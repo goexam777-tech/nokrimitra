@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
-const OPD_BASE_PRICE = 99;
+const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
           ? MBBS_PRICE
           : isEscooter
             ? ESCOOTER_CATALOG.price
-            : Number(body.amount || 99);
+            : Number(body.amount || 149);
 
     if (!Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json({ error: "Invalid order amount" }, { status: 400 });

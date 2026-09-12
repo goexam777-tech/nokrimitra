@@ -32,12 +32,12 @@ function OpdThankYouContent() {
   const [downloadPath, setDownloadPath] = useState("");
   const [downloads, setDownloads] = useState<VerifiedDownload[]>([]);
   const [confirmedAmount, setConfirmedAmount] = useState(
-    params.get("amountPaid") || "99"
+    params.get("amountPaid") || "149"
   );
 
   const name = params.get("name") || "";
   const email = params.get("email") || "";
-  const amountPaid = params.get("amountPaid") || "99";
+  const amountPaid = params.get("amountPaid") || "149";
   const addons = params.get("addons") || "";
   const orderId =
     params.get("razorpay_order_id") ||
@@ -148,7 +148,7 @@ function OpdThankYouContent() {
             fbq?: (...args: unknown[]) => void;
           };
 
-          const finalPaid = Number(paidAmount) || 99;
+          const finalPaid = Number(paidAmount) || 149;
 
           // 1. Google Analytics (GA4) Purchase Event
           w.dataLayer = w.dataLayer || [];

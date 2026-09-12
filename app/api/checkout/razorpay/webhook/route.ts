@@ -5,7 +5,7 @@ import { buildNursingEmail, buildNursingEmailText } from "@/lib/nursingEmailTemp
 import { buildMbbsEmail, buildMbbsEmailText } from "@/lib/mbbsEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
 
-const OPD_BASE_PRICE = 99;
+const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;

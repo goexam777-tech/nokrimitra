@@ -17,7 +17,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 
-import opdHero from "@/public/opd99.webp";
+import opdHero from "@/public/opdmastery.webp";
 import buySteps from "@/public/opd-last-banner.png";
 import trustBadges from "@/public/trust.webp";
 import reviewer1 from "@/public/scdr1.webp";
@@ -27,7 +27,6 @@ import OfferTimer from "./OfferTimer";
 import ReviewCarousel, { type Review } from "./ReviewCarousel";
 import FaqAccordion from "./FaqAccordion";
 import OpdAnalytics from "./OpdAnalytics";
-import LiveSocialProof from "./LiveSocialProof";
 import styles from "./opd.module.css";
 
 const montserrat = Montserrat({
@@ -44,12 +43,13 @@ const poppins = Poppins({
   variable: "--font-poppins",
 });
 
-const PRICE = 99;
+const PRICE = 149;
 const OLD_PRICE = 999;
 const SAVE_PERCENT = Math.round((1 - PRICE / OLD_PRICE) * 100);
 const CHECKOUT = "/opd-mastery/checkout";
 const CONTACT_URL = "mailto:goexam777@gmail.com?subject=OPD%20Mastery%20support";
 const WHATSAPP_URL = "https://wa.me/919104826422?text=Hello!%20I%20have%20a%20question%20regarding%20the%20OPD%20Mastery%20E-Book.";
+const WHATSAPP_DEMO_URL = "https://wa.me/919104826422?text=Hello!%20I%20want%20to%20check%20the%20Sample%2FDemo%20PDF%20of%20OPD%20Mastery%20E-Book.";
 
 export const metadata: Metadata = {
   title: "OPD Mastery E-Book 2026 | Clinical Reference Guide",
@@ -235,7 +235,7 @@ const faqs = [
   {
     emoji: "♾️",
     q: "Will I get lifetime access?",
-    a: "Yes. ₹99 is a single one-time payment with lifetime access. There is no subscription or recurring charge.",
+    a: "Yes. ₹149 is a single one-time payment with lifetime access. There is no subscription or recurring charge.",
   },
   {
     emoji: "🔄",
@@ -266,7 +266,6 @@ export default function OpdMasteryPage() {
   return (
     <main className={`${styles.page} ${montserrat.variable} ${poppins.variable}`}>
       <OpdAnalytics />
-      <LiveSocialProof />
       <section className={styles.simpleHero}>
         <div className={styles.simpleContainer}>
           <span className={styles.heroBadge}>
@@ -405,24 +404,50 @@ export default function OpdMasteryPage() {
         </div>
       </section>
 
-      <section className={styles.todayOfferSection}>
-        <div className={styles.simpleContainer}>
-          <div className={styles.todayOfferBox}>
-            <p className={styles.actualPriceRow}>
-              Actual Price = <span className={styles.strikePrice}>Rs.999/-</span>
-            </p>
-            <h2 className={styles.todayOfferTitle}>
-              Today Offer =
+      <section className={styles.demoSection}>
+        <div className={styles.demoContainer}>
+          <div className={styles.demoCard}>
+            <div className={styles.demoBadge}>
+              <span className={styles.demoDot}></span>
+              Free Sample Available
+            </div>
+
+            <h2 className={styles.demoTitle}>
+              Want to Check <span className={styles.demoHighlight}>Sample Demo PDF</span> First?
             </h2>
-            <p className={styles.offerPriceRow}>
-              Rs.99/-
+
+            <p className={styles.demoDesc}>
+              Send a quick message on WhatsApp to get the <strong>Free Sample PDF &amp; Complete Index</strong> of OPD Mastery directly on your phone.
             </p>
 
-            <a className={styles.simpleCta} href={CHECKOUT}>
-              <CheckCircle2 size={22} /> Click Here to Get Instant Access
+            <div className={styles.demoFeatures}>
+              <div className={styles.demoFeatureItem}>
+                <CheckCircle2 size={18} className={styles.demoCheckIcon} />
+                <span>Full Index &amp; Topics</span>
+              </div>
+              <div className={styles.demoFeatureItem}>
+                <CheckCircle2 size={18} className={styles.demoCheckIcon} />
+                <span>Real Case Format Sample</span>
+              </div>
+              <div className={styles.demoFeatureItem}>
+                <CheckCircle2 size={18} className={styles.demoCheckIcon} />
+                <span>Instant Reply</span>
+              </div>
+            </div>
+
+            <a
+              className={styles.demoWhatsAppBtn}
+              href={WHATSAPP_DEMO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <WhatsAppIcon className={styles.demoWhatsAppIcon} />
+              <span>Send Message for Free Demo</span>
             </a>
 
-            <OfferTimer variant="boxes" durationMinutes={30} className={styles.boxesTimerWrap} />
+            <p className={styles.demoFootnote}>
+              💬 100% Free • Direct WhatsApp • Fast Response
+            </p>
           </div>
         </div>
       </section>

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 const PRODUCT_NAME = "OPD Mastery E-book (2026 Edition)";
-const PRICE = 99;
+const PRICE = 149;
 
 export default function OpdAnalytics() {
   const hasTrackedRef = useRef(false);

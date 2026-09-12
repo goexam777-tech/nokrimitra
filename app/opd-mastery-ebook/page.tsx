@@ -27,7 +27,6 @@ import OfferTimer from "../opd-mastery/OfferTimer";
 import ReviewCarousel, { type Review } from "../opd-mastery/ReviewCarousel";
 import FaqAccordion from "../opd-mastery/FaqAccordion";
 import OpdEbookAnalytics from "./OpdEbookAnalytics";
-import LiveSocialProof from "../opd-mastery/LiveSocialProof";
 import styles from "./opd-mastery-ebook.module.css";
 
 const montserrat = Montserrat({
@@ -251,7 +250,6 @@ export default function OpdMasteryPage() {
   return (
     <main className={`${styles.page} ${montserrat.variable} ${poppins.variable}`}>
       <OpdEbookAnalytics />
-      <LiveSocialProof />
       <section className={styles.simpleHero}>
         <div className={styles.simpleContainer}>
           <span className={styles.heroBadge}>

@@ -4,7 +4,7 @@ import { buildNorcetEmail, buildNorcetEmailText } from "@/lib/norcetEmailTemplat
 import { buildOpdEmail, buildOpdEmailText } from "@/lib/opdEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
 
-const OPD_BASE_PRICE = 99;
+const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
 const OPD_PRODUCT_NAME = "OPD Mastery E-book (2026 Edition)";
 const OPD_ADDON_ID = "emergency-handbook";
@@ -109,7 +109,7 @@ export async function POST(req: Request) {
         success: true,
         verified: true,
         mock: true,
-        amountPaid: Number(amountPaid || 99),
+        amountPaid: Number(amountPaid || 149),
       });
     }
 
@@ -359,7 +359,7 @@ export async function POST(req: Request) {
           customerName,
           productName: itemProductName,
           orderId: order_id,
-          amount: Number(data.order_amount || amountPaid || 99),
+          amount: Number(data.order_amount || amountPaid || 149),
           downloadUrl,
         });
 
@@ -367,7 +367,7 @@ export async function POST(req: Request) {
           customerName,
           productName: itemProductName,
           orderId: order_id,
-          amount: Number(data.order_amount || amountPaid || 99),
+          amount: Number(data.order_amount || amountPaid || 149),
           downloadUrl,
         });
 

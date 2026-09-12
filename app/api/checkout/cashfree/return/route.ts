@@ -35,7 +35,7 @@ export async function GET(req: Request) {
         mock: "true",
         name: searchParams.get("name") || "",
         email: searchParams.get("email") || "",
-        amountPaid: searchParams.get("amountPaid") || "99",
+        amountPaid: searchParams.get("amountPaid") || "149",
         product: prod,
         addons: searchParams.get("addons") || "",
       });
@@ -119,7 +119,7 @@ export async function GET(req: Request) {
     const customerEmail =
       tags.email || data.customer_details?.customer_email || "";
     const addons = tags.addons || "";
-    const amountPaid = String(data.order_amount || 99);
+    const amountPaid = String(data.order_amount || 149);
 
     const q = new URLSearchParams({
       order_id,
