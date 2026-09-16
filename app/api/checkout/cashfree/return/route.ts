@@ -80,6 +80,8 @@ export async function GET(req: Request) {
         case "opd-ebook":
         case "opd_ebook":
           return `${appUrl}/opd-mastery-ebook/checkout?payment_status=${status}`;
+        case "anatomy":
+          return `${appUrl}/anatomy-coloring-book/checkout?payment_status=${status}`;
         case "norcet":
           return `${appUrl}/norcet-notes/checkout?payment_status=${status}`;
         case "mcq":
@@ -95,6 +97,8 @@ export async function GET(req: Request) {
         case "opd-ebook":
         case "opd_ebook":
           return `${appUrl}/opd-mastery-ebook/thank-you?${q.toString()}`;
+        case "anatomy":
+          return `${appUrl}/anatomy-coloring-book/thank-you?${q.toString()}`;
         case "norcet":
           return `${appUrl}/norcet-notes/thank-you?${q.toString()}`;
         case "mcq":

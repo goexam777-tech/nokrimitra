@@ -37,6 +37,7 @@ export async function POST(req: Request) {
       isOpd && !isOpdEbook && (offer === "exit149" || isExitOffer === true);
     const isNorcet = product === "norcet";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
+    const isAnatomy = product === "anatomy";
 
     // Amount is computed server-side for security
     const opdHasAddon =
@@ -54,6 +55,8 @@ export async function POST(req: Request) {
       ? 149
       : isMbbs
       ? 199
+      : isAnatomy
+      ? 149
       : Number(reqAmount || 149);
 
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -103,6 +106,14 @@ export async function POST(req: Request) {
         product: isOpdEbook ? "opd-ebook" : "opd",
         offer: isOpdExitOffer ? "exit149" : "standard",
         addons: addonParam,
+        name: cleanName.slice(0, 80),
+        email: cleanEmail.slice(0, 80),
+      };
+
+    } else if (isAnatomy) {
+      returnUrl = `${appUrl}/api/checkout/cashfree/return?order_id={order_id}`;
+      orderTags = {
+        product: "anatomy",
         name: cleanName.slice(0, 80),
         email: cleanEmail.slice(0, 80),
       };

@@ -1,0 +1,87 @@
+/* Sample pages gallery — native horizontal swipe, mobile friendly */
+.sampleSection {
+  padding: clamp(28px, 5vw, 56px) 0 clamp(32px, 6vw, 60px);
+  background: #f4f8ff;
+}
+
+.sampleContainer {
+  width: min(100%, 1080px);
+  margin-inline: auto;
+  padding-inline: 18px;
+}
+
+.sampleHeader {
+  margin: 0 auto clamp(20px, 3.5vw, 32px);
+  max-width: 640px;
+  text-align: center;
+}
+
+.sampleBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #e7f2ff;
+  color: #1268c4;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.sampleTitle {
+  margin: 0;
+  color: #0d1b33;
+  font-size: clamp(1.5rem, 4.6vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+
+.sampleTitle span {
+  color: #1689ef;
+}
+
+.sampleSubtitle {
+  margin: 12px 0 0;
+  color: #55606b;
+  font-size: clamp(0.92rem, 2.4vw, 1.02rem);
+  line-height: 1.55;
+}
+
+.sampleTrack {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 6px 4px 18px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.sampleTrack::-webkit-scrollbar {
+  height: 8px;
+}
+
+.sampleTrack::-webkit-scrollbar-thumb {
+  background: #c3d6ee;
+  border-radius: 999px;
+}
+
+.sampleImg {
+  flex: 0 0 auto;
+  display: block;
+  width: min(78vw, 340px);
+  height: auto;
+  scroll-snap-align: center;
+  border-radius: 14px;
+}
+
+.sampleHint {
+  margin: 6px 0 0;
+  color: #8a97a6;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}

@@ -12,6 +12,10 @@ const DEFAULT_PIXEL =
 const GSRTC_PIXEL =
   process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || DEFAULT_PIXEL;
 
+// Dedicated pixel (PureWow) used ONLY for the Anatomy Coloring Book product.
+const ANATOMY_PIXEL =
+  process.env.NEXT_PUBLIC_FB_PIXEL_ID_ANATOMY || "1399128725611345";
+
 // Route prefixes that use the 905602885399577 pixel (GSRTC).
 const GSRTC_PREFIXES = [
   "/buy",
@@ -22,11 +26,18 @@ const GSRTC_PREFIXES = [
   "/gujarat-no-itihas",
 ];
 
+// Route prefixes that use the dedicated Anatomy Coloring Book pixel.
+const ANATOMY_PREFIXES = ["/anatomy-coloring-book"];
+
 function isGsrtcPath(path: string): boolean {
   if (path === "/") return true;
   return GSRTC_PREFIXES.some(
     (p) => path === p || path.startsWith(p + "/")
   );
+}
+
+function isAnatomyPath(path: string): boolean {
+  return ANATOMY_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
 }
 
 export default function FbPixel() {
@@ -35,7 +46,11 @@ export default function FbPixel() {
 
   useEffect(() => {
     const path = pathname || "/";
-    const id = isGsrtcPath(path) ? GSRTC_PIXEL : DEFAULT_PIXEL;
+    const id = isAnatomyPath(path)
+      ? ANATOMY_PIXEL
+      : isGsrtcPath(path)
+      ? GSRTC_PIXEL
+      : DEFAULT_PIXEL;
     if (!id) return;
 
     let cancelled = false;

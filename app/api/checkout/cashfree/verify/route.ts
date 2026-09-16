@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import { buildOrderEmail, buildOrderEmailText } from "@/lib/emailTemplate";
 import { buildNorcetEmail, buildNorcetEmailText } from "@/lib/norcetEmailTemplate";
 import { buildOpdEmail, buildOpdEmailText } from "@/lib/opdEmailTemplate";
+import {
+  buildAnatomyEmail,
+  buildAnatomyEmailText,
+} from "@/lib/anatomyEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
+
+const ANATOMY_PRICE = 149;
+const ANATOMY_PRODUCT_NAME = "500+ Human Anatomy Coloring Book Bundle";
 
 const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
@@ -39,6 +46,7 @@ export async function POST(req: Request) {
     const isOpd = product === "opd" || isOpdEbook;
     const isNorcet = product === "norcet";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
+    const isAnatomy = product === "anatomy";
 
     // Public origin for links included in email + downloads.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
@@ -94,6 +102,18 @@ export async function POST(req: Request) {
           mock: true,
           amountPaid: 199,
           downloadPath: "/mbbs-notes/go",
+        });
+      }
+      if (isAnatomy) {
+        const anatomyToken = createDownloadToken("anatomy", order_id);
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          mock: true,
+          amountPaid: ANATOMY_PRICE,
+          downloadPath: `/anatomy-coloring-book/go${
+            anatomyToken ? `?t=${anatomyToken}` : ""
+          }`,
         });
       }
       if (isNorcet) {
@@ -152,7 +172,7 @@ export async function POST(req: Request) {
     // The product + add-on are read back from Cashfree order tags, so the
     // browser can never inflate what was purchased.
     const tags = (data.order_tags || {}) as Record<string, string>;
-    const verifiedProduct = tags.product || (isOpd ? (isOpdEbook ? "opd-ebook" : "opd") : isNorcet ? "norcet" : "mcq");
+    const verifiedProduct = tags.product || (isOpd ? (isOpdEbook ? "opd-ebook" : "opd") : isNorcet ? "norcet" : isAnatomy ? "anatomy" : "mcq");
 
     if (verifiedProduct === "opd" || verifiedProduct === "opd-ebook" || verifiedProduct === "opd_ebook") {
       const isVerifiedOpdEbook = verifiedProduct === "opd-ebook" || verifiedProduct === "opd_ebook" || isOpdEbook;
@@ -340,6 +360,82 @@ export async function POST(req: Request) {
         mock: false,
         amountPaid: expectedAmount,
         downloadPath: "/norcet-notes/go",
+      });
+    }
+
+    if (verifiedProduct === "anatomy") {
+      const expectedAmount = ANATOMY_PRICE;
+
+      if (Number(data.order_amount) !== expectedAmount) {
+        return NextResponse.json(
+          { error: "Anatomy order amount verification failed" },
+          { status: 400 }
+        );
+      }
+
+      const customerEmail = String(
+        tags.email || email || data.customer_details?.customer_email || ""
+      ).trim();
+      const customerName =
+        String(
+          tags.name || name || data.customer_details?.customer_name || "Student"
+        ).trim() || "Student";
+
+      const anatomyToken = createDownloadToken("anatomy", order_id);
+      const anatomyDownloadUrl = `${appUrl}/anatomy-coloring-book/go${
+        anatomyToken ? `?t=${anatomyToken}` : ""
+      }`;
+
+      if (resendApiKey && resendApiKey !== "your_resend_key_here" && customerEmail) {
+        try {
+          const emailResponse = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${resendApiKey}`,
+            },
+            body: JSON.stringify({
+              from: emailFrom,
+              to: [customerEmail],
+              reply_to: "support@nokrimitra.in",
+              subject: `${ANATOMY_PRODUCT_NAME}: Your download link is ready! 🎨`,
+              html: buildAnatomyEmail({
+                customerName,
+                productName: ANATOMY_PRODUCT_NAME,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl: anatomyDownloadUrl,
+              }),
+              text: buildAnatomyEmailText({
+                customerName,
+                productName: ANATOMY_PRODUCT_NAME,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl: anatomyDownloadUrl,
+              }),
+            }),
+          });
+          if (!emailResponse.ok) {
+            console.error(
+              "Resend API failed for Anatomy Cashfree verification:",
+              await emailResponse.text()
+            );
+          } else {
+            console.log(`Anatomy order email sent to ${customerEmail}`);
+          }
+        } catch (emailErr) {
+          console.error("Failed to send Anatomy Cashfree email:", emailErr);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        verified: true,
+        mock: false,
+        amountPaid: expectedAmount,
+        downloadPath: `/anatomy-coloring-book/go${
+          anatomyToken ? `?t=${anatomyToken}` : ""
+        }`,
       });
     }
 
