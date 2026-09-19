@@ -30,18 +30,38 @@ function sign(payload: string, secret: string): string {
     .digest("base64url");
 }
 
+function createTokenWithExpiry(
+  product: string,
+  orderId: string,
+  expiryMs: number
+): string | null {
+  const secret = getSecret();
+  if (!secret || !orderId || !Number.isFinite(expiryMs)) return null;
+
+  const payload = `${product}.${orderId}.${Math.floor(expiryMs)}`;
+  const encoded = Buffer.from(payload, "utf8").toString("base64url");
+  return `${encoded}.${sign(payload, secret)}`;
+}
+
 /** Returns a download token, or null when no signing secret is configured. */
 export function createDownloadToken(
   product: string,
   orderId: string,
   ttlMs: number = TOKEN_TTL_MS
 ): string | null {
-  const secret = getSecret();
-  if (!secret || !orderId) return null;
+  return createTokenWithExpiry(product, orderId, Date.now() + ttlMs);
+}
 
-  const payload = `${product}.${orderId}.${Date.now() + ttlMs}`;
-  const encoded = Buffer.from(payload, "utf8").toString("base64url");
-  return `${encoded}.${sign(payload, secret)}`;
+/**
+ * Returns a stable token for a fixed expiry. Useful when webhook and browser
+ * fulfillment may run concurrently and must produce the same email payload.
+ */
+export function createStableDownloadToken(
+  product: string,
+  orderId: string,
+  expiryMs: number
+): string | null {
+  return createTokenWithExpiry(product, orderId, expiryMs);
 }
 
 export type TokenCheck =

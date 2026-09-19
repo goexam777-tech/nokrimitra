@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { ANATOMY_PIXEL_ID } from "@/lib/anatomyTracking";
 
 // Default (old) pixel used by every product EXCEPT the GSRTC funnel.
 const DEFAULT_PIXEL =
@@ -13,8 +14,7 @@ const GSRTC_PIXEL =
   process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || DEFAULT_PIXEL;
 
 // Dedicated pixel (PureWow) used ONLY for the Anatomy Coloring Book product.
-const ANATOMY_PIXEL =
-  process.env.NEXT_PUBLIC_FB_PIXEL_ID_ANATOMY || "1399128725611345";
+const ANATOMY_PIXEL = ANATOMY_PIXEL_ID;
 
 // Route prefixes that use the 905602885399577 pixel (GSRTC).
 const GSRTC_PREFIXES = [
@@ -56,7 +56,10 @@ export default function FbPixel() {
     let cancelled = false;
 
     const fire = () => {
-      const w = window as unknown as { fbq?: (...a: unknown[]) => void };
+      const w = window as unknown as {
+        fbq?: (...a: unknown[]) => void;
+        __anatomyPixelInitialized?: boolean;
+      };
       if (!w.fbq) {
         if (!cancelled) window.setTimeout(fire, 200);
         return;
@@ -66,6 +69,9 @@ export default function FbPixel() {
       if (!initedIds.current.has(id)) {
         w.fbq("init", id);
         initedIds.current.add(id);
+        if (id === ANATOMY_PIXEL) {
+          w.__anatomyPixelInitialized = true;
+        }
       }
       w.fbq("trackSingle", id, "PageView");
     };

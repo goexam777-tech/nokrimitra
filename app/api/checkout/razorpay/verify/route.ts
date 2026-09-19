@@ -15,6 +15,11 @@ import {
   buildMbbsEmailText,
 } from "@/lib/mbbsEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
+import {
+  ANATOMY_PRICE,
+  fulfillAnatomyRazorpayOrder,
+  getAnatomyFulfillmentErrorStatus,
+} from "@/lib/anatomyRazorpayFulfillment";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
 
 const OPD_BASE_PRICE = 149;
@@ -60,12 +65,22 @@ export async function POST(req: Request) {
       // With real keys configured, a mock order can never unlock a download.
       const liveSecret = process.env.RAZORPAY_KEY_SECRET;
       const inMockMode =
-        !liveSecret ||
-        liveSecret.includes("your_key_secret") ||
-        liveSecret.trim() === "";
+        process.env.NODE_ENV !== "production" &&
+        (!liveSecret ||
+          liveSecret.includes("your_key_secret") ||
+          liveSecret.trim() === "");
+
+      if (!inMockMode) {
+        return NextResponse.json(
+          { error: "Mock payments are disabled" },
+          { status: 400 }
+        );
+      }
+
       const mockTokenProduct =
-        inMockMode && (product === "escooter" || product === "opd")
-          ? (product as "escooter" | "opd")
+        inMockMode &&
+        (product === "escooter" || product === "opd" || product === "anatomy")
+          ? (product as "escooter" | "opd" | "anatomy")
           : null;
       const mockToken = mockTokenProduct
         ? createDownloadToken(mockTokenProduct, razorpay_order_id)
@@ -73,7 +88,9 @@ export async function POST(req: Request) {
       const mockBase =
         mockTokenProduct === "opd"
           ? "/opd-mastery/go"
-          : "/electric-scooter-repairing/go";
+          : mockTokenProduct === "anatomy"
+            ? "/anatomy-coloring-book/go"
+            : "/electric-scooter-repairing/go";
       const isExitOfferMock =
         product === "opd" &&
         (String(amountPaid) === "149" || String(addons || "").includes("exit149") || (body as { offer?: string }).offer === "exit149");
@@ -91,6 +108,8 @@ export async function POST(req: Request) {
             : OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
           : product === "nursing"
             ? NURSING_PRICE
+            : product === "anatomy"
+              ? ANATOMY_PRICE
             : product === ESCOOTER_CATALOG.product
               ? ESCOOTER_CATALOG.price
               : Number(amountPaid || 0);
@@ -113,6 +132,14 @@ export async function POST(req: Request) {
         amountPaid: mockAmount,
         downloads: mockDownloads,
         ...(mockToken ? { downloadPath: `${mockBase}?t=${mockToken}` } : {}),
+        ...(product === "anatomy"
+          ? {
+              customerName: String(name || "Student").trim() || "Student",
+              customerEmail: String(email || "").trim().toLowerCase(),
+              alreadyFulfilled: false,
+              emailDelivered: false,
+            }
+          : {}),
       });
     }
 
@@ -135,6 +162,44 @@ export async function POST(req: Request) {
         { error: "Invalid payment signature verification failed" },
         { status: 400 }
       );
+    }
+
+    if (product === "anatomy") {
+      const configuredAppUrl =
+        process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
+      const host = req.headers.get("host") || "localhost:3000";
+      const protocol = req.headers.get("x-forwarded-proto") || "http";
+      const appUrl = (
+        configuredAppUrl ||
+        (process.env.NODE_ENV === "production"
+          ? "https://nokrimitra.in"
+          : `${protocol}://${host}`)
+      ).replace(/\/$/, "");
+
+      try {
+        const result = await fulfillAnatomyRazorpayOrder({
+          orderId: razorpay_order_id,
+          paymentId: razorpay_payment_id,
+          appUrl,
+        });
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          mock: false,
+          ...result,
+        });
+      } catch (anatomyError) {
+        console.error("Anatomy Razorpay verification failed:", anatomyError);
+        return NextResponse.json(
+          {
+            error:
+              anatomyError instanceof Error
+                ? anatomyError.message
+                : "Anatomy payment verification failed",
+          },
+          { status: getAnatomyFulfillmentErrorStatus(anatomyError) }
+        );
+      }
     }
 
     let verifiedOpdAddons: string[] = [];

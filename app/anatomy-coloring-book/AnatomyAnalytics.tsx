@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { trackAnatomyMetaEvent } from "@/lib/anatomyTracking";
 
 const PRODUCT_NAME = "500+ Human Anatomy Coloring Book Bundle";
 const PRICE = 149;
@@ -38,20 +39,14 @@ export default function AnatomyAnalytics() {
       ],
     });
 
-    // 2. Facebook Pixel (ViewContent)
-    const fireFb = (attempts = 0) => {
-      if (typeof w.fbq === "function") {
-        w.fbq("track", "ViewContent", {
-          content_name: PRODUCT_NAME,
-          content_category: "Anatomy Coloring Book",
-          value: PRICE,
-          currency: "INR",
-        });
-      } else if (attempts < 10) {
-        setTimeout(() => fireFb(attempts + 1), 300);
-      }
-    };
-    fireFb();
+    // 2. Dedicated PureWow Facebook Pixel (ViewContent)
+    trackAnatomyMetaEvent("ViewContent", {
+      content_name: PRODUCT_NAME,
+      content_category: "Anatomy Coloring Book",
+      content_type: "product",
+      value: PRICE,
+      currency: "INR",
+    });
   }, []);
 
   return null;

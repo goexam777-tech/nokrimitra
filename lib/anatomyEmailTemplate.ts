@@ -4,8 +4,29 @@ interface AnatomyEmailParams {
   orderId: string;
   amount: number;
   downloadUrl: string;
+  coverUrl?: string;
   brandName?: string;
   supportEmail?: string;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function safeHttpUrl(value: string): string {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:"
+      ? escapeHtml(url.toString())
+      : "#";
+  } catch {
+    return "#";
+  }
 }
 
 export function buildAnatomyEmailText({
@@ -17,23 +38,27 @@ export function buildAnatomyEmailText({
   brandName = "Anatomy Coloring Book",
   supportEmail = "support@nokrimitra.in",
 }: AnatomyEmailParams): string {
-  return `Payment Successful!
+  return `YOUR ANATOMY COLORING BUNDLE IS READY
 
-Hi ${customerName || "there"},
+Hi ${customerName || "Student"},
 
-Thank you for purchasing ${productName}. Your payment was successful and your bundle is ready to download.
+Thank you for purchasing ${productName}. Your payment has been verified and your digital PDF bundle is ready.
 
-Download link:
+DOWNLOAD YOUR BUNDLE:
 ${downloadUrl}
 
-Order Details:
-- Product: ${productName}
-- Order ID: ${orderId}
-- Amount Paid: Rs.${amount}
+WHAT IS INCLUDED:
+- 500+ printable anatomy learning and coloring pages
+- Major human body systems
+- Multiple-choice questions for revision
+- Personal study access on compatible devices
 
-Keep this email safe. You can access and re-download your PDF anytime on any device.
+ORDER SUMMARY:
+Product: ${productName}
+Order ID: ${orderId}
+Amount Paid: ₹${amount} INR
 
-If you need any help, contact our support team at ${supportEmail}.
+Your secure link is valid for 12 months. Save this email. If you ever need a refreshed link, contact ${supportEmail} with your Order ID.
 
 Warm regards,
 ${brandName} Team`;
@@ -45,108 +70,116 @@ export function buildAnatomyEmail({
   orderId,
   amount,
   downloadUrl,
+  coverUrl,
   brandName = "Anatomy Coloring Book",
   supportEmail = "support@nokrimitra.in",
 }: AnatomyEmailParams): string {
-  const header = "#1689ef";
-  const headerDark = "#0c4f9f";
-  const btn = "#1179e2";
-  const btnHover = "#0c4f9f";
+  const safeName = escapeHtml(customerName || "Student");
+  const safeProduct = escapeHtml(productName);
+  const safeOrderId = escapeHtml(orderId);
+  const safeDownloadUrl = safeHttpUrl(downloadUrl);
+  const safeCoverUrl = coverUrl ? safeHttpUrl(coverUrl) : "";
+  const safeBrand = escapeHtml(brandName);
+  const safeSupportEmail = escapeHtml(supportEmail);
 
-  return `<!DOCTYPE html>
+  return `<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${productName}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>${safeProduct}</title>
 </head>
-<body style="margin:0;padding:0;background-color:#eef6ff;font-family:'Segoe UI',Roboto,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;color:#0f172a;-webkit-font-smoothing:antialiased;">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Order Confirmed! Access your Human Anatomy Coloring Book Bundle now.</div>
-
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#eef6ff;padding:32px 16px;">
+<body style="margin:0;padding:0;background:#edf4fb;color:#172033;font-family:Arial,'Helvetica Neue',sans-serif;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">Your verified Anatomy Coloring Book download is ready.</div>
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#edf4fb" style="width:100%;background:#edf4fb;">
     <tr>
-      <td align="center">
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 12px 36px rgba(15,23,42,0.08);border:1px solid #e2e8f0;">
-
+      <td align="center" style="padding:28px 12px;">
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #dce7f3;border-radius:18px;overflow:hidden;">
           <tr>
-            <td style="background:linear-gradient(135deg,${header} 0%,${headerDark} 100%);padding:36px 28px;text-align:center;">
-              <div style="display:inline-block;width:64px;height:64px;line-height:64px;border-radius:50%;background:rgba(255,255,255,0.18);font-size:32px;margin-bottom:12px;">
-                🎨
-              </div>
-              <h1 style="margin:0 0 6px 0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.01em;">Payment Successful!</h1>
-              <p style="margin:0;color:#d7ecff;font-size:14.5px;font-weight:500;">Your Anatomy Coloring Bundle is confirmed</p>
+            <td bgcolor="#102a43" style="padding:10px 24px;background:#102a43;color:#d8f3dc;font-size:12px;font-weight:700;text-align:center;letter-spacing:.08em;text-transform:uppercase;">
+              Payment verified • Secure digital delivery
             </td>
           </tr>
-
           <tr>
-            <td style="padding:36px 32px 16px 32px;">
-              <p style="margin:0 0 14px 0;font-size:17px;font-weight:600;color:#0f172a;">Hi <strong>${customerName || "Student"}</strong> 👋,</p>
-              <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#334155;">
-                Thank you for purchasing the <strong>${productName}</strong>! Your transaction was verified successfully. Click the button below to download your complete bundle immediately.
-              </p>
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;border:1.5px solid #e2e8f0;border-radius:14px;margin:0 0 28px 0;overflow:hidden;">
+            <td bgcolor="#1769aa" style="padding:30px 26px;background:#1769aa;text-align:center;">
+              <div style="margin:0 0 10px;color:#bfe3ff;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">500+ Human Anatomy Coloring Book Bundle</div>
+              <h1 style="margin:0;color:#ffffff;font-size:28px;line-height:1.18;font-weight:800;">Learn it. Color it. Remember it.</h1>
+              <p style="margin:10px 0 0;color:#e8f5ff;font-size:15px;line-height:1.55;">Your complete anatomy study bundle is ready to download.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 26px 8px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 <tr>
-                  <td style="padding:16px 20px;background:#eaf3ff;border-bottom:1px solid #cfe4fb;">
-                    <span style="font-size:12px;font-weight:700;color:${header};text-transform:uppercase;letter-spacing:0.8px;">OFFICIAL ORDER RECEIPT</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:18px 20px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td style="padding:4px 0;font-size:14px;color:#64748b;font-weight:500;">Product:</td>
-                        <td style="padding:4px 0;font-size:14px;color:#0f172a;font-weight:600;text-align:right;">${productName}</td>
-                      </tr>
-                      <tr>
-                        <td style="padding:4px 0;font-size:14px;color:#64748b;font-weight:500;">Order ID:</td>
-                        <td style="padding:4px 0;font-size:14px;color:#0f172a;font-weight:600;text-align:right;"><code style="background:#e2e8f0;padding:2px 7px;border-radius:5px;font-family:monospace;font-size:13px;">${orderId}</code></td>
-                      </tr>
-                      <tr>
-                        <td style="padding:8px 0 0 0;font-size:14px;color:#64748b;font-weight:500;">Total Paid:</td>
-                        <td style="padding:8px 0 0 0;font-size:18px;color:${btn};font-weight:700;text-align:right;">₹${amount}</td>
-                      </tr>
-                    </table>
+                  ${safeCoverUrl ? `<td width="104" valign="top" style="width:104px;padding:0 20px 0 0;"><img src="${safeCoverUrl}" width="104" alt="Human Anatomy Coloring Book Bundle cover" style="display:block;width:104px;height:auto;border:0;border-radius:10px;"></td>` : ""}
+                  <td valign="top">
+                    <p style="margin:0 0 8px;color:#172033;font-size:17px;font-weight:700;">Hi ${safeName},</p>
+                    <p style="margin:0;color:#506176;font-size:15px;line-height:1.65;">Thank you for your purchase. Your Razorpay payment has been verified and your digital PDF bundle is available now.</p>
                   </td>
                 </tr>
               </table>
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 26px 8px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f5f9fd" style="background:#f5f9fd;border:1px solid #dce7f3;border-radius:12px;">
                 <tr>
-                  <td align="center" style="padding:0 0 12px 0;">
-                    <a href="${downloadUrl}" target="_blank"
-                       style="display:block;width:100%;max-width:440px;padding:16px 24px;border-radius:14px;background:linear-gradient(180deg,${btn} 0%,${btnHover} 100%);color:#ffffff;font-size:15.5px;font-weight:600;text-decoration:none;text-align:center;box-shadow:0 8px 22px rgba(17,121,226,0.35);box-sizing:border-box;">
-                      📥 DOWNLOAD YOUR ANATOMY BUNDLE
-                    </a>
+                  <td style="padding:18px 18px 8px;color:#1769aa;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;">Inside your bundle</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 18px 18px;color:#334e68;font-size:14px;line-height:1.8;">
+                    <strong style="color:#1f7a4d;">✓</strong>&nbsp; 500+ printable anatomy coloring pages<br>
+                    <strong style="color:#1f7a4d;">✓</strong>&nbsp; All major human body systems<br>
+                    <strong style="color:#1f7a4d;">✓</strong>&nbsp; Multiple-choice revision questions<br>
+                    <strong style="color:#1f7a4d;">✓</strong>&nbsp; Digital PDF for personal study
                   </td>
                 </tr>
               </table>
-
-              <div style="background-color:#f1f5f9;border-radius:12px;padding:14px 18px;text-align:center;margin-bottom:24px;">
-                <p style="margin:0;font-size:13px;color:#475569;font-weight:600;line-height:1.45;">
-                  🔒 <strong>Lifetime &amp; Multi-Device Access:</strong> Save this email! This download link works anytime on Mobile, Tablet, Laptop, or PC.
-                </p>
-              </div>
             </td>
           </tr>
-
           <tr>
-            <td style="padding:24px 32px 32px 32px;background-color:#fafafa;border-top:1px solid #f1f5f9;">
-              <p style="margin:0 0 10px 0;font-size:13.5px;color:#475569;line-height:1.5;">
-                Need help with your download? Reply directly to this email or reach our support desk:
-              </p>
-              <p style="margin:0;font-size:14.5px;font-weight:700;">
-                ✉️ Support Email: <a href="mailto:${supportEmail}" style="color:${header};text-decoration:none;">${supportEmail}</a>
-              </p>
+            <td align="center" style="padding:20px 26px 10px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto;">
+                <tr>
+                  <td align="center" bgcolor="#28a745" style="border-radius:8px;background:#28a745;">
+                    <a href="${safeDownloadUrl}" target="_blank" style="display:inline-block;padding:16px 30px;color:#ffffff;font-size:16px;font-weight:800;text-decoration:none;line-height:1.2;">DOWNLOAD YOUR ANATOMY BUNDLE</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:13px 0 0;color:#718096;font-size:12px;line-height:1.5;">Button not working? Copy this secure link:</p>
+              <p style="margin:4px auto 0;max-width:500px;word-break:break-all;color:#1769aa;font-size:12px;line-height:1.5;"><a href="${safeDownloadUrl}" style="color:#1769aa;text-decoration:underline;">${safeDownloadUrl}</a></p>
             </td>
           </tr>
-
-          <tr style="background-color:#0f172a;">
-            <td style="padding:18px 24px;text-align:center;">
-              <p style="margin:0;font-size:12.5px;color:#94a3b8;font-weight:500;">© ${new Date().getFullYear()} ${brandName}. All rights reserved.</p>
+          <tr>
+            <td style="padding:14px 26px 8px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-top:1px solid #e6edf5;border-bottom:1px solid #e6edf5;">
+                <tr>
+                  <td style="padding:15px 0;color:#6b7c93;font-size:13px;">Product</td>
+                  <td align="right" style="padding:15px 0;color:#172033;font-size:13px;font-weight:700;">${safeProduct}</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 15px;color:#6b7c93;font-size:13px;">Order ID</td>
+                  <td align="right" style="padding:0 0 15px;color:#172033;font-family:monospace;font-size:12px;font-weight:700;">${safeOrderId}</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 15px;color:#6b7c93;font-size:13px;">Amount paid</td>
+                  <td align="right" style="padding:0 0 15px;color:#1f7a4d;font-size:16px;font-weight:800;">₹${amount} INR</td>
+                </tr>
+              </table>
             </td>
           </tr>
-
+          <tr>
+            <td style="padding:18px 26px 26px;color:#62748a;font-size:13px;line-height:1.65;">
+              <p style="margin:0 0 10px;"><strong style="color:#334e68;">Keep this email safe.</strong> Your secure link is valid for 12 months. If you need a refreshed link later, send your Order ID to support.</p>
+              <p style="margin:0;">Need help? Reply to this email or contact <a href="mailto:${safeSupportEmail}" style="color:#1769aa;font-weight:700;text-decoration:none;">${safeSupportEmail}</a>.</p>
+            </td>
+          </tr>
+          <tr>
+            <td bgcolor="#102a43" style="padding:18px 24px;background:#102a43;text-align:center;color:#9fb3c8;font-size:12px;line-height:1.5;">
+              © ${new Date().getFullYear()} ${safeBrand} • Digital study resource for personal use
+            </td>
+          </tr>
         </table>
       </td>
     </tr>

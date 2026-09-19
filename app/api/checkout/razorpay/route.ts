@@ -10,6 +10,8 @@ const NURSING_PRICE = 199;
 
 const MBBS_PRICE = 199;
 
+const ANATOMY_PRICE = 149;
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -21,6 +23,7 @@ export async function POST(req: Request) {
     const opdBase = isOpdEbook ? 149 : OPD_BASE_PRICE;
     const isNursing = body.product === "nursing";
     const isMbbs = body.product === "mbbs" || body.product === "mbbs-notes";
+    const isAnatomy = body.product === "anatomy";
     const isEscooter = body.product === ESCOOTER_CATALOG.product;
     const requestedAddons = Array.isArray(body.addons) ? body.addons.map(String) : [];
     const unknownAddons = isOpd
@@ -31,6 +34,22 @@ export async function POST(req: Request) {
 
     if (unknownAddons.length) {
       return NextResponse.json({ error: "Invalid add-on selected" }, { status: 400 });
+    }
+
+    if (isAnatomy) {
+      const customerName = String(body.name || "").trim();
+      const customerEmail = String(body.email || "").trim().toLowerCase();
+      if (
+        !customerName ||
+        customerName.length > 120 ||
+        customerEmail.length > 200 ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)
+      ) {
+        return NextResponse.json(
+          { error: "A valid name and email are required" },
+          { status: 400 }
+        );
+      }
     }
 
     const addons = isOpd
@@ -46,6 +65,8 @@ export async function POST(req: Request) {
         ? NURSING_PRICE
         : isMbbs
           ? MBBS_PRICE
+          : isAnatomy
+            ? ANATOMY_PRICE
           : isEscooter
             ? ESCOOTER_CATALOG.price
             : Number(body.amount || 149);
@@ -55,7 +76,20 @@ export async function POST(req: Request) {
     }
 
     const amountInPaise = Math.round(amount * 100);
-    const isMock = !keyId || keyId.includes("your_key_id") || !keySecret || keySecret.includes("your_key_secret");
+    const credentialsMissing =
+      !keyId ||
+      keyId.includes("your_key_id") ||
+      !keySecret ||
+      keySecret.includes("your_key_secret");
+    const isMock = credentialsMissing && process.env.NODE_ENV !== "production";
+
+    if (credentialsMissing && process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        { error: "Razorpay is not configured on the server" },
+        { status: 500 }
+      );
+    }
+
     if (isMock) {
       return NextResponse.json({ orderId: `order_mock_${Math.random().toString(36).substring(2, 11)}`, amount: amountInPaise, total: amount, addons, currency: "INR", mock: true });
     }
@@ -82,6 +116,13 @@ export async function POST(req: Request) {
           catalogVersion: "1",
           customerEmail: String(body.email || "").trim().toLowerCase(),
           customerName: String(body.name || "").trim().slice(0, 120),
+        }
+      : isAnatomy
+      ? {
+          product: "anatomy",
+          catalogVersion: "1",
+          customerEmail: String(body.email || "").trim().toLowerCase(),
+          customerName: String(body.name || "").trim(),
         }
       : isEscooter
         ? {

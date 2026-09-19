@@ -226,7 +226,7 @@ export default function AnatomyColoringBookPage() {
       <section className={styles.simpleHero}>
         <div className={styles.simpleContainer}>
           <span className={styles.heroBadge}>
-            500+ Human Anatomy Coloring Book Bundle
+            500+ Human Anatomy Coloring Book
           </span>
 
           <h1 className={styles.simpleTitle}>

@@ -4,6 +4,10 @@ import { buildOpdEmail, buildOpdEmailText } from "@/lib/opdEmailTemplate";
 import { buildNursingEmail, buildNursingEmailText } from "@/lib/nursingEmailTemplate";
 import { buildMbbsEmail, buildMbbsEmailText } from "@/lib/mbbsEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
+import {
+  fulfillAnatomyRazorpayOrder,
+  getAnatomyFulfillmentErrorStatus,
+} from "@/lib/anatomyRazorpayFulfillment";
 
 const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
@@ -30,23 +34,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Secret not configured" }, { status: 500 });
     }
 
-    if (signature) {
-      const expectedSignature = crypto
-        .createHmac("sha256", webhookSecret)
-        .update(rawBody)
-        .digest("hex");
+    if (!signature) {
+      console.error("[Webhook] Missing Razorpay signature");
+      return NextResponse.json({ error: "Missing signature" }, { status: 400 });
+    }
 
-      if (expectedSignature !== signature) {
-        // Also test with RAZORPAY_KEY_SECRET if webhookSecret was different
-        const keySecret = process.env.RAZORPAY_KEY_SECRET;
-        const altSignature = keySecret
-          ? crypto.createHmac("sha256", keySecret).update(rawBody).digest("hex")
-          : null;
+    const expectedSignature = crypto
+      .createHmac("sha256", webhookSecret)
+      .update(rawBody)
+      .digest("hex");
 
-        if (altSignature !== signature) {
-          console.error("[Webhook] Invalid signature received");
-          return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
-        }
+    if (expectedSignature !== signature) {
+      // Support existing deployments that configured the API secret as the
+      // webhook secret, while still rejecting every unsigned request.
+      const keySecret = process.env.RAZORPAY_KEY_SECRET;
+      const altSignature = keySecret
+        ? crypto.createHmac("sha256", keySecret).update(rawBody).digest("hex")
+        : null;
+
+      if (altSignature !== signature) {
+        console.error("[Webhook] Invalid signature received");
+        return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
       }
     }
 
@@ -116,6 +124,41 @@ export async function POST(req: Request) {
 
     const resendApiKey = process.env.RESEND_API_KEY;
     const emailFrom = process.env.EMAIL_FROM || "NokriMitra <download@pdf.nokrimitra.in>";
+
+    if (product === "anatomy") {
+      try {
+        const result = await fulfillAnatomyRazorpayOrder({
+          orderId,
+          paymentId: payment?.id,
+          appUrl,
+        });
+
+        if (!result.emailDelivered) {
+          return NextResponse.json(
+            { error: "Anatomy email delivery is pending" },
+            { status: 503 }
+          );
+        }
+
+        return NextResponse.json({
+          success: true,
+          orderId,
+          product: "anatomy",
+          alreadyFulfilled: result.alreadyFulfilled,
+        });
+      } catch (anatomyError) {
+        console.error("[Webhook] Anatomy fulfillment failed:", anatomyError);
+        return NextResponse.json(
+          {
+            error:
+              anatomyError instanceof Error
+                ? anatomyError.message
+                : "Anatomy fulfillment failed",
+          },
+          { status: getAnatomyFulfillmentErrorStatus(anatomyError) }
+        );
+      }
+    }
 
     if (product === "opd" || product === "opd-ebook" || product === "opd_ebook") {
       const isExitOffer =
