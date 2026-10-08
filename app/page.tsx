@@ -2,23 +2,23 @@ import type { Metadata } from "next";
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import SiteFooter from "@/app/components/SiteFooter";
-import pdfHero from "@/public/pdfhero.webp";
+import pdfHero from "@/public/5ef7d48c-9f0c-4388-8409-32dbd27d792a.webp";
 import razorpayBadge from "@/public/razorpay-logo.webp";
 import waReview1 from "@/public/wa-review-1.jpg";
 import waReview2 from "@/public/wa-review-2.png";
 import waReview3 from "@/public/wa-review-3.png";
-import pdfPreview1 from "@/public/pdf-preview-1.png";
-import pdfPreview2 from "@/public/pdf-preview-2.png";
-import pdfPreview3 from "@/public/pdf-preview-3.png";
-import pdfPreview4 from "@/public/pdf-preview-4.png";
+import pdfPreview1 from "@/public/Screenshot 2026-10-09 005105.webp";
+import pdfPreview2 from "@/public/Screenshot 2026-10-09 005203.webp";
+import pdfPreview3 from "@/public/Screenshot 2026-10-09 005250.webp";
+import pdfPreview4 from "@/public/Screenshot 2026-10-09 005359.webp";
 import rahulPatel from "@/public/rahul-patel.webp";
 import jayeshChaudhary from "@/public/jayesh.jpg";
 import priyaDesai from "@/public/neha-verma.avif";
 
 export const metadata: Metadata = {
-  title: "GSRTC MCQ કોર્સ ₹99 | નોકરી મિત્ર",
+  title: "GSRTC કંડક્ટર ભરતી 2026 Model Papers | નોકરી મિત્ર",
   description:
-    "GSRTC MCQ પેકેજમાં 10 Content PDFs, 2500+ MCQs, 21 Model Practice Papers અને 10 Computer Notes — ₹99 માં તાત્કાલિક ડિજિટલ એક્સેસ.",
+    "GSRTC કંડક્ટર પરીક્ષા માટે 15 Model Papers, 2500+ MCQs, 500 Computer One-Liners અને 10 Computer Notes — ₹49 માં તાત્કાલિક ડિજિટલ એક્સેસ.",
 };
 
 type CheckItem = {
@@ -52,27 +52,24 @@ type Faq = {
 };
 
 const heroChecklist: CheckItem[] = [
-  { bold: "100% અભ્યાસક્રમ આધારિત", rest: "– GSRTC ના દરેક વિષય આવરી લેવાયા" },
-  { bold: "તૈયાર નોંધ", rest: "– વાંચો અને યાદ રાખો, બીજી મહેનત નહીં" },
-  { bold: "HD ગુણવત્તા", rest: "– સ્પષ્ટ અને વ્યવસ્થિત લેઆઉટ" },
-  { bold: "21 Model Paper", rest: "– પેપર આધારિત પ્રેક્ટિસ માટે" },
-  { bold: "2500+ MCQ પ્રેક્ટિસ", rest: "– જવાબ સાથે, ક્વિઝ ફોર્મેટમાં" },
-  { bold: "તાત્કાલિક ડાઉનલોડ", rest: "– રાહ જોવાની જરૂર નહીં" },
-  { bold: "લાઇફટાઇમ એક્સેસ", rest: "– એક વાર ખરીદો, કાયમ વાપરો" },
+  { bold: "15 Model Papers", rest: "– પરીક્ષા માટે પ્રેક્ટિસ કરો" },
+  { bold: "2500+ MCQs", rest: "– પ્રશ્નો અને જવાબો સાથે" },
+  { bold: "500 Computer One-Liners", rest: "– ઝડપી રિવિઝન માટે" },
+  { bold: "10 Computer Notes", rest: "– કમ્પ્યુટર વિષયની પ્રેક્ટિસ માટે" },
 ];
 
 const stats: Stat[] = [
-  { num: "10", label: "Content PDFs" },
+  { num: "15", label: "Model Papers" },
   { num: "2500+", label: "MCQs" },
-  { num: "21", label: "Model Practice Papers" },
+  { num: "500", label: "Computer One-Liners" },
   { num: "10", label: "Computer Notes" },
 ];
 
 const included: Feature[] = [
   {
-    icon: "📘",
-    title: "10 Content PDFs",
-    desc: "GSRTC MCQ અભ્યાસ માટે વિષયવાર ગોઠવેલી 10 Content PDFs.",
+    icon: "📄",
+    title: "15 Model Papers",
+    desc: "GSRTC કંડક્ટર પરીક્ષા માટે વિશેષ તૈયાર કરેલા 15 Model Practice Papers.",
   },
   {
     icon: "✍️",
@@ -80,14 +77,14 @@ const included: Feature[] = [
     desc: "જવાબ સાથે 2500+ બહુવિકલ્પ પ્રશ્નો, નિયમિત પ્રેક્ટિસ માટે.",
   },
   {
-    icon: "📄",
-    title: "21 Model Practice Papers",
-    desc: "પેપર આધારિત તૈયારી અને સ્વ-મૂલ્યાંકન માટે 21 Model Practice Papers.",
+    icon: "⚡",
+    title: "500 Computer One-Liners",
+    desc: "ઝડપી રિવિઝન અને કમ્પ્યુટર વિષયની તૈયારી માટે 500 One-Liners.",
   },
   {
     icon: "💻",
     title: "10 Computer Notes",
-    desc: "કમ્પ્યુટર વિષયના અભ્યાસ માટે 10 ગોઠવેલી Computer Notes.",
+    desc: "કમ્પ્યુટર વિષયના સંપૂર્ણ અભ્યાસ માટે 10 ગોઠવેલી Computer Notes.",
   },
 ];
 
@@ -113,7 +110,7 @@ const reviews: Review[] = [
     initial: "પ",
     color: "#b8720a",
     img: priyaDesai,
-    text: "MCQ અને મોડલ પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹99 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
+    text: "MCQ અને મોડલ પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹49 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
   },
   {
     name: "જયેશ ચૌધરી",
@@ -219,7 +216,7 @@ export default function PdfCourse() {
               </div>
             </div>
             <Link className="header-buy" href="/gsrtc-mcq-course/checkout">
-              <CartIcon /> ખરીદો ₹99
+              <CartIcon /> ખરીદો ₹49
             </Link>
           </nav>
         </div>
@@ -234,7 +231,7 @@ export default function PdfCourse() {
               <div className="box-scene">
                 <Image
                   src={pdfHero}
-                  alt="GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ"
+                  alt="GSRTC કંડક્ટર ભરતી 2026 મોડલ પેપર પ્રેક્ટિસ પેપર"
                   className="product-image"
                   sizes="(max-width: 900px) 90vw, 440px"
                   priority
@@ -243,24 +240,21 @@ export default function PdfCourse() {
 
               {/* Product info */}
               <div className="product-info" id="buy">
-                <div className="updated-badge">
-                  <span className="dot" /> Updated for 2026 syllabus
-                </div>
                 <div className="rating">
                   <span className="stars">★★★★★</span>
                   <span className="rating-score">4.9</span>
                   <span className="rating-sep" />
                   <span className="rating-count">
-                    <strong>800+</strong> ઉમેદવારોના રિવ્યુ
+                    <strong>2000+</strong> ઉમેદવારોના રિવ્યુ
                   </span>
                 </div>
 
                 <h1 className="product-headline">
-                  GSRTC કંડક્ટર સંપૂર્ણ PDF કોર્સ હમણાં જ મેળવો!! 📗
+                  GSRTC કંડક્ટર પરીક્ષા માટે Model Paper સાથે પ્રેક્ટિસ કરો! 📚
                 </h1>
 
                 <div className="product-tagline">
-                  GSRTC કંડક્ટર સંપૂર્ણ તૈયારી PDF (તૈયાર — તરત ડાઉનલોડ)
+                  પરીક્ષાની તૈયારીને વધુ મજબૂત બનાવવા માટે મેળવો પ્રેક્ટિસ પેપર, MCQs અને કમ્પ્યુટર અભ્યાસ સામગ્રી.
                 </div>
 
                 <ul className="check-list">
@@ -284,20 +278,28 @@ export default function PdfCourse() {
                     </li>
                   ))}
                 </ul>
+
+                <div className="hero-callout">
+                  📥 આજે જ તમારા Model Papers મેળવો!
+                </div>
               </div>
             </div>
 
             {/* Offer below hero (centered, full width) */}
             <div className="hero-offer">
+              <div className="hero-urgency-notice">
+                🔥 <strong>લિમિટેડ લૉન્ચ ઓફર (Today Only):</strong> આજે જ મેળવો માત્ર <strong>₹49</strong> માં — ઓફર પૂર્ણ થતાં કિંમત વધીને <strong>₹99</strong> થઈ જશે!
+              </div>
+
               <h2 className="hero-offer-title">
-                ફક્ત ₹99/- આજે — તરત ડાઉનલોડ, હમણાં જ અભ્યાસ શરૂ કરો!
+                ફક્ત ₹49/- આજે જ PDF ડાઉનલોડ કરો અને GSRTC કંડક્ટર પરીક્ષા માટે પ્રેક્ટિસ શરૂ કરો!
               </h2>
 
               <Link
                 className="btn btn-accent hero-buy"
                 href="/gsrtc-mcq-course/checkout"
               >
-                <CartIcon /> હમણાં ખરીદો ₹99{" "}
+                <CartIcon /> હમણાં ખરીદો ₹49{" "}
                 <span className="final-old">₹299</span>
               </Link>
 
@@ -373,8 +375,8 @@ export default function PdfCourse() {
               </div>
             </div>
             <p className="wa-proof-note">
-              આ ફક્ત નમૂનારૂપ પાનાં છે — સંપૂર્ણ પેકેજમાં 10 Content PDFs, 2500+
-              MCQs, 21 Model Practice Papers અને 10 Computer Notes મળશે.
+              આ ફક્ત નમૂનારૂપ પાનાં છે — સંપૂર્ણ પેકેજમાં 15 Model Papers, 2500+
+              MCQs, 500 Computer One-Liners અને 10 Computer Notes મળશે.
             </p>
           </div>
         </section>
@@ -384,7 +386,7 @@ export default function PdfCourse() {
           <div className="container">
             <h2 className="section-title">ઉમેદવારો શું કહે છે</h2>
             <p className="section-subtitle">
-              800+ ઉમેદવારોએ આ PDF કોર્સથી પોતાની તૈયારી મજબૂત બનાવી.
+              2000+ ઉમેદવારોએ આ PDF કોર્સથી પોતાની તૈયારી મજબૂત બનાવી.
             </p>
 
             <div className="reviews-grid">
@@ -484,7 +486,7 @@ export default function PdfCourse() {
             className="btn buy-bar-btn"
             href="/gsrtc-mcq-course/checkout"
           >
-            <CartIcon /> ખરીદો ₹99/-
+            <CartIcon /> ખરીદો ₹49/-
           </Link>
         </div>
       </div>

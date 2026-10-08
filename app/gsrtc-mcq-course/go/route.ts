@@ -7,7 +7,10 @@ import { NextResponse } from "next/server";
  * so email/download links stay on our own domain.
  */
 export async function GET() {
-  const driveUrl = process.env.MCQ_DRIVE_URL;
+  const driveUrl =
+    process.env.MCQ_DRIVE_URL ||
+    process.env.GOOGLE_DRIVE_URL ||
+    "https://drive.google.com/drive/folders/1b2nFVSWuJtb_Rtu1yZu1snBb65qsWi7B?usp=sharing";
 
   if (
     driveUrl &&

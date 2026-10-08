@@ -144,8 +144,13 @@ function ThankYouContent() {
         cleanUrl();
         // Track mock purchase event
         if (typeof window !== "undefined" && (window as any).fbq) {
+          const pixelId = process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || "1399128725611345";
           (window as any).fbq("track", "Purchase", {
-            value: Number(params.amountPaid || 99),
+            value: Number(params.amountPaid || 49),
+            currency: "INR",
+          });
+          (window as any).fbq("trackSingle", pixelId, "Purchase", {
+            value: Number(params.amountPaid || 49),
             currency: "INR",
           });
         }
@@ -181,8 +186,13 @@ function ThankYouContent() {
         cleanUrl();
         // Track real purchase event
         if (typeof window !== "undefined" && (window as any).fbq) {
+          const pixelId = process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || "1399128725611345";
           (window as any).fbq("track", "Purchase", {
-            value: Number(params.amountPaid || 99),
+            value: Number(params.amountPaid || 49),
+            currency: "INR",
+          });
+          (window as any).fbq("trackSingle", pixelId, "Purchase", {
+            value: Number(params.amountPaid || 49),
             currency: "INR",
           });
         }

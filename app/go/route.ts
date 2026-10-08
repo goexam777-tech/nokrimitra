@@ -6,7 +6,10 @@ import { NextResponse } from "next/server";
  * This keeps the email links matching your domain, avoiding spam filter triggers.
  */
 export async function GET() {
-  const driveUrl = process.env.GOOGLE_DRIVE_URL;
+  const driveUrl =
+    process.env.GOOGLE_DRIVE_URL ||
+    process.env.MCQ_DRIVE_URL ||
+    "https://drive.google.com/drive/folders/1b2nFVSWuJtb_Rtu1yZu1snBb65qsWi7B?usp=sharing";
 
   if (
     driveUrl &&

@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       ? 199
       : isAnatomy
       ? 149
-      : Number(reqAmount || 149);
+      : Number(reqAmount || 49);
 
     if (!Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json({ error: "Invalid order amount" }, { status: 400 });

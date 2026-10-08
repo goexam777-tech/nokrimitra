@@ -12,8 +12,8 @@ function Content() {
 
   const orderId = sp.get("order_id") || sp.get("orderId") || sp.get("razorpay_order_id") || "N/A";
   const paymentId = sp.get("razorpay_payment_id") || sp.get("cf_payment_id") || "";
-  const productName = sp.get("productName") || "GSRTC કંડક્ટર MCQ પેકેજ";
-  const amountPaid = sp.get("amountPaid") || "99";
+  const productName = sp.get("productName") || "GSRTC કંડક્ટર 2026 Model Papers & MCQ પેકેજ";
+  const amountPaid = sp.get("amountPaid") || "49";
   const email = sp.get("email") || "";
   const name = sp.get("name") || "";
 
@@ -50,6 +50,7 @@ function Content() {
         gtag?: (...a: unknown[]) => void;
       };
       if (typeof window !== "undefined" && w.fbq) {
+        const pixelId = process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || "1399128725611345";
         w.fbq(
           "track",
           "Purchase",
@@ -59,6 +60,17 @@ function Content() {
             content_name: productName,
           },
           // Same eventID lets Meta drop duplicates of this order.
+          { eventID: `mcq_${orderId}` }
+        );
+        w.fbq(
+          "trackSingle",
+          pixelId,
+          "Purchase",
+          {
+            value: Number(amountPaid),
+            currency: "INR",
+            content_name: productName,
+          },
           { eventID: `mcq_${orderId}` }
         );
       }

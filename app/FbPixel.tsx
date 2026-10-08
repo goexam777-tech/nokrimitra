@@ -9,9 +9,8 @@ const DEFAULT_PIXEL =
   process.env.NEXT_PUBLIC_FB_PIXEL_ID || "2012096232739016";
 
 // Separate pixel used ONLY for the GSRTC product pages.
-// Falls back to the default pixel until a dedicated GSRTC pixel id is set.
 const GSRTC_PIXEL =
-  process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || DEFAULT_PIXEL;
+  process.env.NEXT_PUBLIC_FB_PIXEL_ID_GSRTC || "1399128725611345";
 
 // Dedicated pixel (PureWow) used ONLY for the Anatomy Coloring Book product.
 const ANATOMY_PIXEL = ANATOMY_PIXEL_ID;
