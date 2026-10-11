@@ -13,7 +13,7 @@ function Content() {
   const orderId = sp.get("order_id") || sp.get("orderId") || sp.get("razorpay_order_id") || "N/A";
   const paymentId = sp.get("razorpay_payment_id") || sp.get("cf_payment_id") || "";
   const productName = sp.get("productName") || "GSRTC કંડક્ટર 2026 Model Papers & MCQ પેકેજ";
-  const amountPaid = sp.get("amountPaid") || "49";
+  const amountPaid = sp.get("amountPaid") || "69";
   const email = sp.get("email") || "";
   const name = sp.get("name") || "";
 

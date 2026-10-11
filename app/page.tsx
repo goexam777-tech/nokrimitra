@@ -18,7 +18,7 @@ import priyaDesai from "@/public/neha-verma.avif";
 export const metadata: Metadata = {
   title: "GSRTC કંડક્ટર ભરતી 2026 Model Papers | નોકરી મિત્ર",
   description:
-    "GSRTC કંડક્ટર પરીક્ષા માટે 15 Model Papers, 2500+ MCQs, 500 Computer One-Liners અને 10 Computer Notes — ₹49 માં તાત્કાલિક ડિજિટલ એક્સેસ.",
+    "GSRTC કંડક્ટર પરીક્ષા માટે 15 Model Papers, 2500+ MCQs, 500 Computer One-Liners અને 10 Computer Notes — ₹69 માં તાત્કાલિક ડિજિટલ એક્સેસ.",
 };
 
 type CheckItem = {
@@ -110,7 +110,7 @@ const reviews: Review[] = [
     initial: "પ",
     color: "#b8720a",
     img: priyaDesai,
-    text: "MCQ અને મોડલ પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹49 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
+    text: "MCQ અને મોડલ પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹69 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
   },
   {
     name: "જયેશ ચૌધરી",
@@ -216,7 +216,7 @@ export default function PdfCourse() {
               </div>
             </div>
             <Link className="header-buy" href="/gsrtc-mcq-course/checkout">
-              <CartIcon /> ખરીદો ₹49
+              <CartIcon /> ખરીદો ₹69
             </Link>
           </nav>
         </div>
@@ -288,18 +288,18 @@ export default function PdfCourse() {
             {/* Offer below hero (centered, full width) */}
             <div className="hero-offer">
               <div className="hero-urgency-notice">
-                🔥 <strong>લિમિટેડ લૉન્ચ ઓફર (Today Only):</strong> આજે જ મેળવો માત્ર <strong>₹49</strong> માં — ઓફર પૂર્ણ થતાં કિંમત વધીને <strong>₹99</strong> થઈ જશે!
+                🔥 <strong>લિમિટેડ લૉન્ચ ઓફર (Today Only):</strong> આજે જ મેળવો માત્ર <strong>₹69</strong> માં — ઓફર પૂર્ણ થતાં કિંમત વધીને <strong>₹99</strong> થઈ જશે!
               </div>
 
               <h2 className="hero-offer-title">
-                ફક્ત ₹49/- આજે જ PDF ડાઉનલોડ કરો અને GSRTC કંડક્ટર પરીક્ષા માટે પ્રેક્ટિસ શરૂ કરો!
+                ફક્ત ₹69/- આજે જ PDF ડાઉનલોડ કરો અને GSRTC કંડક્ટર પરીક્ષા માટે પ્રેક્ટિસ શરૂ કરો!
               </h2>
 
               <Link
                 className="btn btn-accent hero-buy"
                 href="/gsrtc-mcq-course/checkout"
               >
-                <CartIcon /> હમણાં ખરીદો ₹49{" "}
+                <CartIcon /> હમણાં ખરીદો ₹69{" "}
                 <span className="final-old">₹299</span>
               </Link>
 
@@ -486,7 +486,7 @@ export default function PdfCourse() {
             className="btn buy-bar-btn"
             href="/gsrtc-mcq-course/checkout"
           >
-            <CartIcon /> ખરીદો ₹49/-
+            <CartIcon /> ખરીદો ₹69/-
           </Link>
         </div>
       </div>

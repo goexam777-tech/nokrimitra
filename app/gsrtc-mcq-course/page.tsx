@@ -139,13 +139,13 @@ export default function GsrtcMcqCoursePage() {
               </p>
 
               <div className={styles.priceRow}>
-                <span className={styles.priceNow}>₹49</span>
+                <span className={styles.priceNow}>₹69</span>
                 <span className={styles.priceOld}>₹299</span>
-                <span className={styles.priceOff}>84% OFF</span>
+                <span className={styles.priceOff}>77% OFF</span>
               </div>
 
               <a className={styles.cta} href="/gsrtc-mcq-course/checkout">
-                📥 હમણાં જ ડાઉનલોડ કરો – માત્ર ₹49
+                📥 હમણાં જ ડાઉનલોડ કરો – માત્ર ₹69
               </a>
               <p className={styles.microTrust}>
                 ⭐ 4.9/5 રેટિંગ · 1000+ ઉમેદવારોએ ડાઉનલોડ કર્યું
@@ -297,12 +297,12 @@ export default function GsrtcMcqCoursePage() {
               </li>
             </ul>
             <div className={styles.buyPrice}>
-              <span className={styles.priceNow}>₹49</span>
+              <span className={styles.priceNow}>₹69</span>
               <span className={styles.priceOld}>₹299</span>
-              <span className={styles.priceOff}>84% OFF</span>
+              <span className={styles.priceOff}>77% OFF</span>
             </div>
             <a className={styles.cta} href="/gsrtc-mcq-course/checkout">
-              📥 હમણાં જ ડાઉનલોડ કરો – માત્ર ₹49
+              📥 હમણાં જ ડાઉનલોડ કરો – માત્ર ₹69
             </a>
             <p className={styles.microTrust}>🔒 100% સુરક્ષિત પેમેન્ટ · Razorpay</p>
           </div>
@@ -364,7 +364,7 @@ export default function GsrtcMcqCoursePage() {
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
           </span>
-          ખરીદો ₹49/-
+          ખરીદો ₹69/-
         </a>
       </div>
     </div>
