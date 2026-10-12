@@ -5,8 +5,9 @@ export default function NursingEmailPreviewPage() {
     customerName: "Anjali Sharma",
     productName: "ALL-In-One Nursing Notes (600+ Pages PDF)",
     orderId: "order_NUR_874921",
-    amount: 199,
+    amount: 198,
     downloadUrl: "https://drive.google.com/",
+    addonDownloadUrl: "https://drive.google.com/drive/folders/1AHA6ohI2h3zfEG4BxE9wOTIS76-XQEdi?usp=sharing",
     brandName: "Nursing Notes",
     supportEmail: "support@nokrimitra.in",
   });

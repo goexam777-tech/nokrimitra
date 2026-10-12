@@ -15,6 +15,10 @@ const GSRTC_PIXEL =
 // Dedicated pixel (PureWow) used ONLY for the Anatomy Coloring Book product.
 const ANATOMY_PIXEL = ANATOMY_PIXEL_ID;
 
+// Dedicated pixel used for Nursing Notes funnel (/nursing-notes/**)
+const NURSING_PIXEL =
+  process.env.NEXT_PUBLIC_FB_PIXEL_ID_NURSING || "1399128725611345";
+
 // Route prefixes that use the 905602885399577 pixel (GSRTC).
 const GSRTC_PREFIXES = [
   "/buy",
@@ -28,6 +32,9 @@ const GSRTC_PREFIXES = [
 // Route prefixes that use the dedicated Anatomy Coloring Book pixel.
 const ANATOMY_PREFIXES = ["/anatomy-coloring-book"];
 
+// Route prefixes that use the dedicated Nursing Notes pixel.
+const NURSING_PREFIXES = ["/nursing-notes"];
+
 function isGsrtcPath(path: string): boolean {
   if (path === "/") return true;
   return GSRTC_PREFIXES.some(
@@ -39,13 +46,19 @@ function isAnatomyPath(path: string): boolean {
   return ANATOMY_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
 }
 
+function isNursingPath(path: string): boolean {
+  return NURSING_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
+}
+
 export default function FbPixel() {
   const pathname = usePathname();
   const initedIds = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const path = pathname || "/";
-    const id = isAnatomyPath(path)
+    const id = isNursingPath(path)
+      ? NURSING_PIXEL
+      : isAnatomyPath(path)
       ? ANATOMY_PIXEL
       : isGsrtcPath(path)
       ? GSRTC_PIXEL

@@ -4,6 +4,7 @@ interface NursingEmailParams {
   orderId: string;
   amount: number;
   downloadUrl: string;
+  addonDownloadUrl?: string;
   brandName?: string;
   supportEmail?: string;
 }
@@ -14,6 +15,7 @@ export function buildNursingEmailText({
   orderId,
   amount,
   downloadUrl,
+  addonDownloadUrl,
   brandName = "Nursing Notes",
   supportEmail = "support@nokrimitra.in",
 }: NursingEmailParams): string {
@@ -21,11 +23,11 @@ export function buildNursingEmailText({
 
 Hi ${customerName || "there"},
 
-Thank you for purchasing ${productName}. Your payment was successful and your 600+ pages Nursing Notes PDF is ready to download.
+Thank you for purchasing ${productName}. Your payment was successful and your study materials are ready to download.
 
-Download link:
-${downloadUrl}
-
+Download link(s):
+- Complete Nursing Notes PDF: ${downloadUrl}
+${addonDownloadUrl ? `- Human Anatomy Coloring E-book (500+ Pages): ${addonDownloadUrl}\n` : ""}
 Order Details:
 - Product: ${productName}
 - Order ID: ${orderId}
@@ -45,6 +47,7 @@ export function buildNursingEmail({
   orderId,
   amount,
   downloadUrl,
+  addonDownloadUrl,
   brandName = "Nursing Notes",
   supportEmail = "support@nokrimitra.in",
 }: NursingEmailParams): string {
@@ -61,7 +64,7 @@ export function buildNursingEmail({
   <title>${productName}</title>
 </head>
 <body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Roboto,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;color:#0f172a;-webkit-font-smoothing:antialiased;">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Order Confirmed! Access your 600+ pages Nursing Notes PDF now.</div>
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Order Confirmed! Access your study PDF materials now.</div>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9;padding:32px 16px;">
     <tr>
@@ -75,7 +78,7 @@ export function buildNursingEmail({
                 🩺
               </div>
               <h1 style="margin:0 0 6px 0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.01em;">Payment Successful!</h1>
-              <p style="margin:0;color:#dcfce7;font-size:14.5px;font-weight:500;">Your 600+ Pages Nursing Notes PDF is confirmed</p>
+              <p style="margin:0;color:#dcfce7;font-size:14.5px;font-weight:500;">Your study materials are confirmed &amp; ready</p>
             </td>
           </tr>
 
@@ -84,7 +87,7 @@ export function buildNursingEmail({
             <td style="padding:36px 32px 16px 32px;">
               <p style="margin:0 0 14px 0;font-size:17px;font-weight:600;color:#0f172a;">Hi <strong>${customerName || "Customer"}</strong> 👋,</p>
               <p style="margin:0 0 24px 0;font-size:15px;line-height:1.6;color:#334155;">
-                Thank you for purchasing the <strong>${productName}</strong>! Your transaction was verified successfully. Click the button below to download your complete PDF e-book immediately.
+                Thank you for purchasing the <strong>${productName}</strong>! Your transaction was verified successfully. Click below to download your complete PDF e-books immediately.
               </p>
 
               <!-- Order Summary Card -->
@@ -101,6 +104,12 @@ export function buildNursingEmail({
                         <td style="padding:4px 0;font-size:14px;color:#64748b;font-weight:500;">Product:</td>
                         <td style="padding:4px 0;font-size:14px;color:#0f172a;font-weight:600;text-align:right;">${productName}</td>
                       </tr>
+                      ${addonDownloadUrl ? `
+                      <tr>
+                        <td style="padding:4px 0;font-size:14px;color:#64748b;font-weight:500;">Bonus Add-on:</td>
+                        <td style="padding:4px 0;font-size:14px;color:#0f172a;font-weight:600;text-align:right;">Human Anatomy Coloring E-book (500+ Pages)</td>
+                      </tr>
+                      ` : ""}
                       <tr>
                         <td style="padding:4px 0;font-size:14px;color:#64748b;font-weight:500;">Order ID:</td>
                         <td style="padding:4px 0;font-size:14px;color:#0f172a;font-weight:600;text-align:right;"><code style="background:#e2e8f0;padding:2px 7px;border-radius:5px;font-family:monospace;font-size:13px;">${orderId}</code></td>
@@ -114,7 +123,7 @@ export function buildNursingEmail({
                 </tr>
               </table>
 
-              <!-- Action Button -->
+              <!-- Action Button(s) -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center" style="padding:0 0 16px 0;">
@@ -122,6 +131,14 @@ export function buildNursingEmail({
                        style="display:block;width:100%;max-width:440px;padding:16px 24px;border-radius:14px;background:linear-gradient(180deg,${greenBtn} 0%,${greenBtnHover} 100%);color:#ffffff;font-size:16.5px;font-weight:600;text-decoration:none;text-align:center;box-shadow:0 8px 22px rgba(22,163,74,0.38);box-sizing:border-box;">
                       📥 DOWNLOAD NURSING NOTES PDF NOW
                     </a>
+                    ${addonDownloadUrl ? `
+                    <div style="margin-top:12px;">
+                      <a href="${addonDownloadUrl}" target="_blank"
+                         style="display:block;width:100%;max-width:440px;padding:15px 24px;border-radius:14px;background:linear-gradient(180deg,#0284c7 0%,#0369a1 100%);color:#ffffff;font-size:15.5px;font-weight:600;text-decoration:none;text-align:center;box-shadow:0 8px 22px rgba(2,132,199,0.35);box-sizing:border-box;">
+                        📥 DOWNLOAD HUMAN ANATOMY COLORING E-BOOK (500+ PAGES)
+                      </a>
+                    </div>
+                    ` : ""}
                   </td>
                 </tr>
               </table>

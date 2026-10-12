@@ -21,13 +21,16 @@ function ThankYouContent() {
 
   const [status, setStatus] = useState<"checking" | "ready" | "failed">("checking");
   const [downloadUrl, setDownloadUrl] = useState("/nursing-notes/go");
+  const [downloadsList, setDownloadsList] = useState<Array<{ label: string; path?: string; url?: string }>>([]);
 
   const name = params.get("name") || "";
   const email = params.get("email") || "";
   const orderId = params.get("razorpay_order_id") || params.get("orderId") || "";
   const paymentId = params.get("razorpay_payment_id") || "";
   const signature = params.get("razorpay_signature") || "";
-  const amountPaid = params.get("amountPaid") || "199";
+  const amountPaid = params.get("amountPaid") || "149";
+  const addonsParam = params.get("addons") || "";
+  const hasAddon = addonsParam.includes("anatomy-revision") || amountPaid === "198";
 
   useEffect(() => {
     if (verified.current) return;
@@ -39,8 +42,12 @@ function ThankYouContent() {
       try {
         const cached = sessionStorage.getItem(cacheKey);
         if (cached) {
-          const saved = JSON.parse(cached) as { downloadUrl?: string };
+          const saved = JSON.parse(cached) as {
+            downloadUrl?: string;
+            downloads?: Array<{ label: string; path?: string; url?: string }>;
+          };
           if (saved.downloadUrl) setDownloadUrl(saved.downloadUrl);
+          if (saved.downloads) setDownloadsList(saved.downloads);
           setStatus("ready");
           return;
         }
@@ -63,6 +70,7 @@ function ThankYouContent() {
             amountPaid,
             product: "nursing",
             productName: PRODUCT_NAME,
+            addons: addonsParam,
           }),
         });
         const data = await res.json();
@@ -73,12 +81,17 @@ function ThankYouContent() {
         }
 
         const url = data.downloadPath || data.downloadUrl || "/nursing-notes/go";
+        const dls = Array.isArray(data.downloads) ? data.downloads : [];
         setDownloadUrl(url);
+        if (dls.length > 0) setDownloadsList(dls);
         setStatus("ready");
 
         if (cacheKey) {
           try {
-            sessionStorage.setItem(cacheKey, JSON.stringify({ downloadUrl: url }));
+            sessionStorage.setItem(
+              cacheKey,
+              JSON.stringify({ downloadUrl: url, downloads: dls })
+            );
           } catch {
             // Ignore
           }
@@ -89,8 +102,20 @@ function ThankYouContent() {
           fbq?: (...a: unknown[]) => void;
           gtag?: (...a: unknown[]) => void;
         };
+        const pixelId = process.env.NEXT_PUBLIC_FB_PIXEL_ID_NURSING || "1399128725611345";
         w.fbq?.(
           "track",
+          "Purchase",
+          {
+            value: Number(amountPaid),
+            currency: "INR",
+            content_name: PRODUCT_NAME,
+          },
+          { eventID: orderId }
+        );
+        w.fbq?.(
+          "trackSingle",
+          pixelId,
           "Purchase",
           {
             value: Number(amountPaid),
@@ -112,7 +137,21 @@ function ThankYouContent() {
     };
 
     runVerify();
-  }, [amountPaid, email, name, orderId, paymentId, signature]);
+  }, [addonsParam, amountPaid, email, name, orderId, paymentId, signature]);
+
+  const addonDownloadPath =
+    downloadsList.find(
+      (d) =>
+        d.path?.includes("anatomy") ||
+        d.url?.includes("anatomy") ||
+        d.label?.toLowerCase().includes("anatomy")
+    )?.path ||
+    downloadsList.find(
+      (d) =>
+        d.url?.includes("anatomy") ||
+        d.label?.toLowerCase().includes("anatomy")
+    )?.url ||
+    "/nursing-notes/go?item=anatomy-revision";
 
   return (
     <div className={`${styles.thankYouContainer} ${plusJakarta.variable}`}>
@@ -127,7 +166,7 @@ function ThankYouContent() {
           Thank You For Your Purchase{name ? `, ${name}` : ""}!
         </h1>
         <p className={styles.subTitle}>
-          Your order has been completed successfully. You can download your 600+ pages Nursing Notes PDF below.
+          Your order has been completed successfully. You can download your study materials below.
         </p>
 
         {/* Order Details Receipt Box */}
@@ -136,6 +175,12 @@ function ThankYouContent() {
             <span>Product Name:</span>
             <strong>ALL-In-One Nursing Notes (PDF)</strong>
           </div>
+          {hasAddon && (
+            <div className={styles.receiptRow}>
+              <span>Bonus Add-on:</span>
+              <strong>Human Anatomy Coloring E-book (500+ Pages)</strong>
+            </div>
+          )}
           <div className={styles.receiptRow}>
             <span>Amount Paid:</span>
             <strong className={styles.greenText}>₹{amountPaid}</strong>
@@ -176,6 +221,22 @@ function ThankYouContent() {
                 <Download size={20} />
                 <span>DOWNLOAD NURSING NOTES PDF</span>
               </a>
+              {hasAddon && (
+                <a
+                  href={addonDownloadPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.downloadBtn}
+                  style={{
+                    marginTop: "12px",
+                    background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+                    boxShadow: "0 8px 22px rgba(2, 132, 199, 0.35)",
+                  }}
+                >
+                  <Download size={20} />
+                  <span>DOWNLOAD HUMAN ANATOMY COLORING E-BOOK</span>
+                </a>
+              )}
               <p className={styles.downloadHint}>
                 (Click above to open &amp; download your file via Google Drive)
               </p>

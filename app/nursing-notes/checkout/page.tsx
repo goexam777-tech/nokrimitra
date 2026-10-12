@@ -6,8 +6,9 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
 import {
   ArrowLeft,
+  ArrowRight,
   BadgeCheck,
-  CheckCircle2,
+  Check,
   Lock,
   Mail,
   MessageSquare,
@@ -15,7 +16,23 @@ import {
   Zap,
 } from "lucide-react";
 
-import nursingNotesHero from "@/public/Nursing-notes.webp";
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      width="22"
+      height="22"
+      aria-hidden="true"
+    >
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.458 5.704 1.46h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  );
+}
+
+import nursingNotesHero from "@/public/Colorful-Nursing-Study-Guide-Promotion-2026-29-09-02-00-59.jpg";
+import anatomyAddonImg from "@/public/f88e82b6-2f72-4d47-89fb-3efb135ed031.webp";
 import trustBadges from "@/public/trust.webp";
 import styles from "./checkout.module.css";
 
@@ -26,24 +43,17 @@ const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-nursing",
 });
 
-const PRICE = 199;
-const OLD_PRICE = 999;
-const PRODUCT_NAME = "ALL-In-One Nursing Notes (600+ Pages PDF)";
-const PAYMENT_LABEL = "ALL-In-One Nursing Notes PDF";
-
-const included = [
-  "600+ Pages Complete Syllabus",
-  "Fundamentals, IV Fluids & Anatomy",
-  "Medical-Surgical & Flashcards",
-  "Pharmacology, EKGs & Lab Values",
-  "Instant PDF + Email Delivery",
-  "Lifetime Access on All Devices",
-];
+const PRICE = 149;
+const OLD_PRICE = 1599;
+const ADDON_ID = "anatomy-revision";
+const ADDON_PRICE = 49;
+const PRODUCT_NAME = "Complete Nursing Study Guide (600+ Pages PDF)";
+const PAYMENT_LABEL = "Complete Nursing Study Guide PDF";
 
 const trustPoints = [
   { icon: Lock, text: "100% Secure Payment" },
-  { icon: Zap, text: "Instant Delivery After Payment" },
-  { icon: Mail, text: "PDF Delivered to Your Email" },
+  { icon: Zap, text: "Instant Delivery" },
+  { icon: Mail, text: "Delivered to Email" },
   { icon: MessageSquare, text: "Support Available" },
 ];
 
@@ -68,8 +78,11 @@ export default function NursingNotesCheckout() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [addonSelected, setAddonSelected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const total = PRICE + (addonSelected ? ADDON_PRICE : 0);
 
   const formStartedRef = useRef(false);
 
@@ -89,7 +102,7 @@ export default function NursingNotesCheckout() {
       const w = window as unknown as { gtag?: (...a: unknown[]) => void };
       w.gtag?.("event", "purchase_button_click", {
         product_name: PRODUCT_NAME,
-        price: PRICE,
+        price: total,
         currency: "INR",
       });
     }
@@ -100,7 +113,13 @@ export default function NursingNotesCheckout() {
       fbq?: (...a: unknown[]) => void;
       gtag?: (...a: unknown[]) => void;
     };
+    const pixelId = process.env.NEXT_PUBLIC_FB_PIXEL_ID_NURSING || "1399128725611345";
     w.fbq?.("track", "InitiateCheckout", {
+      value: PRICE,
+      currency: "INR",
+      content_name: PRODUCT_NAME,
+    });
+    w.fbq?.("trackSingle", pixelId, "InitiateCheckout", {
       value: PRICE,
       currency: "INR",
       content_name: PRODUCT_NAME,
@@ -136,7 +155,7 @@ export default function NursingNotesCheckout() {
       const w = window as unknown as { gtag?: (...a: unknown[]) => void };
       w.gtag?.("event", "checkout_form_submit", {
         product_name: PRODUCT_NAME,
-        value: PRICE,
+        value: total,
         currency: "INR",
       });
     }
@@ -152,6 +171,7 @@ export default function NursingNotesCheckout() {
           product: "nursing",
           name,
           email,
+          addons: addonSelected ? [ADDON_ID] : [],
         }),
       });
       const data = await res.json();
@@ -161,9 +181,10 @@ export default function NursingNotesCheckout() {
         const q = new URLSearchParams({
           name,
           email,
-          amountPaid: String(PRICE),
+          amountPaid: String(total),
           productName: PRODUCT_NAME,
           product: "nursing",
+          ...(addonSelected ? { addons: ADDON_ID } : {}),
           ...extra,
         });
         router.push(`/nursing-notes/thank-you?${q.toString()}`);
@@ -174,7 +195,7 @@ export default function NursingNotesCheckout() {
           const w = window as unknown as { gtag?: (...a: unknown[]) => void };
           w.gtag?.("event", "payment_redirect", {
             order_id: data.orderId,
-            value: PRICE,
+            value: total,
             currency: "INR",
           });
         }
@@ -193,7 +214,7 @@ export default function NursingNotesCheckout() {
         const w = window as unknown as { gtag?: (...a: unknown[]) => void };
         w.gtag?.("event", "payment_redirect", {
           order_id: data.orderId,
-          value: PRICE,
+          value: total,
           currency: "INR",
         });
       }
@@ -264,25 +285,13 @@ export default function NursingNotesCheckout() {
                 </div>
                 <div className={styles.productInfo}>
                   <strong className={styles.productName}>
-                    ALL-In-One Nursing Notes
+                    Complete Nursing Study Guide
                   </strong>
                   <span className={styles.productMeta}>
                     600+ Pages • Digital PDF • 2026 Edition
                   </span>
-                  <div className={styles.miniPrice}>
-                    <s>₹{OLD_PRICE}</s>
-                    <b>₹{PRICE}</b>
-                  </div>
                 </div>
               </div>
-
-              <ul className={styles.includedGrid}>
-                {included.map((item) => (
-                  <li key={item}>
-                    <CheckCircle2 size={17} /> {item}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
 
@@ -290,13 +299,10 @@ export default function NursingNotesCheckout() {
           <div className={styles.formColumn}>
             <div className={styles.formCard}>
               <div className={styles.formHeader}>
-                <span className={styles.discountBadge}>
-                  🔥 Launch Price — ₹{PRICE} Only
-                </span>
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
                   <span className={styles.priceCurrent}>₹{PRICE}</span>
-                  <span className={styles.priceSave}>Save 80%</span>
+                  <span className={styles.priceSave}>Save 90%</span>
                 </div>
                 <div className={styles.oneTimeAccessNote}>
                   <span>One-time payment</span>
@@ -354,6 +360,84 @@ export default function NursingNotesCheckout() {
                   </span>
                 </div>
 
+                {/* Order Bump Offer Box */}
+                <div
+                  className={`${styles.bumpBox} ${
+                    addonSelected ? styles.bumpBoxActive : ""
+                  }`}
+                  onClick={() => setAddonSelected(!addonSelected)}
+                  role="checkbox"
+                  aria-checked={addonSelected}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === " " || e.key === "Enter") {
+                      e.preventDefault();
+                      setAddonSelected(!addonSelected);
+                    }
+                  }}
+                >
+                  <div className={styles.bumpHeader}>
+                    <label
+                      htmlFor="bump-checkbox"
+                      className={styles.bumpCheckboxLabel}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        id="bump-checkbox"
+                        checked={addonSelected}
+                        onChange={(e) => setAddonSelected(e.target.checked)}
+                        className={styles.bumpCheckbox}
+                      />
+                      <span className={styles.bumpCustomCheck}>
+                        {addonSelected && <Check size={12} strokeWidth={3.5} />}
+                      </span>
+                      <span className={styles.bumpCheckboxText}>
+                        Yes! Add This Bonus for Just ₹{ADDON_PRICE}
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className={styles.bumpBody}>
+                    <div className={styles.bumpTopRow}>
+                      <div className={styles.bumpImageWrap}>
+                        <Image
+                          src={anatomyAddonImg}
+                          alt="Human Anatomy Coloring E-book"
+                          width={56}
+                          height={74}
+                          className={styles.bumpImage}
+                        />
+                      </div>
+                      <div className={styles.bumpInfo}>
+                        <h4 className={styles.bumpTitle}>
+                          Make Your Anatomy Revision Easier!
+                        </h4>
+                        <p className={styles.bumpText}>
+                          <strong>
+                            Human Anatomy Coloring E-book <em>500+ Pages</em>
+                          </strong>
+                        </p>
+                      </div>
+                    </div>
+
+                    <ul className={styles.bumpList}>
+                      <li>
+                        <span className={styles.bumpCheckMark}>✓</span>
+                        <span>Major body systems &amp; key structures</span>
+                      </li>
+                      <li>
+                        <span className={styles.bumpCheckMark}>✓</span>
+                        <span>Important concepts for quick revision</span>
+                      </li>
+                      <li>
+                        <span className={styles.bumpCheckMark}>✓</span>
+                        <span>Digital PDF - study anytime, anywhere</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
                 <div className={styles.summaryHead}>
                   <span>Item</span>
                   <span>Price</span>
@@ -361,15 +445,21 @@ export default function NursingNotesCheckout() {
 
                 <div className={styles.priceBreakdown}>
                   <div className={styles.priceRow}>
-                    <span>ALL-In-One Nursing Notes PDF</span>
+                    <span>Complete Nursing Study Guide PDF</span>
                     <span>INR {PRICE}</span>
                   </div>
+                  {addonSelected && (
+                    <div className={styles.priceRow}>
+                      <span>Human Anatomy Coloring E-book (500+ Pages)</span>
+                      <span>INR {ADDON_PRICE}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className={styles.orderTotal}>
                   <span>TOTAL</span>
                   <strong>
-                    <i>INR</i> {PRICE}.00
+                    <i>INR</i> {total}.00
                   </strong>
                 </div>
 
@@ -383,7 +473,7 @@ export default function NursingNotesCheckout() {
                     "Initiating payment…"
                   ) : (
                     <>
-                      <span>🔒 Pay ₹{PRICE} &amp; Get Instant Access</span>
+                      <span>🔒 Pay ₹{total} &amp; Get Instant Access</span>
                     </>
                   )}
                 </button>
@@ -409,20 +499,28 @@ export default function NursingNotesCheckout() {
                 />
               </form>
 
-              <div className={styles.guarantee}>
-                <BadgeCheck size={20} />
-                <div>
-                  <strong>✓ Instant Delivery</strong>
-                  <p>
-                    Your PDF is delivered immediately after payment and emailed to you.
-                  </p>
-                  <p className={styles.guaranteeHelp}>
-                    Need help? Contact{" "}
-                    <a href="mailto:support@nokrimitra.in">
-                      support@nokrimitra.in
-                    </a>
-                  </p>
-                </div>
+              <div className={styles.waWrapper}>
+                <a
+                  href="https://wa.me/919104826422?text=Hello!%20I%20have%20a%20question%20regarding%20the%20Nursing%20Study%20Guide%20checkout."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.waConcierge}
+                  aria-label="Chat with WhatsApp Support"
+                >
+                  <div className={styles.waAvatar}>
+                    <WhatsAppIcon className={styles.waIconSvg} />
+                    <span className={styles.waStatusDot} aria-hidden="true" />
+                  </div>
+                  <div className={styles.waInfo}>
+                    <span className={styles.waHeading}>Need Help? Chat on WhatsApp</span>
+                    <span className={styles.waSub}>
+                      +91 91048 26422 <span className={styles.waDot}>•</span> Quick reply
+                    </span>
+                  </div>
+                  <div className={styles.waArrowCircle} aria-hidden="true">
+                    <ArrowRight size={14} strokeWidth={2.5} />
+                  </div>
+                </a>
               </div>
 
               <nav className={styles.legalNav} aria-label="Legal links">

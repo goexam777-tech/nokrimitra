@@ -5,34 +5,32 @@ import styles from "./nursing-notes.module.css";
 
 const reviewsList = [
   {
+    name: "Pooja Sharma",
+    title: "Helpful for Revision",
+    comment:
+      "“The guide is well-organized and makes it easier to revise important nursing topics. A useful resource for regular revision and exam preparation.”",
     stars: 5,
-    comment:
-      "I found this ebook to be very thorough and easy to follow. It breaks down complex medical concepts into simple terms. Perfect for both beginners and advanced learners.",
-    author: "-Rakesh Bagade",
   },
   {
-    stars: 4.5,
-    author: "-Shreya Sharma",
+    name: "Anjali Verma",
+    title: "Easy to Understand",
     comment:
-      "I am from Mumbai and this ebooks helped me a lot. This ebook is a fantastic resource for anyone studying nursing. It covers all the essential topics in a clear and concise manner.\n\nHighly recommended!",
-  },
-  {
-    stars: 4,
-    author: "-Pooja Deshmukh",
-    comment:
-      "This ebook is an excellent study guide. It helped me understand difficult topics and prepare for my exams. The explanations are straightforward and very helpful.",
-  },
-  {
+      "“The content is presented in simple language, making topics easier to understand. A helpful study resource for nursing students.”",
     stars: 5,
-    author: "-Amit Patel",
-    comment:
-      "The detailed diagrams for organ systems and IV fluid charts are super helpful. Everything is neatly organized. Must-buy for all nursing students!",
   },
   {
-    stars: 5,
-    author: "-Sneha Kulkarni",
+    name: "Rahul Patel",
+    title: "Convenient to Study",
     comment:
-      "Instant access on email within seconds of payment! The notes are extremely detailed, covering NORCET syllabus completely. Totally worth it.",
+      "“I like the PDF format because I can study on my phone whenever I have free time. It’s convenient for revising important topics.”",
+    stars: 5,
+  },
+  {
+    name: "Sneha Kulkarni",
+    title: "Useful Study Resource",
+    comment:
+      "“Having nursing-related study material in one place is very convenient. It can be a useful reference for nursing studies and exam preparation.”",
+    stars: 5,
   },
 ];
 
@@ -52,7 +50,7 @@ export default function NursingReviews() {
               <Star
                 key={i}
                 size={18}
-                fill={i < 4 ? "#f59e0b" : "#f59e0b"}
+                fill="#f59e0b"
                 color="#f59e0b"
               />
             ))}
@@ -66,25 +64,25 @@ export default function NursingReviews() {
           <div className={styles.barRow}>
             <span className={styles.barLabel}>Excellent</span>
             <div className={styles.barTrack}>
-              <div className={styles.barFill} style={{ width: "92%" }} />
+              <div className={styles.barFill} style={{ width: "94%" }} />
             </div>
-            <span className={styles.barPercent}>92%</span>
+            <span className={styles.barPercent}>94%</span>
           </div>
 
           <div className={styles.barRow}>
             <span className={styles.barLabel}>Very good</span>
             <div className={styles.barTrack}>
-              <div className={styles.barFill} style={{ width: "6%" }} />
+              <div className={styles.barFill} style={{ width: "5%" }} />
             </div>
-            <span className={styles.barPercent}>6%</span>
+            <span className={styles.barPercent}>5%</span>
           </div>
 
           <div className={styles.barRow}>
             <span className={styles.barLabel}>Average</span>
             <div className={styles.barTrack}>
-              <div className={styles.barFill} style={{ width: "2%" }} />
+              <div className={styles.barFill} style={{ width: "1%" }} />
             </div>
-            <span className={styles.barPercent}>2%</span>
+            <span className={styles.barPercent}>1%</span>
           </div>
 
           <div className={styles.barRow}>
@@ -112,39 +110,23 @@ export default function NursingReviews() {
         {reviewsList.map((review, idx) => (
           <div key={idx} className={styles.exactReviewItem}>
             <div className={styles.starsRowItem}>
-              {[...Array(5)].map((_, i) => {
-                const isFull = i < Math.floor(review.stars);
-                const isHalf = i === Math.floor(review.stars) && review.stars % 1 !== 0;
-                return (
-                  <Star
-                    key={i}
-                    size={18}
-                    fill={isFull ? "#f59e0b" : isHalf ? "#f59e0b" : "#e2e8f0"}
-                    color={isFull || isHalf ? "#f59e0b" : "#cbd5e1"}
-                  />
-                );
-              })}
+              {[...Array(review.stars)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={18}
+                  fill="#f59e0b"
+                  color="#f59e0b"
+                />
+              ))}
             </div>
 
-            {review.author && idx === 1 ? (
-              <>
-                <p className={styles.exactGreenAuthor}>{review.author}</p>
-                <div className={styles.exactReviewComment}>
-                  {review.comment.split("\n\n").map((para, pIdx) => (
-                    <p key={pIdx}>{para}</p>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <>
-                <div className={styles.exactReviewComment}>
-                  <p>{review.comment}</p>
-                </div>
-                {review.author && (
-                  <p className={styles.exactGreenAuthor}>{review.author}</p>
-                )}
-              </>
-            )}
+            <h3 className={styles.reviewItemHeading}>{review.title}</h3>
+
+            <div className={styles.exactReviewComment}>
+              <p>{review.comment}</p>
+            </div>
+
+            <p className={styles.exactGreenAuthor}>— {review.name}</p>
 
             {idx < reviewsList.length - 1 && (
               <hr className={styles.reviewDividerItem} />

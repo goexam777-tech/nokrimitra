@@ -15,8 +15,11 @@ const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 const OPD_ADDON_NAME = "Emergency Medicine Handbook";
 
-const NURSING_PRICE = 199;
-const NURSING_PRODUCT_NAME = "Nursing Protocol Reference Notebook";
+const NURSING_PRICE = 149;
+const NURSING_ADDON_ID = "anatomy-revision";
+const NURSING_ADDON_PRICE = 49;
+const NURSING_ADDON_NAME = "Human Anatomy Coloring E-book (500+ Pages)";
+const NURSING_PRODUCT_NAME = "Complete Nursing Study Guide (600+ Pages PDF)";
 
 const MBBS_PRICE = 199;
 const MBBS_PRODUCT_NAME = "Complete MBBS Notes (All 21 Subjects)";
@@ -262,22 +265,42 @@ export async function POST(req: Request) {
     }
 
     if (product === "nursing") {
+      const orderNotes = (notes || {}) as Record<string, string>;
+      const notedAddons = String(orderNotes.addons || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter((id) => id === NURSING_ADDON_ID);
+      const paidPaise = Number(order?.amount || payment?.amount || 0);
+      const hasNursingAddon =
+        notedAddons.includes(NURSING_ADDON_ID) ||
+        paidPaise === (NURSING_PRICE + NURSING_ADDON_PRICE) * 100;
+      const verifiedNursingAmount =
+        NURSING_PRICE + (hasNursingAddon ? NURSING_ADDON_PRICE : 0);
+
       const nursingToken = createDownloadToken("nursing", orderId);
       const nursingDownloadUrl = `${appUrl}/nursing-notes/go${nursingToken ? `?t=${nursingToken}` : ""}`;
+      const nursingAddonToken = hasNursingAddon
+        ? createDownloadToken("anatomy", orderId)
+        : null;
+      const nursingAddonDownloadUrl = `${appUrl}/nursing-notes/go?item=anatomy-revision${
+        nursingAddonToken ? `&t=${nursingAddonToken}` : ""
+      }`;
 
       const htmlContent = buildNursingEmail({
         customerName: customerName || "there",
         productName: NURSING_PRODUCT_NAME,
         orderId,
-        amount: NURSING_PRICE,
+        amount: verifiedNursingAmount,
         downloadUrl: nursingDownloadUrl,
+        addonDownloadUrl: nursingAddonToken ? nursingAddonDownloadUrl : undefined,
       });
       const textContent = buildNursingEmailText({
         customerName: customerName || "there",
         productName: NURSING_PRODUCT_NAME,
         orderId,
-        amount: NURSING_PRICE,
+        amount: verifiedNursingAmount,
         downloadUrl: nursingDownloadUrl,
+        addonDownloadUrl: nursingAddonToken ? nursingAddonDownloadUrl : undefined,
       });
 
       if (resendApiKey) {

@@ -8,27 +8,43 @@ import { verifyDownloadToken } from "@/lib/downloadToken";
  * The token is issued after a valid Razorpay payment verification,
  * protecting the direct Google Drive link while giving instant access to legitimate buyers.
  */
+function cleanUrl(val?: string | null): string | null {
+  if (!val) return null;
+  const trimmed = val.trim();
+  if (!trimmed || trimmed.includes("your_google_drive")) return null;
+  return trimmed;
+}
+
 const COOKIE_NAME = "nm_nursing_dl";
 const GOOGLE_DRIVE_PDF_LINK =
-  process.env.NURSING_NOTES_DRIVE_URL ||
-  process.env.NURSING_DRIVE_URL ||
+  cleanUrl(process.env.NURSING_NOTES_DRIVE_URL) ||
+  cleanUrl(process.env.NURSING_DRIVE_URL) ||
   "https://drive.google.com/file/d/1DH3zflyLjRkZq5eEy_YhtH-LWWuLWs7D/view?usp=sharing";
+const ANATOMY_DRIVE_LINK =
+  cleanUrl(process.env.ANATOMY_DRIVE_URL) ||
+  "https://drive.google.com/drive/folders/1AHA6ohI2h3zfEG4BxE9wOTIS76-XQEdi?usp=sharing";
 const SUPPORT_MAIL =
   "mailto:support@nokrimitra.in?subject=Nursing%20Notes%20download%20help";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const urlToken = url.searchParams.get("t");
+  const item = url.searchParams.get("item");
+  const isAnatomyItem = item === "anatomy-revision" || item === "anatomy";
   const cookieToken = readCookie(req.headers.get("cookie"), COOKIE_NAME);
   const token = urlToken || cookieToken;
 
-  const check = verifyDownloadToken("nursing", token);
+  const check = isAnatomyItem
+    ? verifyDownloadToken("anatomy", token).valid
+      ? { valid: true, reason: undefined }
+      : verifyDownloadToken("nursing", token)
+    : verifyDownloadToken("nursing", token);
 
   if (!check.valid) {
-    return blockedResponse(check.reason);
+    return blockedResponse(check.reason || "invalid");
   }
 
-  const driveUrl = GOOGLE_DRIVE_PDF_LINK;
+  const driveUrl = isAnatomyItem ? ANATOMY_DRIVE_LINK : GOOGLE_DRIVE_PDF_LINK;
 
   if (driveUrl && driveUrl.trim() !== "") {
     const res = NextResponse.redirect(driveUrl);

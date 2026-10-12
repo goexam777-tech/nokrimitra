@@ -28,8 +28,11 @@ const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 const OPD_ADDON_NAME = "Emergency Medicine Handbook";
 
-const NURSING_PRICE = 199;
-const NURSING_PRODUCT_NAME = "Nursing Protocol Reference Notebook";
+const NURSING_PRICE = 149;
+const NURSING_ADDON_ID = "anatomy-revision";
+const NURSING_ADDON_PRICE = 49;
+const NURSING_ADDON_NAME = "Human Anatomy Coloring E-book (500+ Pages)";
+const NURSING_PRODUCT_NAME = "Complete Nursing Study Guide (600+ Pages PDF)";
 
 const MBBS_PRICE = 199;
 const MBBS_PRODUCT_NAME = "Complete MBBS Notes (All 21 Subjects)";
@@ -101,13 +104,21 @@ export async function POST(req: Request) {
         inMockMode && mockHasOpdAddon
           ? createDownloadToken("opd-emergency-handbook", razorpay_order_id)
           : null;
+      const mockHasNursingAddon =
+        product === "nursing" &&
+        (String(addons || "").split(",").includes(NURSING_ADDON_ID) ||
+          Number(amountPaid) === NURSING_PRICE + NURSING_ADDON_PRICE);
+      const mockNursingAddonToken =
+        inMockMode && mockHasNursingAddon
+          ? createDownloadToken("anatomy", razorpay_order_id)
+          : null;
       const mockAmount =
         product === "opd"
           ? isExitOfferMock
             ? OPD_EXIT_PRICE
             : OPD_BASE_PRICE + (mockHasOpdAddon ? OPD_ADDON_PRICE : 0)
           : product === "nursing"
-            ? NURSING_PRICE
+            ? NURSING_PRICE + (mockHasNursingAddon ? NURSING_ADDON_PRICE : 0)
             : product === "anatomy"
               ? ANATOMY_PRICE
             : product === ESCOOTER_CATALOG.product
@@ -122,6 +133,9 @@ export async function POST(req: Request) {
           : []),
         ...(product === "nursing"
           ? [{ label: NURSING_PRODUCT_NAME, path: "/nursing-notes/go" }]
+          : []),
+        ...(mockNursingAddonToken
+          ? [{ label: NURSING_ADDON_NAME, path: "/nursing-notes/go?item=anatomy-revision" }]
           : []),
       ];
 
@@ -333,7 +347,8 @@ export async function POST(req: Request) {
     }
 
     // Read the Psychology add-on from Razorpay itself. The browser's amount,
-    // Nursing e-book: single product, verified server-side against Razorpay.
+    // Nursing e-book: single product or with anatomy revision add-on, verified server-side against Razorpay.
+    let verifiedNursingAddons: string[] = [];
     let verifiedNursingAmount = NURSING_PRICE;
     let verifiedNursingEmail = String(email || "").trim().toLowerCase();
     let verifiedNursingName = String(name || "there").trim() || "there";
@@ -367,8 +382,19 @@ export async function POST(req: Request) {
       }
 
       nursingNotes = (order.notes || {}) as Record<string, string>;
+      const notedAddons = String(nursingNotes.addons || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter((id) => id === NURSING_ADDON_ID);
+
       const paidAmount = Number(order.amount) / 100;
-      if (nursingNotes.product === "nursing" || paidAmount === NURSING_PRICE) {
+      if (
+        notedAddons.includes(NURSING_ADDON_ID) ||
+        paidAmount === NURSING_PRICE + NURSING_ADDON_PRICE
+      ) {
+        verifiedNursingAddons = [NURSING_ADDON_ID];
+        verifiedNursingAmount = NURSING_PRICE + NURSING_ADDON_PRICE;
+      } else if (nursingNotes.product === "nursing" || paidAmount === NURSING_PRICE) {
         verifiedNursingAmount = NURSING_PRICE;
       } else {
         return NextResponse.json(
@@ -454,6 +480,21 @@ export async function POST(req: Request) {
     const nursingDownloadUrl = `${appUrl}/nursing-notes/go${
       nursingToken ? `?t=${nursingToken}` : ""
     }`;
+    const nursingAddonToken =
+      isNursing &&
+      (verifiedNursingAddons.includes(NURSING_ADDON_ID) ||
+        verifiedNursingAmount === NURSING_PRICE + NURSING_ADDON_PRICE)
+        ? createDownloadToken("anatomy", razorpay_order_id)
+        : null;
+    const nursingAddonDownloadUrl = `${appUrl}/nursing-notes/go?item=anatomy-revision${
+      nursingAddonToken ? `&t=${nursingAddonToken}` : ""
+    }`;
+    const nursingDownloads = [
+      { label: NURSING_PRODUCT_NAME, url: nursingDownloadUrl },
+      ...(nursingAddonToken
+        ? [{ label: NURSING_ADDON_NAME, url: nursingAddonDownloadUrl }]
+        : []),
+    ];
 
     const downloadUrl = isNursing
       ? nursingDownloadUrl
@@ -504,6 +545,7 @@ export async function POST(req: Request) {
               orderId: razorpay_order_id,
               amount: verifiedNursingAmount,
               downloadUrl,
+              addonDownloadUrl: nursingAddonToken ? nursingAddonDownloadUrl : undefined,
             })
           : isMbbs
           ? buildMbbsEmail({
@@ -546,6 +588,7 @@ export async function POST(req: Request) {
               orderId: razorpay_order_id,
               amount: verifiedNursingAmount,
               downloadUrl,
+              addonDownloadUrl: nursingAddonToken ? nursingAddonDownloadUrl : undefined,
             })
           : isMbbs
           ? buildMbbsEmailText({
@@ -762,6 +805,16 @@ export async function POST(req: Request) {
                   nursingToken ? `?t=${nursingToken}` : ""
                 }`,
               },
+              ...(nursingAddonToken
+                ? [
+                    {
+                      label: NURSING_ADDON_NAME,
+                      path: `/nursing-notes/go?item=anatomy-revision${
+                        nursingAddonToken ? `&t=${nursingAddonToken}` : ""
+                      }`,
+                    },
+                  ]
+                : []),
             ],
             alreadyFulfilled: nursingAlreadyFulfilled,
           }

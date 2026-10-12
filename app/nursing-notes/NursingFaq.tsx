@@ -35,7 +35,7 @@ const faqData = [
   },
   {
     question: "Is it a monthly subscription or a one-time purchase?",
-    answer: "It is a one-time payment of RS 199/- only. No recurring fees or hidden charges.",
+    answer: "It is a one-time payment of RS 149/- only. No recurring fees or hidden charges.",
   },
   {
     question: "What if I entered an incorrect email address?",

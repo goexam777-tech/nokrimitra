@@ -6,7 +6,9 @@ const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 
-const NURSING_PRICE = 199;
+const NURSING_PRICE = 149;
+const NURSING_ADDON_ID = "anatomy-revision";
+const NURSING_ADDON_PRICE = 49;
 
 const MBBS_PRICE = 199;
 
@@ -28,9 +30,11 @@ export async function POST(req: Request) {
     const requestedAddons = Array.isArray(body.addons) ? body.addons.map(String) : [];
     const unknownAddons = isOpd
       ? requestedAddons.filter((id: string) => id !== OPD_ADDON_ID)
-      : isEscooter
-        ? requestedAddons
-        : [];
+      : isNursing
+        ? requestedAddons.filter((id: string) => id !== NURSING_ADDON_ID)
+        : isEscooter
+          ? requestedAddons
+          : [];
 
     if (unknownAddons.length) {
       return NextResponse.json({ error: "Invalid add-on selected" }, { status: 400 });
@@ -56,13 +60,15 @@ export async function POST(req: Request) {
       ? isOpdExitOffer
         ? [OPD_ADDON_ID]
         : requestedAddons.filter((id: string) => id === OPD_ADDON_ID).slice(0, 1)
-      : [];
+      : isNursing
+        ? requestedAddons.filter((id: string) => id === NURSING_ADDON_ID).slice(0, 1)
+        : [];
     const amount = isOpd
       ? isOpdExitOffer
         ? OPD_EXIT_PRICE
         : opdBase + (addons.length ? OPD_ADDON_PRICE : 0)
       : isNursing
-        ? NURSING_PRICE
+        ? NURSING_PRICE + (addons.length ? NURSING_ADDON_PRICE : 0)
         : isMbbs
           ? MBBS_PRICE
           : isAnatomy
@@ -106,6 +112,7 @@ export async function POST(req: Request) {
       : isNursing
       ? {
           product: "nursing",
+          addons: addons.join(","),
           catalogVersion: "1",
           customerEmail: String(body.email || "").trim().toLowerCase(),
           customerName: String(body.name || "").trim().slice(0, 120),

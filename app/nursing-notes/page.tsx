@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
-import { BookOpen, Clock, FileText, Mail } from "lucide-react";
-import nursingNotesHero from "@/public/Nursing-notes.webp";
+import nursingNotesHero from "@/public/Colorful-Nursing-Study-Guide-Promotion-2026-29-09-02-00-59.jpg";
+import featuresBanner from "@/public/66ee8194-eba8-4dbd-8f73-3183132edf4b.webp";
 import MidnightTimer from "./MidnightTimer";
-import SampleCarousel from "./SampleCarousel";
+import VideoPreview from "./VideoPreview";
 import NursingReviews from "./NursingReviews";
 import NursingFaq from "./NursingFaq";
 import styles from "./nursing-notes.module.css";
@@ -17,40 +17,64 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "ALL-In-One Nursing Notes at your Fingertips 📚",
+  title: "Complete Nursing Study Guide 📚",
   description:
-    "The Only Nursing Notebook You Need | Simplify Your Nursing Journey. Master every aspect of nursing with ease and confidence.",
+    "Stop Searching Through 20 Different PDFs Before Your Exam. 600+ pages of nursing notes, clinical concepts, flashcards & care plans, all in one simple PDF.",
 };
 
-const insideItems = [
-  "Fundamentals of Nursing [5-41 pages]",
-  "IV Fluids [42-51 pages]",
-  "Anatomy and Physiology [52-82 pages]",
-  "Medical-Surgical Nursing [83-233 pages]",
-  "Med-Surg Flashcards [234-280 pages]",
-  "Shock [281-299 pages]",
-  "Hepatitis [300-302 pages]",
-  "Burns [303-308 pages]",
-  "Chest Tube Management [309-312 pages]",
-  "Electrolyte Imbalance [313-318 pages]",
-  "EKGs/ECGs [319-344 pages]",
-  "Lab Values [345-349 pages]",
-  "ABGs [350 page]",
-  "Pharmacology [351-426 pages]",
-  "Drug Calculation [427-431 pages]",
-  "Insulin [432-433 pages]",
-  "Maternal and Child Health [434-467 pages]",
-  "Pediatric Disorders [468-500 pages]",
-  "Nursing Health Assessment [501-508 pages]",
-  "Cranial Nerves [509-524 pages]",
-  "Patient Assessment Template [525-529 pages]",
-  "Nurse Report Template [530 page]",
-  "Nursing Process [531-600 pages]",
+const insideCategories = [
+  {
+    title: "Core Nursing",
+    items: [
+      "Fundamentals of Nursing",
+      "Anatomy & Physiology",
+      "Nursing Process, Care Plans & Concept Mapping",
+      "Nursing Health Assessment & Cranial Nerves",
+    ],
+  },
+  {
+    title: "Medical-Surgical Nursing",
+    items: [
+      "Med-Surg Nursing + Med-Surg Flashcards",
+      "Shock, Hepatitis, Burns, Chest Tube Management",
+      "Electrolyte Imbalance & IV Fluids",
+    ],
+  },
+  {
+    title: "Clinical Skills",
+    items: [
+      "EKGs / ECGs",
+      "Lab Values & ABGs",
+      "Pharmacology, Drug Calculations & Insulin",
+    ],
+  },
+  {
+    title: "Maternal & Child",
+    items: [
+      "Maternal & Child Health",
+      "Pediatric Disorders",
+    ],
+  },
+  {
+    title: "Ready-to-Use Templates",
+    items: [
+      "Patient Assessment Template",
+      "Nurse Report Template",
+    ],
+  },
+];
+
+const guideForYouItems = [
+  { label: "Nursing Students", text: "GNM & B.Sc Nursing" },
+  { label: "Exam Preparation", text: "NORCET, Staff Nurse & NCLEX" },
+  { label: "Quick Revision", text: "Before exams & clinical practice" },
+  { label: "Core Subjects", text: "Pharmacology, ECG, ABGs & Lab Values" },
+  { label: "Clinical Skills", text: "Nursing Assessment & Care Plans" },
 ];
 
 export default function NursingNotesPage() {
   return (
-    <main className={`${styles.page} ${plusJakarta.variable}`}>
+    <main className={`${styles.page} ${plusJakarta.className} ${plusJakarta.variable}`}>
       <section className={styles.heroSection}>
         <div className={styles.container}>
           <p className={styles.eyebrow}>
@@ -58,27 +82,23 @@ export default function NursingNotesPage() {
           </p>
 
           <h1 className={styles.mainTitle}>
-            ALL-In-One Nursing Notes at your Fingertips
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://s.w.org/images/core/emoji/17.0.2/svg/1f4da.svg"
-              alt="books"
-              className={styles.titleEmojiSvg}
-            />
+            Complete Nursing Study Guide
           </h1>
 
           <div className={styles.discountBadge}>
-            85% Discount : Limited time offer
+            90% Discount : Limited time offer
           </div>
 
           <p className={styles.description}>
-            Feel difficulties in your nursing preparation? Don’t worry our crafted nursing notebook is your ultimate study companion, designed to help you master every aspect of nursing with ease and confidence.
+            Stop Searching Through 20 Different PDFs Before Your Exam.
+            <br />
+            600+ pages of nursing notes, clinical concepts, flashcards &amp; care plans, all in one simple PDF.
           </p>
 
           <div className={styles.heroImageWrap}>
             <Image
               src={nursingNotesHero}
-              alt="ALL-In-One Nursing Notes"
+              alt="Complete Nursing Study Guide"
               className={styles.heroImage}
               priority
               sizes="(max-width: 768px) 92vw, 780px"
@@ -88,7 +108,7 @@ export default function NursingNotesPage() {
           <div className={styles.ctaSection}>
             <a href="/nursing-notes/checkout" className={styles.greenBuyBtn}>
               <span className={styles.greenBuyMain}>BUY NOW</span>
-              <span className={styles.greenBuySub}>(Get complete Nursing Notes)</span>
+              <span className={styles.greenBuySub}>(Get complete Nursing Study Guide)</span>
             </a>
 
             <p className={styles.ctaSubtext}>
@@ -196,41 +216,48 @@ export default function NursingNotesPage() {
           </div>
 
           <div className={styles.insideSection}>
-            <h2 className={styles.insideTitle}>What You Get Inside</h2>
+            <h2 className={styles.insideTitle}>
+              EVERYTHING YOU NEED FOR NURSING STUDY, IN ONE PLACE
+            </h2>
 
             <div className={styles.insideListWrap}>
-              <ul className={styles.insideList}>
-                {insideItems.map((item, index) => (
-                  <li key={index} className={styles.insideItem}>
-                    <svg
-                      className={styles.checkIcon}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle cx="12" cy="12" r="10" fill="#22c55e" />
-                      <path
-                        d="M8.5 12.5L10.8 14.8L15.5 9.5"
-                        stroke="#ffffff"
-                        strokeWidth="2.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+              {insideCategories.map((group, gIdx) => (
+                <div key={gIdx} className={styles.insideCategoryCard}>
+                  <h3 className={styles.insideCategoryTitle}>{group.title}</h3>
+                  <ul className={styles.insideList}>
+                    {group.items.map((item, index) => (
+                      <li key={index} className={styles.insideItem}>
+                        <svg
+                          className={styles.checkIcon}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle cx="12" cy="12" r="10" fill="#22c55e" />
+                          <path
+                            d="M8.5 12.5L10.8 14.8L15.5 9.5"
+                            stroke="#ffffff"
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
 
             <div className={styles.ctaSection}>
               <a href="/nursing-notes/checkout" className={styles.greenBuyBtn}>
                 <span className={styles.greenBuyMain}>BUY NOW</span>
-                <span className={styles.greenBuySub}>(Get complete Nursing Notes)</span>
+                <span className={styles.greenBuySub}>(Get complete Nursing Study Guide)</span>
               </a>
 
               <p className={styles.priceValidSubtext}>
-                RS 199/- Only [ Valid for Today ]
+                RS 149/- Only [ Valid for Today ]
               </p>
 
               <p className={styles.ctaSubtext}>
@@ -239,7 +266,36 @@ export default function NursingNotesPage() {
             </div>
           </div>
 
-          <SampleCarousel />
+          <VideoPreview />
+
+          <section className={styles.forYouSection}>
+            <h2 className={styles.forYouTitle}>IS THIS GUIDE FOR YOU?</h2>
+            <p className={styles.forYouSubtitle}>Perfect for:</p>
+            <ul className={styles.forYouList}>
+              {guideForYouItems.map((item, idx) => (
+                <li key={idx} className={styles.forYouItem}>
+                  <svg
+                    className={styles.checkIcon}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <circle cx="12" cy="12" r="10" fill="#22c55e" />
+                    <path
+                      d="M8.5 12.5L10.8 14.8L15.5 9.5"
+                      stroke="#ffffff"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>
+                    <strong>{item.label}</strong> — {item.text}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
 
           <NursingReviews />
 
@@ -258,13 +314,13 @@ export default function NursingNotesPage() {
             </p>
 
             <div className={styles.cleanPriceWrap}>
-              <span className={styles.cleanOldPrice}>₹999</span>
-              <span className={styles.cleanNewPrice}>RS 199/- Only</span>
-              <span className={styles.cleanSaveBadge}>Save 85% Today</span>
+              <span className={styles.cleanOldPrice}>₹1599</span>
+              <span className={styles.cleanNewPrice}>RS 149/- Only</span>
+              <span className={styles.cleanSaveBadge}>Save 90% Today</span>
             </div>
 
             <a href="/nursing-notes/checkout" className={styles.cleanGreenCtaBtn}>
-              <span className={styles.cleanBtnMain}>GET INSTANT ACCESS NOW 🚀</span>
+              <span className={styles.cleanBtnMain}>GET INSTANT ACCESS NOW</span>
               <span className={styles.cleanBtnSub}>Buy Once • Lifetime Access</span>
             </a>
 
@@ -272,6 +328,15 @@ export default function NursingNotesPage() {
               <span>✓ Instant Email Access</span>
               <span>✓ Printable PDF</span>
             </div>
+          </div>
+
+          <div className={styles.simpleImageWrap}>
+            <Image
+              src={featuresBanner}
+              alt="Secure Checkout, Digital PDF, Instant Delivery, Works on All Devices, Lifetime Access"
+              className={styles.simpleImage}
+              sizes="(max-width: 768px) 96vw, 780px"
+            />
           </div>
 
           <NursingFaq />
@@ -296,7 +361,7 @@ export default function NursingNotesPage() {
       {/* Sticky Bottom CTA Bar for Mobile */}
       <div className={styles.stickyMobileCtaBar}>
         <a href="/nursing-notes/checkout" className={styles.stickyMobileCtaBtn}>
-          <span className={styles.stickyMobileBtnMain}>Click Here to Get Access</span>
+          <span className={styles.stickyMobileBtnMain}>Get Instant Access - ₹149</span>
         </a>
       </div>
     </main>
