@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Image from "next/image";
-import nursingNotesHero from "@/public/Colorful-Nursing-Study-Guide-Promotion-2026-29-09-02-00-59.jpg";
+import nursingNotesHero from "@/public/e30d6b36-d9d9-468c-b218-0bd78f9e1408.webp";
 import featuresBanner from "@/public/66ee8194-eba8-4dbd-8f73-3183132edf4b.webp";
 import MidnightTimer from "./MidnightTimer";
 import VideoPreview from "./VideoPreview";
@@ -86,7 +86,7 @@ export default function NursingNotesPage() {
           </h1>
 
           <div className={styles.discountBadge}>
-            90% Discount : Limited time offer
+            80% Discount : Limited time offer
           </div>
 
           <p className={styles.description}>
@@ -257,7 +257,7 @@ export default function NursingNotesPage() {
               </a>
 
               <p className={styles.priceValidSubtext}>
-                RS 149/- Only [ Valid for Today ]
+                RS 99/- Only [ Valid for Today ]
               </p>
 
               <p className={styles.ctaSubtext}>
@@ -314,9 +314,9 @@ export default function NursingNotesPage() {
             </p>
 
             <div className={styles.cleanPriceWrap}>
-              <span className={styles.cleanOldPrice}>₹1599</span>
-              <span className={styles.cleanNewPrice}>RS 149/- Only</span>
-              <span className={styles.cleanSaveBadge}>Save 90% Today</span>
+              <span className={styles.cleanOldPrice}>₹499</span>
+              <span className={styles.cleanNewPrice}>RS 99/- Only</span>
+              <span className={styles.cleanSaveBadge}>Save 80% Today</span>
             </div>
 
             <a href="/nursing-notes/checkout" className={styles.cleanGreenCtaBtn}>
@@ -361,7 +361,7 @@ export default function NursingNotesPage() {
       {/* Sticky Bottom CTA Bar for Mobile */}
       <div className={styles.stickyMobileCtaBar}>
         <a href="/nursing-notes/checkout" className={styles.stickyMobileCtaBtn}>
-          <span className={styles.stickyMobileBtnMain}>Get Instant Access - ₹149</span>
+          <span className={styles.stickyMobileBtnMain}>Get Instant Access - ₹99</span>
         </a>
       </div>
     </main>

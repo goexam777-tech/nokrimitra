@@ -31,7 +31,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
   );
 }
 
-import nursingNotesHero from "@/public/Colorful-Nursing-Study-Guide-Promotion-2026-29-09-02-00-59.jpg";
+import nursingNotesHero from "@/public/e30d6b36-d9d9-468c-b218-0bd78f9e1408.webp";
 import anatomyAddonImg from "@/public/f88e82b6-2f72-4d47-89fb-3efb135ed031.webp";
 import trustBadges from "@/public/trust.webp";
 import styles from "./checkout.module.css";
@@ -43,10 +43,10 @@ const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-nursing",
 });
 
-const PRICE = 149;
-const OLD_PRICE = 1599;
+const PRICE = 99;
+const OLD_PRICE = 499;
 const ADDON_ID = "anatomy-revision";
-const ADDON_PRICE = 49;
+const ADDON_PRICE = 29;
 const PRODUCT_NAME = "Complete Nursing Study Guide (600+ Pages PDF)";
 const PAYMENT_LABEL = "Complete Nursing Study Guide PDF";
 
@@ -302,7 +302,7 @@ export default function NursingNotesCheckout() {
                 <div className={styles.pricePill}>
                   <span className={styles.priceOriginal}>₹{OLD_PRICE}</span>
                   <span className={styles.priceCurrent}>₹{PRICE}</span>
-                  <span className={styles.priceSave}>Save 90%</span>
+                  <span className={styles.priceSave}>Save 80%</span>
                 </div>
                 <div className={styles.oneTimeAccessNote}>
                   <span>One-time payment</span>

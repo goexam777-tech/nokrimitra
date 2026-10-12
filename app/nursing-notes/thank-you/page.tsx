@@ -28,9 +28,9 @@ function ThankYouContent() {
   const orderId = params.get("razorpay_order_id") || params.get("orderId") || "";
   const paymentId = params.get("razorpay_payment_id") || "";
   const signature = params.get("razorpay_signature") || "";
-  const amountPaid = params.get("amountPaid") || "149";
+  const amountPaid = params.get("amountPaid") || "99";
   const addonsParam = params.get("addons") || "";
-  const hasAddon = addonsParam.includes("anatomy-revision") || amountPaid === "198";
+  const hasAddon = addonsParam.includes("anatomy-revision") || amountPaid === "128" || amountPaid === "198";
 
   useEffect(() => {
     if (verified.current) return;

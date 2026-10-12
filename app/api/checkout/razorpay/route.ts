@@ -6,9 +6,9 @@ const OPD_EXIT_PRICE = 149;
 const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 
-const NURSING_PRICE = 149;
+const NURSING_PRICE = 99;
 const NURSING_ADDON_ID = "anatomy-revision";
-const NURSING_ADDON_PRICE = 49;
+const NURSING_ADDON_PRICE = 29;
 
 const MBBS_PRICE = 199;
 

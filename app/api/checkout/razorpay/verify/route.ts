@@ -28,9 +28,9 @@ const OPD_ADDON_ID = "emergency-handbook";
 const OPD_ADDON_PRICE = 49;
 const OPD_ADDON_NAME = "Emergency Medicine Handbook";
 
-const NURSING_PRICE = 149;
+const NURSING_PRICE = 99;
 const NURSING_ADDON_ID = "anatomy-revision";
-const NURSING_ADDON_PRICE = 49;
+const NURSING_ADDON_PRICE = 29;
 const NURSING_ADDON_NAME = "Human Anatomy Coloring E-book (500+ Pages)";
 const NURSING_PRODUCT_NAME = "Complete Nursing Study Guide (600+ Pages PDF)";
 
