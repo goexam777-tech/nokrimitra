@@ -116,6 +116,38 @@ a {
   padding: 0 20px;
 }
 
+/* Mobile Top Offer Announcement Bar */
+.mobile-top-offer-bar {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile-top-offer-bar {
+    display: block;
+    background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+    border-bottom: 1.5px dashed #f43f5e;
+    color: #9f1239;
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.45;
+    padding: 10px 14px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(244, 63, 94, 0.1);
+  }
+
+  .mobile-top-offer-bar strong {
+    font-weight: 800;
+    color: #881337;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-top-offer-bar {
+    font-size: 12.5px;
+    padding: 8px 10px;
+  }
+}
+
 /* Header */
 .site-header {
   background: var(--white);

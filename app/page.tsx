@@ -3,7 +3,6 @@ import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import SiteFooter from "@/app/components/SiteFooter";
 import pdfHero from "@/public/5ef7d48c-9f0c-4388-8409-32dbd27d792a.webp";
-import razorpayBadge from "@/public/razorpay-logo.webp";
 import waReview1 from "@/public/wa-review-1.jpg";
 import waReview2 from "@/public/wa-review-2.png";
 import waReview3 from "@/public/wa-review-3.png";
@@ -18,7 +17,7 @@ import priyaDesai from "@/public/neha-verma.avif";
 export const metadata: Metadata = {
   title: "GSRTC કંડક્ટર ભરતી 2026 Model Papers | નોકરી મિત્ર",
   description:
-    "GSRTC કંડક્ટર પરીક્ષા માટે 15 Model Papers, 2500+ MCQs, 500 Computer One-Liners અને 10 Computer Notes — ₹69 માં તાત્કાલિક ડિજિટલ એક્સેસ.",
+    "GSRTC કંડક્ટર પરીક્ષા માટે 15 Model Papers, 2500+ MCQs, 500 Computer One-Liners અને 10 Computer Notes — ₹29 માં તાત્કાલિક ડિજિટલ એક્સેસ.",
 };
 
 type CheckItem = {
@@ -110,7 +109,7 @@ const reviews: Review[] = [
     initial: "પ",
     color: "#b8720a",
     img: priyaDesai,
-    text: "MCQ અને મોડલ પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹69 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
+    text: "MCQ અને મોડલ પેપરથી પ્રેક્ટિસ બહુ મજબૂત થઈ. ₹29 માં આટલું બધું — સાચે જ કિંમતથી વધુ.",
   },
   {
     name: "જયેશ ચૌધરી",
@@ -175,6 +174,13 @@ function CartIcon() {
 export default function PdfCourse() {
   return (
     <>
+      {/* Mobile Top Offer Announcement Bar */}
+      <div className="mobile-top-offer-bar">
+        🔥 <strong>નવરાત્રી સ્પેશિયલ ઑફર!:</strong> આજે જ મેળવો માત્ર{" "}
+        <strong>₹29</strong> માં - ઓફર પૂર્ણ થતાં કિંમત વધીને{" "}
+        <strong>₹99</strong> થઈ જશે!
+      </div>
+
       <header className="site-header">
         <div className="container header-inner">
           <a href="/" className="logo">
@@ -216,7 +222,7 @@ export default function PdfCourse() {
               </div>
             </div>
             <Link className="header-buy" href="/gsrtc-mcq-course/checkout">
-              <CartIcon /> ખરીદો ₹69
+              <CartIcon /> ખરીદો ₹29
             </Link>
           </nav>
         </div>
@@ -288,18 +294,18 @@ export default function PdfCourse() {
             {/* Offer below hero (centered, full width) */}
             <div className="hero-offer">
               <div className="hero-urgency-notice">
-                🔥 <strong>લિમિટેડ લૉન્ચ ઓફર (Today Only):</strong> આજે જ મેળવો માત્ર <strong>₹69</strong> માં — ઓફર પૂર્ણ થતાં કિંમત વધીને <strong>₹99</strong> થઈ જશે!
+                🔥 <strong>નવરાત્રી સ્પેશિયલ ઑફર!:</strong> આજે જ મેળવો માત્ર <strong>₹29</strong> માં - ઓફર પૂર્ણ થતાં કિંમત વધીને <strong>₹99</strong> થઈ જશે!
               </div>
 
               <h2 className="hero-offer-title">
-                ફક્ત ₹69/- આજે જ PDF ડાઉનલોડ કરો અને GSRTC કંડક્ટર પરીક્ષા માટે પ્રેક્ટિસ શરૂ કરો!
+                ફક્ત ₹29/- આજે જ PDF ડાઉનલોડ કરો અને GSRTC કંડક્ટર પરીક્ષા માટે પ્રેક્ટિસ શરૂ કરો!
               </h2>
 
               <Link
                 className="btn btn-accent hero-buy"
                 href="/gsrtc-mcq-course/checkout"
               >
-                <CartIcon /> હમણાં ખરીદો ₹69{" "}
+                <CartIcon /> હમણાં ખરીદો ₹29{" "}
                 <span className="final-old">₹299</span>
               </Link>
 
@@ -307,15 +313,6 @@ export default function PdfCourse() {
                 <span className="fb">⚡ તરત ડાઉનલોડ</span>
                 <span className="fb">✅ 100% સુરક્ષિત પેમેન્ટ</span>
                 <span className="fb">♾️ લાઇફટાઇમ એક્સેસ</span>
-              </div>
-
-              <div className="pay-trust">
-                <Image
-                  src={razorpayBadge}
-                  alt="Razorpay દ્વારા 100% સુરક્ષિત પેમેન્ટ — GPay, PhonePe, UPI, Paytm"
-                  className="pay-trust-img"
-                  sizes="(max-width: 640px) 90vw, 420px"
-                />
               </div>
             </div>
           </div>
@@ -486,7 +483,7 @@ export default function PdfCourse() {
             className="btn buy-bar-btn"
             href="/gsrtc-mcq-course/checkout"
           >
-            <CartIcon /> ખરીદો ₹69/-
+            <CartIcon /> ખરીદો ₹29/-
           </Link>
         </div>
       </div>

@@ -20,7 +20,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
   );
 }
 
-const PRICE = 69;
+const PRICE = 29;
 const OLD_PRICE = 299;
 const SAVINGS = OLD_PRICE - PRICE;
 const DISCOUNT = Math.round((SAVINGS / OLD_PRICE) * 100);
@@ -183,7 +183,7 @@ export default function McqCheckout() {
       <div className={styles.timerStrip}>
         <div className={styles.timerContent}>
           <span className={styles.pulseDot} />
-          <span>🔥 <strong>સ્પેશિયલ લૉન્ચ ઓફર (Today Only):</strong> કિંમત ₹69 લૉક કરેલી છે! સમય બાકી: <strong className={styles.countdown}>{formatTimer(timeLeft)}</strong></span>
+          <span>🔥 <strong>નવરાત્રી સ્પેશિયલ ઑફર!:</strong> આજે જ મેળવો માત્ર <strong>₹29</strong> માં - ઓફર પૂર્ણ થતાં કિંમત વધીને <strong>₹99</strong> થઈ જશે! સમય બાકી: <strong className={styles.countdown}>{formatTimer(timeLeft)}</strong></span>
         </div>
       </div>
 
