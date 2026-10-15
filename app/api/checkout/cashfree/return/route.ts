@@ -1,5 +1,48 @@
 import { NextResponse } from "next/server";
 
+const ELECTRIC_PRODUCT = "electric-repairing";
+
+/**
+ * Returns the status of the most recent payment attempt on an order:
+ * "SUCCESS" | "PENDING" | "FAILED" | "USER_DROPPED" | ... or "NONE" if the
+ * buyer never attempted a payment / the lookup failed.
+ */
+async function getLatestPaymentStatus(
+  orderId: string,
+  env: string,
+  appId: string,
+  secretKey: string
+): Promise<string> {
+  try {
+    const url =
+      env === "SANDBOX"
+        ? `https://sandbox.cashfree.com/pg/orders/${encodeURIComponent(orderId)}/payments`
+        : `https://api.cashfree.com/pg/orders/${encodeURIComponent(orderId)}/payments`;
+    const res = await fetch(url, {
+      headers: {
+        "x-client-id": appId,
+        "x-client-secret": secretKey,
+        "x-api-version": "2023-08-01",
+      },
+      cache: "no-store",
+    });
+    if (!res.ok) return "NONE";
+    const payments = (await res.json()) as Array<{
+      payment_status?: string;
+      payment_time?: string;
+    }>;
+    if (!Array.isArray(payments) || payments.length === 0) return "NONE";
+    const latest = [...payments].sort(
+      (a, b) =>
+        new Date(b.payment_time || 0).getTime() -
+        new Date(a.payment_time || 0).getTime()
+    )[0];
+    return String(latest.payment_status || "NONE").toUpperCase();
+  } catch {
+    return "NONE";
+  }
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -20,10 +63,15 @@ export async function GET(req: Request) {
     ).replace(/\/$/, "");
 
     const requestedProduct = searchParams.get("product") || "";
+    const isElectricReturn = requestedProduct === ELECTRIC_PRODUCT;
+    const electricCheckout = (status: string) =>
+      `${appUrl}/electric-repairing-master-course/checkout?payment_status=${status}`;
 
     // If no order ID, return to checkout
     if (!order_id) {
-      const fallbackCheckout = `${appUrl}/opd-mastery/checkout?payment_status=cancelled`;
+      const fallbackCheckout = isElectricReturn
+        ? electricCheckout("cancelled")
+        : `${appUrl}/opd-mastery/checkout?payment_status=cancelled`;
       return NextResponse.redirect(fallbackCheckout);
     }
 
@@ -66,6 +114,14 @@ export async function GET(req: Request) {
         "Cashfree order fetch failed on return:",
         await response.text().catch(() => "")
       );
+      // Electric: we can't confirm status, so let the thank-you page retry
+      // verification instead of telling a possibly-paid buyer it failed.
+      if (isElectricReturn) {
+        const q = new URLSearchParams({ order_id, pending: "1" });
+        return NextResponse.redirect(
+          `${appUrl}/electric-repairing-master-course/thank-you?${q.toString()}`
+        );
+      }
       return NextResponse.redirect(
         `${appUrl}/opd-mastery/checkout?payment_status=cancelled`
       );
@@ -86,6 +142,8 @@ export async function GET(req: Request) {
           return `${appUrl}/norcet-notes/checkout?payment_status=${status}`;
         case "mcq":
           return `${appUrl}/gsrtc-mcq-course/checkout?payment_status=${status}`;
+        case "electric-repairing":
+          return `${appUrl}/electric-repairing-master-course/checkout?payment_status=${status}`;
         case "opd":
         default:
           return `${appUrl}/opd-mastery/checkout?payment_status=${status}`;
@@ -103,11 +161,35 @@ export async function GET(req: Request) {
           return `${appUrl}/norcet-notes/thank-you?${q.toString()}`;
         case "mcq":
           return `${appUrl}/gsrtc-mcq-course/thank-you?${q.toString()}`;
+        case "electric-repairing":
+          return `${appUrl}/electric-repairing-master-course/thank-you?${q.toString()}`;
         case "opd":
         default:
           return `${appUrl}/opd-mastery/thank-you?${q.toString()}`;
       }
     };
+
+    // Electric: tell apart "still processing" (e.g. UPI pending) from
+    // "failed" / "cancelled", so a buyer whose money is in flight isn't asked to pay again.
+    if (product === ELECTRIC_PRODUCT && data.order_status !== "PAID") {
+      const paymentStatus = await getLatestPaymentStatus(
+        order_id,
+        env,
+        appId || "",
+        secretKey || ""
+      );
+
+      if (paymentStatus === "PENDING") {
+        const q = new URLSearchParams({ order_id, pending: "1" });
+        return NextResponse.redirect(
+          `${appUrl}/electric-repairing-master-course/thank-you?${q.toString()}`
+        );
+      }
+
+      return NextResponse.redirect(
+        electricCheckout(paymentStatus === "FAILED" ? "failed" : "cancelled")
+      );
+    }
 
     // CRITICAL: If payment was cancelled, failed, user dropped or pending -> REDIRECT TO CHECKOUT!
     if (data.order_status !== "PAID") {
@@ -139,6 +221,15 @@ export async function GET(req: Request) {
     console.error("Cashfree return route error:", error);
     const configuredAppUrl =
       process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "";
+    // Electric: status unknown, let thank-you page re-verify (it falls back to checkout if unpaid)
+    const failedUrl = new URL(req.url);
+    const failedOrderId = failedUrl.searchParams.get("order_id");
+    if (failedUrl.searchParams.get("product") === ELECTRIC_PRODUCT && failedOrderId) {
+      const q = new URLSearchParams({ order_id: failedOrderId, pending: "1" });
+      return NextResponse.redirect(
+        `${configuredAppUrl || failedUrl.origin}/electric-repairing-master-course/thank-you?${q.toString()}`
+      );
+    }
     return NextResponse.redirect(
       `${configuredAppUrl}/opd-mastery/checkout?payment_status=cancelled`
     );

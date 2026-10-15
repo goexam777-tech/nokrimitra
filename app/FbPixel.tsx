@@ -27,6 +27,8 @@ const GSRTC_PREFIXES = [
   "/gsrtc-conductor-model-paper-1",
   "/mcq-1",
   "/gujarat-no-itihas",
+  // Electric course uses the same pixel as the home page
+  "/electric-repairing-master-course",
 ];
 
 // Route prefixes that use the dedicated Anatomy Coloring Book pixel.
@@ -71,15 +73,21 @@ export default function FbPixel() {
       const w = window as unknown as {
         fbq?: (...a: unknown[]) => void;
         __anatomyPixelInitialized?: boolean;
+        __nmInitedPixels?: Set<string>;
       };
       if (!w.fbq) {
         if (!cancelled) window.setTimeout(fire, 200);
         return;
       }
+      // Shared with lib/electricTracking so a pixel is never init'd twice.
+      w.__nmInitedPixels = w.__nmInitedPixels || new Set<string>();
       // init each pixel only once per session, then fire a PageView
       // scoped to just that pixel so the two products stay separated.
       if (!initedIds.current.has(id)) {
-        w.fbq("init", id);
+        if (!w.__nmInitedPixels.has(id)) {
+          w.fbq("init", id);
+          w.__nmInitedPixels.add(id);
+        }
         initedIds.current.add(id);
         if (id === ANATOMY_PIXEL) {
           w.__anatomyPixelInitialized = true;

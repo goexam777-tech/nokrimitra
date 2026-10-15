@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ESCOOTER_CATALOG } from "@/lib/escooterCatalog";
+import { ELECTRIC_CATALOG } from "@/lib/electricCatalog";
 
 const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
@@ -27,12 +28,15 @@ export async function POST(req: Request) {
     const isMbbs = body.product === "mbbs" || body.product === "mbbs-notes";
     const isAnatomy = body.product === "anatomy";
     const isEscooter = body.product === ESCOOTER_CATALOG.product;
+    const isElectric =
+      body.product === "electric-repairing" ||
+      body.product === "electric-repairing-master-course";
     const requestedAddons = Array.isArray(body.addons) ? body.addons.map(String) : [];
     const unknownAddons = isOpd
       ? requestedAddons.filter((id: string) => id !== OPD_ADDON_ID)
       : isNursing
         ? requestedAddons.filter((id: string) => id !== NURSING_ADDON_ID)
-        : isEscooter
+        : isEscooter || isElectric
           ? requestedAddons
           : [];
 
@@ -75,7 +79,9 @@ export async function POST(req: Request) {
             ? ANATOMY_PRICE
           : isEscooter
             ? ESCOOTER_CATALOG.price
-            : Number(body.amount || 149);
+            : isElectric
+              ? ELECTRIC_CATALOG.price
+              : Number(body.amount || 149);
 
     if (!Number.isFinite(amount) || amount <= 0) {
       return NextResponse.json({ error: "Invalid order amount" }, { status: 400 });
@@ -139,6 +145,14 @@ export async function POST(req: Request) {
             // Recording the price here keeps verification correct even after
             // the catalogue price changes later.
             price: String(ESCOOTER_CATALOG.price),
+          }
+      : isElectric
+        ? {
+            product: "electric-repairing",
+            bundle: "electric-repairing-master-course",
+            customerEmail: String(body.email || "").trim().toLowerCase(),
+            customerName: String(body.name || "").trim().slice(0, 120),
+            price: String(ELECTRIC_CATALOG.price),
           }
         : undefined;
 

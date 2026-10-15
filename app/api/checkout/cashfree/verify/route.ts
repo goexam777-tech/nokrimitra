@@ -7,6 +7,13 @@ import {
   buildAnatomyEmailText,
 } from "@/lib/anatomyEmailTemplate";
 import { createDownloadToken } from "@/lib/downloadToken";
+import { ELECTRIC_CATALOG } from "@/lib/electricCatalog";
+import {
+  buildElectricEmail,
+  buildElectricEmailText,
+  ELECTRIC_EMAIL_SUBJECT,
+  ELECTRIC_SUPPORT_EMAIL,
+} from "@/lib/electricEmailTemplate";
 
 const ANATOMY_PRICE = 149;
 const ANATOMY_PRODUCT_NAME = "500+ Human Anatomy Coloring Book Bundle";
@@ -47,6 +54,7 @@ export async function POST(req: Request) {
     const isNorcet = product === "norcet";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
     const isAnatomy = product === "anatomy";
+    const isElectric = product === ELECTRIC_CATALOG.product;
 
     // Public origin for links included in email + downloads.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
@@ -125,6 +133,20 @@ export async function POST(req: Request) {
           downloadPath: "/norcet-notes/go",
         });
       }
+      if (isElectric) {
+        const electricToken = createDownloadToken("electric", order_id);
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          mock: true,
+          amountPaid: ELECTRIC_CATALOG.price,
+          customerEmail: String(email || ""),
+          emailDelivered: false,
+          downloadPath: `/electric-repairing-master-course/go${
+            electricToken ? `?t=${electricToken}` : ""
+          }`,
+        });
+      }
       return NextResponse.json({
         success: true,
         verified: true,
@@ -160,7 +182,12 @@ export async function POST(req: Request) {
 
     if (data.order_status !== "PAID") {
       return NextResponse.json(
-        { error: `Payment not completed. Order status: ${data.order_status}` },
+        {
+          error: `Payment not completed. Order status: ${data.order_status}`,
+          // Lets the thank-you page tell "not paid yet" apart from other errors.
+          notPaid: true,
+          orderStatus: data.order_status,
+        },
         { status: 400 }
       );
     }
@@ -360,6 +387,92 @@ export async function POST(req: Request) {
         mock: false,
         amountPaid: expectedAmount,
         downloadPath: "/norcet-notes/go",
+      });
+    }
+
+    if (verifiedProduct === ELECTRIC_CATALOG.product) {
+      // Price was recorded on the order by our server at creation time.
+      const expectedAmount = Number(tags.price) || ELECTRIC_CATALOG.price;
+
+      if (Number(data.order_amount) !== expectedAmount) {
+        return NextResponse.json(
+          { error: "Electric course order amount verification failed" },
+          { status: 400 }
+        );
+      }
+
+      // customer_details keeps the full email; the tag copy is cut at 80 chars.
+      const customerEmail = String(
+        data.customer_details?.customer_email || tags.email || email || ""
+      ).trim();
+      const rawName = String(
+        data.customer_details?.customer_name || name || ""
+      ).trim();
+      // Checkout doesn't collect a name, so placeholder names become "there".
+      const customerName =
+        rawName && rawName !== "Doctor/Student" && rawName !== "Customer"
+          ? rawName
+          : "there";
+
+      const electricToken = createDownloadToken("electric", order_id);
+      const electricPath = `/electric-repairing-master-course/go${
+        electricToken ? `?t=${electricToken}` : ""
+      }`;
+      const electricDownloadUrl = `${appUrl}${electricPath}`;
+
+      let emailDelivered = false;
+      if (resendApiKey && resendApiKey !== "your_resend_key_here" && customerEmail) {
+        try {
+          const emailResponse = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${resendApiKey}`,
+              // Same order verified twice (refresh) => Resend sends only one email.
+              "Idempotency-Key": `electric-${order_id}`,
+            },
+            body: JSON.stringify({
+              from: emailFrom,
+              to: [customerEmail],
+              reply_to: ELECTRIC_SUPPORT_EMAIL,
+              subject: ELECTRIC_EMAIL_SUBJECT,
+              html: buildElectricEmail({
+                customerName,
+                productName: ELECTRIC_CATALOG.name,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl: electricDownloadUrl,
+              }),
+              text: buildElectricEmailText({
+                customerName,
+                productName: ELECTRIC_CATALOG.name,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl: electricDownloadUrl,
+              }),
+            }),
+          });
+          if (!emailResponse.ok) {
+            console.error(
+              "Resend API failed for Electric Cashfree verification:",
+              await emailResponse.text()
+            );
+          } else {
+            emailDelivered = true;
+          }
+        } catch (emailErr) {
+          console.error("Failed to send Electric Cashfree email:", emailErr);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        verified: true,
+        mock: false,
+        amountPaid: expectedAmount,
+        customerEmail,
+        emailDelivered,
+        downloadPath: electricPath,
       });
     }
 

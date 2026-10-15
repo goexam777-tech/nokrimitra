@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-
+import { ELECTRIC_CATALOG } from "@/lib/electricCatalog";
 
 const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
@@ -38,6 +38,7 @@ export async function POST(req: Request) {
     const isNorcet = product === "norcet";
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
     const isAnatomy = product === "anatomy";
+    const isElectric = product === ELECTRIC_CATALOG.product;
 
     // Amount is computed server-side for security
     const opdHasAddon =
@@ -57,6 +58,8 @@ export async function POST(req: Request) {
       ? 199
       : isAnatomy
       ? 149
+      : isElectric
+      ? ELECTRIC_CATALOG.price
       : Number(reqAmount || 29);
 
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -115,6 +118,16 @@ export async function POST(req: Request) {
       orderTags = {
         product: "anatomy",
         name: cleanName.slice(0, 80),
+        email: cleanEmail.slice(0, 80),
+      };
+
+    } else if (isElectric) {
+      // Product + price are stored on the order so verification never trusts the browser.
+      // `product` in the URL only decides where to send the user if Cashfree can't be reached.
+      returnUrl = `${appUrl}/api/checkout/cashfree/return?order_id={order_id}&product=${ELECTRIC_CATALOG.product}`;
+      orderTags = {
+        product: ELECTRIC_CATALOG.product,
+        price: String(ELECTRIC_CATALOG.price),
         email: cleanEmail.slice(0, 80),
       };
 
