@@ -2,6 +2,11 @@
 @import "tailwindcss";
 @source "..";
 
+/* Hide Next.js dev indicator badge that overlaps sticky checkout button */
+nextjs-portal {
+  display: none !important;
+}
+
 @theme {
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-heading: 'Plus Jakarta Sans', 'Inter', sans-serif;

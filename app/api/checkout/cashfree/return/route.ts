@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 const ELECTRIC_PRODUCT = "electric-repairing";
+const MEDICAL_PRODUCT = "medical-masterbook";
 
 /**
  * Returns the status of the most recent payment attempt on an order:
@@ -64,13 +65,18 @@ export async function GET(req: Request) {
 
     const requestedProduct = searchParams.get("product") || "";
     const isElectricReturn = requestedProduct === ELECTRIC_PRODUCT;
+    const isMedicalReturn = requestedProduct === MEDICAL_PRODUCT;
     const electricCheckout = (status: string) =>
       `${appUrl}/electric-repairing-master-course/checkout?payment_status=${status}`;
+    const medicalCheckout = (status: string) =>
+      `${appUrl}/medical-masterbook/checkout?payment_status=${status}`;
 
     // If no order ID, return to checkout
     if (!order_id) {
       const fallbackCheckout = isElectricReturn
         ? electricCheckout("cancelled")
+        : isMedicalReturn
+        ? medicalCheckout("cancelled")
         : `${appUrl}/opd-mastery/checkout?payment_status=cancelled`;
       return NextResponse.redirect(fallbackCheckout);
     }
@@ -83,10 +89,13 @@ export async function GET(req: Request) {
         mock: "true",
         name: searchParams.get("name") || "",
         email: searchParams.get("email") || "",
-        amountPaid: searchParams.get("amountPaid") || "149",
+        amountPaid: searchParams.get("amountPaid") || "99",
         product: prod,
         addons: searchParams.get("addons") || "",
       });
+      if (prod === MEDICAL_PRODUCT) {
+        return NextResponse.redirect(`${appUrl}/medical-masterbook/thank-you?${q.toString()}`);
+      }
       return NextResponse.redirect(`${appUrl}/opd-mastery/thank-you?${q.toString()}`);
     }
 
@@ -144,6 +153,8 @@ export async function GET(req: Request) {
           return `${appUrl}/gsrtc-mcq-course/checkout?payment_status=${status}`;
         case "electric-repairing":
           return `${appUrl}/electric-repairing-master-course/checkout?payment_status=${status}`;
+        case "medical-masterbook":
+          return `${appUrl}/medical-masterbook/checkout?payment_status=${status}`;
         case "opd":
         default:
           return `${appUrl}/opd-mastery/checkout?payment_status=${status}`;
@@ -163,13 +174,15 @@ export async function GET(req: Request) {
           return `${appUrl}/gsrtc-mcq-course/thank-you?${q.toString()}`;
         case "electric-repairing":
           return `${appUrl}/electric-repairing-master-course/thank-you?${q.toString()}`;
+        case "medical-masterbook":
+          return `${appUrl}/medical-masterbook/thank-you?${q.toString()}`;
         case "opd":
         default:
           return `${appUrl}/opd-mastery/thank-you?${q.toString()}`;
       }
     };
 
-    // Electric: tell apart "still processing" (e.g. UPI pending) from
+    // Electric & Medical: tell apart "still processing" (e.g. UPI pending) from
     // "failed" / "cancelled", so a buyer whose money is in flight isn't asked to pay again.
     if (product === ELECTRIC_PRODUCT && data.order_status !== "PAID") {
       const paymentStatus = await getLatestPaymentStatus(
@@ -188,6 +201,26 @@ export async function GET(req: Request) {
 
       return NextResponse.redirect(
         electricCheckout(paymentStatus === "FAILED" ? "failed" : "cancelled")
+      );
+    }
+
+    if (product === MEDICAL_PRODUCT && data.order_status !== "PAID") {
+      const paymentStatus = await getLatestPaymentStatus(
+        order_id,
+        env,
+        appId || "",
+        secretKey || ""
+      );
+
+      if (paymentStatus === "PENDING") {
+        const q = new URLSearchParams({ order_id, pending: "1" });
+        return NextResponse.redirect(
+          `${appUrl}/medical-masterbook/thank-you?${q.toString()}`
+        );
+      }
+
+      return NextResponse.redirect(
+        medicalCheckout(paymentStatus === "FAILED" ? "failed" : "cancelled")
       );
     }
 
@@ -221,13 +254,20 @@ export async function GET(req: Request) {
     console.error("Cashfree return route error:", error);
     const configuredAppUrl =
       process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "";
-    // Electric: status unknown, let thank-you page re-verify (it falls back to checkout if unpaid)
+    // Electric & Medical: status unknown, let thank-you page re-verify (it falls back to checkout if unpaid)
     const failedUrl = new URL(req.url);
     const failedOrderId = failedUrl.searchParams.get("order_id");
-    if (failedUrl.searchParams.get("product") === ELECTRIC_PRODUCT && failedOrderId) {
+    const failedProduct = failedUrl.searchParams.get("product");
+    if (failedProduct === ELECTRIC_PRODUCT && failedOrderId) {
       const q = new URLSearchParams({ order_id: failedOrderId, pending: "1" });
       return NextResponse.redirect(
         `${configuredAppUrl || failedUrl.origin}/electric-repairing-master-course/thank-you?${q.toString()}`
+      );
+    }
+    if (failedProduct === MEDICAL_PRODUCT && failedOrderId) {
+      const q = new URLSearchParams({ order_id: failedOrderId, pending: "1" });
+      return NextResponse.redirect(
+        `${configuredAppUrl || failedUrl.origin}/medical-masterbook/thank-you?${q.toString()}`
       );
     }
     return NextResponse.redirect(

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ELECTRIC_CATALOG } from "@/lib/electricCatalog";
+import { MEDICAL_CATALOG } from "@/lib/medicalMasterbookCatalog";
 
 const OPD_BASE_PRICE = 149;
 const OPD_EXIT_PRICE = 149;
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
     const isAnatomy = product === "anatomy";
     const isElectric = product === ELECTRIC_CATALOG.product;
+    const isMedical = product === MEDICAL_CATALOG.product;
 
     // Amount is computed server-side for security
     const opdHasAddon =
@@ -47,6 +49,12 @@ export async function POST(req: Request) {
         (Array.isArray(addons)
           ? addons.includes(OPD_ADDON_ID)
           : String(addons || "").includes(OPD_ADDON_ID)));
+
+    const medicalHasAddon =
+      isMedical &&
+      (Array.isArray(addons)
+        ? addons.includes("opd-bundle")
+        : String(addons || "").includes("opd-bundle"));
 
     const amount = isOpd
       ? isOpdExitOffer
@@ -60,6 +68,8 @@ export async function POST(req: Request) {
       ? 149
       : isElectric
       ? ELECTRIC_CATALOG.price
+      : isMedical
+      ? MEDICAL_CATALOG.price + (medicalHasAddon ? 99 : 0)
       : Number(reqAmount || 29);
 
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -128,6 +138,15 @@ export async function POST(req: Request) {
       orderTags = {
         product: ELECTRIC_CATALOG.product,
         price: String(ELECTRIC_CATALOG.price),
+        email: cleanEmail.slice(0, 80),
+      };
+
+    } else if (isMedical) {
+      returnUrl = `${appUrl}/api/checkout/cashfree/return?order_id={order_id}&product=${MEDICAL_CATALOG.product}`;
+      orderTags = {
+        product: MEDICAL_CATALOG.product,
+        price: String(amount),
+        addons: medicalHasAddon ? "opd-bundle" : "",
         email: cleanEmail.slice(0, 80),
       };
 

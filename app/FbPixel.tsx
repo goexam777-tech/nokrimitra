@@ -27,8 +27,9 @@ const GSRTC_PREFIXES = [
   "/gsrtc-conductor-model-paper-1",
   "/mcq-1",
   "/gujarat-no-itihas",
-  // Electric course uses the same pixel as the home page
+  // Electric course and Medical Masterbook use the same pixel as the home page
   "/electric-repairing-master-course",
+  "/medical-masterbook",
 ];
 
 // Route prefixes that use the dedicated Anatomy Coloring Book pixel.

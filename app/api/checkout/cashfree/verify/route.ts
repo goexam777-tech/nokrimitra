@@ -14,6 +14,13 @@ import {
   ELECTRIC_EMAIL_SUBJECT,
   ELECTRIC_SUPPORT_EMAIL,
 } from "@/lib/electricEmailTemplate";
+import { MEDICAL_CATALOG } from "@/lib/medicalMasterbookCatalog";
+import {
+  buildMedicalEmail,
+  buildMedicalEmailText,
+  MEDICAL_EMAIL_SUBJECT,
+  MEDICAL_SUPPORT_EMAIL,
+} from "@/lib/medicalMasterbookEmailTemplate";
 
 const ANATOMY_PRICE = 149;
 const ANATOMY_PRODUCT_NAME = "500+ Human Anatomy Coloring Book Bundle";
@@ -55,6 +62,7 @@ export async function POST(req: Request) {
     const isMbbs = product === "mbbs" || product === "mbbs-notes";
     const isAnatomy = product === "anatomy";
     const isElectric = product === ELECTRIC_CATALOG.product;
+    const isMedical = product === MEDICAL_CATALOG.product;
 
     // Public origin for links included in email + downloads.
     const configuredAppUrl = process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL;
@@ -147,6 +155,44 @@ export async function POST(req: Request) {
           }`,
         });
       }
+      if (isMedical) {
+        const hasAddon =
+          String(addons || "").includes("opd-bundle") ||
+          String(amountPaid) === "248";
+        const medicalToken = createDownloadToken("medical-masterbook", order_id);
+        const upsellToken = hasAddon
+          ? createDownloadToken("medical-masterbook-upsell", order_id)
+          : null;
+        const expectedAmount = MEDICAL_CATALOG.price + (hasAddon ? 99 : 0);
+
+        return NextResponse.json({
+          success: true,
+          verified: true,
+          mock: true,
+          amountPaid: expectedAmount,
+          customerEmail: String(email || ""),
+          emailDelivered: false,
+          downloadPath: `/medical-masterbook/go${
+            medicalToken ? `?t=${medicalToken}` : ""
+          }`,
+          downloads: [
+            {
+              label: "Medical Masterbook PDF",
+              path: `/medical-masterbook/go${medicalToken ? `?t=${medicalToken}` : ""}`,
+            },
+            ...(hasAddon
+              ? [
+                  {
+                    label: "OPD Mastery + Emergency Handbook",
+                    path: `/medical-masterbook/go?item=opd-bundle${
+                      upsellToken ? `&t=${upsellToken}` : ""
+                    }`,
+                  },
+                ]
+              : []),
+          ],
+        });
+      }
       return NextResponse.json({
         success: true,
         verified: true,
@@ -199,7 +245,7 @@ export async function POST(req: Request) {
     // The product + add-on are read back from Cashfree order tags, so the
     // browser can never inflate what was purchased.
     const tags = (data.order_tags || {}) as Record<string, string>;
-    const verifiedProduct = tags.product || (isOpd ? (isOpdEbook ? "opd-ebook" : "opd") : isNorcet ? "norcet" : isAnatomy ? "anatomy" : "mcq");
+    const verifiedProduct = tags.product || (isMedical ? MEDICAL_CATALOG.product : isElectric ? ELECTRIC_CATALOG.product : isOpd ? (isOpdEbook ? "opd-ebook" : "opd") : isNorcet ? "norcet" : isAnatomy ? "anatomy" : "mcq");
 
     if (verifiedProduct === "opd" || verifiedProduct === "opd-ebook" || verifiedProduct === "opd_ebook") {
       const isVerifiedOpdEbook = verifiedProduct === "opd-ebook" || verifiedProduct === "opd_ebook" || isOpdEbook;
@@ -473,6 +519,127 @@ export async function POST(req: Request) {
         customerEmail,
         emailDelivered,
         downloadPath: electricPath,
+      });
+    }
+
+    if (verifiedProduct === MEDICAL_CATALOG.product) {
+      const verifiedAddon =
+        String(tags.addons || "").includes("opd-bundle") ||
+        Number(data.order_amount) === MEDICAL_CATALOG.price + 99;
+      // Price was recorded on the order by our server at creation time.
+      const expectedAmount =
+        Number(tags.price) || (MEDICAL_CATALOG.price + (verifiedAddon ? 99 : 0));
+
+      if (Number(data.order_amount) !== expectedAmount) {
+        return NextResponse.json(
+          { error: "Medical Masterbook order amount verification failed" },
+          { status: 400 }
+        );
+      }
+
+      const customerEmail = String(
+        data.customer_details?.customer_email || tags.email || email || ""
+      ).trim();
+      const rawName = String(
+        data.customer_details?.customer_name || name || ""
+      ).trim();
+      const customerName =
+        rawName && rawName !== "Doctor/Student" && rawName !== "Customer"
+          ? rawName
+          : "there";
+
+      const medicalToken = createDownloadToken("medical-masterbook", order_id);
+      const upsellToken = verifiedAddon
+        ? createDownloadToken("medical-masterbook-upsell", order_id)
+        : null;
+
+      const medicalPath = `/medical-masterbook/go${
+        medicalToken ? `?t=${medicalToken}` : ""
+      }`;
+      const medicalDownloadUrl = `${appUrl}${medicalPath}`;
+
+      const downloads = [
+        {
+          label: "Medical Masterbook PDF",
+          path: medicalPath,
+        },
+        ...(verifiedAddon
+          ? [
+              {
+                label: "OPD Mastery + Emergency Handbook",
+                path: `/medical-masterbook/go?item=opd-bundle${
+                  upsellToken ? `&t=${upsellToken}` : ""
+                }`,
+              },
+            ]
+          : []),
+      ];
+
+      let emailDelivered = false;
+      if (resendApiKey && resendApiKey !== "your_resend_key_here" && customerEmail) {
+        try {
+          const emailResponse = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${resendApiKey}`,
+              "Idempotency-Key": `medical-${order_id}`,
+            },
+            body: JSON.stringify({
+              from: emailFrom,
+              to: [customerEmail],
+              reply_to: MEDICAL_SUPPORT_EMAIL,
+              subject: MEDICAL_EMAIL_SUBJECT,
+              html: buildMedicalEmail({
+                customerName,
+                productName: verifiedAddon
+                  ? `${MEDICAL_CATALOG.name} + OPD & Emergency Bundle`
+                  : MEDICAL_CATALOG.name,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl: medicalDownloadUrl,
+                downloads: downloads.map((d) => ({
+                  label: d.label,
+                  url: `${appUrl}${d.path}`,
+                })),
+              }),
+              text: buildMedicalEmailText({
+                customerName,
+                productName: verifiedAddon
+                  ? `${MEDICAL_CATALOG.name} + OPD & Emergency Bundle`
+                  : MEDICAL_CATALOG.name,
+                orderId: order_id,
+                amount: expectedAmount,
+                downloadUrl: medicalDownloadUrl,
+                downloads: downloads.map((d) => ({
+                  label: d.label,
+                  url: `${appUrl}${d.path}`,
+                })),
+              }),
+            }),
+          });
+          if (!emailResponse.ok) {
+            console.error(
+              "Resend API failed for Medical Masterbook Cashfree verification:",
+              await emailResponse.text()
+            );
+          } else {
+            emailDelivered = true;
+          }
+        } catch (emailErr) {
+          console.error("Failed to send Medical Masterbook Cashfree email:", emailErr);
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        verified: true,
+        mock: false,
+        amountPaid: expectedAmount,
+        customerEmail,
+        emailDelivered,
+        downloadPath: medicalPath,
+        downloads,
       });
     }
 
